@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo1.CKDEPIViewController"
+          alignment="center" hgap="10" vgap="10" style="-fx-padding: 20;">
+  <!-- Пол -->
+  <Label text="Пол:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+  <ComboBox fx:id="cmbGender" GridPane.rowIndex="0" GridPane.columnIndex="1">
+    <items>
+      <FXCollections fx:factory="observableArrayList">
+        <String fx:value="Мужской"/>
+        <String fx:value="Женский"/>
+      </FXCollections>
+    </items>
+  </ComboBox>
+
+  <!-- Креатинин -->
+  <Label text="Креатинин:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+  <TextField fx:id="nmrKreatinin" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+  <!-- Единицы креатинина -->
+  <Label text="Ед. измерения:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+  <ComboBox fx:id="cmbCreatininUnit" GridPane.rowIndex="2" GridPane.columnIndex="1">
+    <items>
+      <FXCollections fx:factory="observableArrayList">
+        <String fx:value="мг/дл"/>
+        <String fx:value="мкмоль/л"/>
+      </FXCollections>
+    </items>
+  </ComboBox>
+
+  <!-- Возраст -->
+  <Label text="Возраст:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+  <TextField fx:id="nmrAge" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+  <!-- Кнопка рассчета -->
+  <Button text="Рассчитать" fx:id="btnCalc" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+
+  <!-- Результат -->
+  <TextArea fx:id="txtResult" GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2"
+            prefRowCount="3" editable="false"/>
+</GridPane>
