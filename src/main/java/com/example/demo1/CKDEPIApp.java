@@ -1,24 +1,27 @@
 package com.example.demo1;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class CKDEPIApp extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("CKDEPIView.fxml"));
-        GridPane root = loader.load();
+    public void start(Stage primaryStage) {
+        // Создание модели для контрола
+        CKDEPIControl.CKDEPIModel model = new CKDEPIControl.CKDEPIModel();
 
-        primaryStage.setTitle("CKD-EPI");
-        primaryStage.setScene(new Scene(root, 400, 300));
+        // Создание контрола и передача модели
+        CKDEPIControl control = new CKDEPIControl(model);
+
+        // Создание сцены и её установка
+        Scene scene = new Scene(control, 400, 300);
+        primaryStage.setTitle("CKD-EPI Calculator");
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     public static void main(String[] args) {
-        launch(args);
+        launch(args); // Запуск JavaFX-приложения
     }
 }
