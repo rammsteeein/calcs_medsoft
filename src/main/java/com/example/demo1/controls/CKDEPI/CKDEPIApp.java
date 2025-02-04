@@ -1,4 +1,4 @@
-package com.example.demo1;
+package com.example.demo1.controls.CKDEPI;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

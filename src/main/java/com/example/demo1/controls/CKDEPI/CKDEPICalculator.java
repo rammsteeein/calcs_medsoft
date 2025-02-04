@@ -1,4 +1,7 @@
-package com.example.demo1;
+package com.example.demo1.controls.CKDEPI;
+
+import com.example.demo1.common.enums.CreatininUnit;
+import com.example.demo1.common.enums.Gender;
 
 public class CKDEPICalculator {
 

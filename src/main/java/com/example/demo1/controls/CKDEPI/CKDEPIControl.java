@@ -1,13 +1,11 @@
-package com.example.demo1;
+package com.example.demo1.controls.CKDEPI;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.example.demo1.common.enums.CreatininUnit;
+import com.example.demo1.common.enums.Gender;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import com.example.demo1.CKDEPIModel;
+
 import java.io.Closeable;
 
 /**

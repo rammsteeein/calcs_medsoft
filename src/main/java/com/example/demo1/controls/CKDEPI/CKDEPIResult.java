@@ -1,4 +1,4 @@
-package com.example.demo1;
+package com.example.demo1.controls.CKDEPI;
 
 public class CKDEPIResult {
     private String result;
