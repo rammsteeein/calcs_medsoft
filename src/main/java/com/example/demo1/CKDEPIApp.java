@@ -8,13 +8,10 @@ public class CKDEPIApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Создание модели для контрола
-        CKDEPIControl.CKDEPIModel model = new CKDEPIControl.CKDEPIModel();
+        CKDEPIModel model = CKDEPIModel.builder().build();
 
-        // Создание контрола и передача модели
         CKDEPIControl control = new CKDEPIControl(model);
 
-        // Создание сцены и её установка
         Scene scene = new Scene(control, 400, 300);
         primaryStage.setTitle("CKD-EPI Calculator");
         primaryStage.setScene(scene);

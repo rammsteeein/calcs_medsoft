@@ -4,7 +4,7 @@ public class CKDEPICalculator {
 
     public static CKDEPIResult calc(Gender gender, double kreatinin, CreatininUnit creatininUnit, int age) {
         if (creatininUnit == CreatininUnit.MKMOL) {
-            kreatinin /= 88.4; // Преобразование из мкмоль/л в мг/дл
+            kreatinin /= 88.4;
         } else if (creatininUnit != CreatininUnit.MGDL) {
             return new CKDEPIResult("Некорректная единица измерения");
         }
