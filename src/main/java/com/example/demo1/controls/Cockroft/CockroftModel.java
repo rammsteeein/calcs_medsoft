@@ -1,4 +1,4 @@
-package com.example.demo1.controls.CKDEPI;
+package com.example.demo1.controls.Cockroft;
 
 import com.example.demo1.common.enums.CreatininUnit;
 import com.example.demo1.common.enums.Gender;
@@ -7,18 +7,20 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class CKDEPIModel {
+public class CockroftModel {
     private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>();
     private final StringProperty kreatinin = new SimpleStringProperty();
     private final ObjectProperty<CreatininUnit> creatininUnit = new SimpleObjectProperty<>();
     private final StringProperty age = new SimpleStringProperty();
+    private final StringProperty weight = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    private CKDEPIModel(Builder builder) {
+    private CockroftModel(Builder builder) {
         this.gender.set(builder.gender);
         this.kreatinin.set(builder.kreatinin);
         this.creatininUnit.set(builder.creatininUnit);
         this.age.set(builder.age);
+        this.weight.set(builder.weight);
         this.result.set(builder.result);
     }
 
@@ -70,6 +72,18 @@ public class CKDEPIModel {
         return age;
     }
 
+    public String getWeight() {
+        return weight.get();
+    }
+
+    public void setWeight(String weight) {
+        this.weight.set(weight);
+    }
+
+    public StringProperty weightProperty() {
+        return weight;
+    }
+
     public String getResult() {
         return result.get();
     }
@@ -88,13 +102,15 @@ public class CKDEPIModel {
             double kreatininValue = Double.parseDouble(getKreatinin());
             CreatininUnit creatininUnitValue = getCreatininUnit();
             int ageValue = Integer.parseInt(getAge());
+            double weightValue = Double.parseDouble(getWeight());
 
-            CKDEPIResult calcResult = CKDEPICalculator.calc(genderValue, kreatininValue, creatininUnitValue, ageValue);
-            setResult(calcResult.toString());
+            double calcResult = CockroftCalculator.calc(genderValue, kreatininValue, weightValue, ageValue);
+            setResult(String.format("Клиренс креатинина: %.2f мл/мин", calcResult));
         } catch (Exception e) {
             setResult("Ошибка: " + e.getMessage());
         }
     }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -104,6 +120,7 @@ public class CKDEPIModel {
         private String kreatinin;
         private CreatininUnit creatininUnit;
         private String age;
+        private String weight;
         private String result = "";
 
         public Builder withGender(Gender gender) {
@@ -126,13 +143,18 @@ public class CKDEPIModel {
             return this;
         }
 
+        public Builder withWeight(String weight) {
+            this.weight = weight;
+            return this;
+        }
+
         public Builder withResult(String result) {
             this.result = result;
             return this;
         }
 
-        public CKDEPIModel build() {
-            return new CKDEPIModel(this);
+        public CockroftModel build() {
+            return new CockroftModel(this);
         }
     }
 }
