@@ -1,0 +1,40 @@
+package com.example.demo1.controls.Wells;
+
+public class WellsCalculator {
+
+    public static WellsResult calc(
+            boolean prevPEorDVT,
+            boolean tachycardia,
+            boolean surgeryOrImmobilization,
+            boolean hemoptysis,
+            boolean activeCancer,
+            boolean clinicalDVT,
+            boolean alternativeLessLikely
+    ) {
+        double score = 0;
+
+        if (prevPEorDVT) score += 1.5;
+        if (tachycardia) score += 1.5;
+        if (surgeryOrImmobilization) score += 1.5;
+        if (hemoptysis) score += 1;
+        if (activeCancer) score += 1;
+        if (clinicalDVT) score += 3;
+        if (alternativeLessLikely) score += 3;
+
+        // Трехуровневая шкала
+        String threeLevel = "";
+        if (score >= 0 && score <= 1) threeLevel = "низкая";
+        else if (score >= 2 && score <= 6) threeLevel = "средняя";
+        else if (score > 7) threeLevel = "высокая";
+
+        // Двухуровневая шкала
+        String twoLevel = "";
+        if (score >= 0 && score <= 4) twoLevel = "ТЭЛА маловероятна";
+        else if (score > 5) twoLevel = "ТЭЛА вероятна";
+
+        String resultStr = String.format("Сумма баллов: %.1f\nТрехуровневая шкала: %s\nДвухуровневая шкала: %s",
+                score, threeLevel, twoLevel);
+
+        return new WellsResult(resultStr);
+    }
+}
