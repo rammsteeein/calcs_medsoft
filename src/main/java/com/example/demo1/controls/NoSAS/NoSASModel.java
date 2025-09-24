@@ -1,5 +1,6 @@
 package com.example.demo1.controls.NoSAS;
 
+import com.example.demo1.common.enums.Gender;
 import javafx.beans.property.*;
 
 public class NoSASModel {
@@ -8,17 +9,8 @@ public class NoSASModel {
     private final DoubleProperty bmi = new SimpleDoubleProperty();
     private final BooleanProperty hasSnoring = new SimpleBooleanProperty();
     private final IntegerProperty age = new SimpleIntegerProperty();
-    private final BooleanProperty isMale = new SimpleBooleanProperty();
+    private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>(Gender.MALE);
     private final StringProperty result = new SimpleStringProperty();
-
-    private NoSASModel(Builder builder) {
-        this.neckCircumference.set(builder.neckCircumference);
-        this.bmi.set(builder.bmi);
-        this.hasSnoring.set(builder.hasSnoring);
-        this.age.set(builder.age);
-        this.isMale.set(builder.isMale);
-        this.result.set(builder.result);
-    }
 
     public double getNeckCircumference() { return neckCircumference.get(); }
     public void setNeckCircumference(double val) { neckCircumference.set(val); }
@@ -36,9 +28,9 @@ public class NoSASModel {
     public void setAge(int val) { age.set(val); }
     public IntegerProperty ageProperty() { return age; }
 
-    public boolean isMale() { return isMale.get(); }
-    public void setMale(boolean val) { isMale.set(val); }
-    public BooleanProperty isMaleProperty() { return isMale; }
+    public Gender getGender() { return gender.get(); }
+    public void setGender(Gender val) { gender.set(val); }
+    public ObjectProperty<Gender> genderProperty() { return gender; }
 
     public String getResult() { return result.get(); }
     public void setResult(String val) { result.set(val); }
@@ -51,7 +43,7 @@ public class NoSASModel {
                     getBmi(),
                     isHasSnoring(),
                     getAge(),
-                    isMale()
+                    getGender()
             );
             setResult(res.toString());
         } catch (Exception e) {
@@ -66,16 +58,25 @@ public class NoSASModel {
         private double bmi = 0;
         private boolean hasSnoring = false;
         private int age = 0;
-        private boolean isMale = false;
+        private Gender gender = Gender.MALE;
         private String result = "";
 
         public Builder withNeckCircumference(double val) { this.neckCircumference = val; return this; }
         public Builder withBmi(double val) { this.bmi = val; return this; }
         public Builder withHasSnoring(boolean val) { this.hasSnoring = val; return this; }
         public Builder withAge(int val) { this.age = val; return this; }
-        public Builder withIsMale(boolean val) { this.isMale = val; return this; }
+        public Builder withGender(Gender val) { this.gender = val; return this; }
         public Builder withResult(String val) { this.result = val; return this; }
 
         public NoSASModel build() { return new NoSASModel(this); }
+    }
+
+    private NoSASModel(Builder builder) {
+        this.neckCircumference.set(builder.neckCircumference);
+        this.bmi.set(builder.bmi);
+        this.hasSnoring.set(builder.hasSnoring);
+        this.age.set(builder.age);
+        this.gender.set(builder.gender);
+        this.result.set(builder.result);
     }
 }

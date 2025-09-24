@@ -1,8 +1,7 @@
 package com.example.demo1.controls.inbar;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import com.example.demo1.common.enums.Gender;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -13,6 +12,7 @@ public class INBARControl extends StackPane implements Closeable {
 
     private TextField nmrAge;
     private TextField nmrWeight;
+    private ComboBox<Gender> cmbGender;
     private Button btnCalc;
     private TextArea txtResult;
 
@@ -29,28 +29,33 @@ public class INBARControl extends StackPane implements Closeable {
         nmrAge.setPromptText("Возраст");
 
         nmrWeight = new TextField();
-        nmrWeight.setPromptText("Персональный вес (кг)");
+        nmrWeight.setPromptText("Вес (кг)");
 
-        btnCalc = new Button();
-        btnCalc.setText(BUTTON_TEXT);
+        cmbGender = new ComboBox<>();
+        cmbGender.getItems().addAll(Gender.values());
+        cmbGender.setValue(Gender.MALE);
+
+        btnCalc = new Button(BUTTON_TEXT);
         btnCalc.setOnAction(e -> calculateResult());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, nmrAge, nmrWeight, txtResult));
+        getChildren().add(new VBox(10, nmrAge, nmrWeight, cmbGender, btnCalc, txtResult));
     }
 
     private void bind() {
         nmrAge.textProperty().bindBidirectional(model.ageProperty());
         nmrWeight.textProperty().bindBidirectional(model.weightProperty());
+        cmbGender.valueProperty().bindBidirectional(model.genderProperty());
         txtResult.textProperty().bindBidirectional(model.resultProperty());
     }
 
     private void unbind() {
         nmrAge.textProperty().unbindBidirectional(model.ageProperty());
         nmrWeight.textProperty().unbindBidirectional(model.weightProperty());
+        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
         txtResult.textProperty().unbindBidirectional(model.resultProperty());
     }
 

@@ -1,5 +1,6 @@
 package com.example.demo1.controls.Pursuit;
 
+import com.example.demo1.common.enums.Gender;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -9,7 +10,8 @@ import java.io.Closeable;
 public class PursuitControl extends StackPane implements Closeable {
     private final PursuitModel model;
     private TextField txtAge;
-    private CheckBox chkMale, chkAngina, chkHeartFailure;
+    private ComboBox<Gender> cmbGender;
+    private CheckBox chkAngina, chkHeartFailure;
     private Button btnCalc;
     private TextArea txtResult;
 
@@ -25,7 +27,10 @@ public class PursuitControl extends StackPane implements Closeable {
         txtAge = new TextField();
         txtAge.setPromptText("Возраст");
 
-        chkMale = new CheckBox("Мужчина");
+        cmbGender = new ComboBox<>();
+        cmbGender.getItems().addAll(Gender.values());
+        cmbGender.setPromptText("Пол");
+
         chkAngina = new CheckBox("Стенокардия III-IV ФК");
         chkHeartFailure = new CheckBox("Сердечная недостаточность");
 
@@ -36,12 +41,12 @@ public class PursuitControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, txtAge, chkMale, chkAngina, chkHeartFailure, btnCalc, txtResult));
+        getChildren().add(new VBox(10, txtAge, cmbGender, chkAngina, chkHeartFailure, btnCalc, txtResult));
     }
 
     private void bind() {
         txtAge.textProperty().bindBidirectional(model.ageProperty());
-        chkMale.selectedProperty().bindBidirectional(model.isMaleProperty());
+        cmbGender.valueProperty().bindBidirectional(model.genderProperty());
         chkAngina.selectedProperty().bindBidirectional(model.hasAnginaProperty());
         chkHeartFailure.selectedProperty().bindBidirectional(model.hasHeartFailureProperty());
         txtResult.textProperty().bindBidirectional(model.resultProperty());
@@ -49,7 +54,7 @@ public class PursuitControl extends StackPane implements Closeable {
 
     private void unbind() {
         txtAge.textProperty().unbindBidirectional(model.ageProperty());
-        chkMale.selectedProperty().unbindBidirectional(model.isMaleProperty());
+        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
         chkAngina.selectedProperty().unbindBidirectional(model.hasAnginaProperty());
         chkHeartFailure.selectedProperty().unbindBidirectional(model.hasHeartFailureProperty());
         txtResult.textProperty().unbindBidirectional(model.resultProperty());

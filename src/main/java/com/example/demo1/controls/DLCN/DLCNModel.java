@@ -22,7 +22,6 @@ public class DLCNModel {
         this.result.set(builder.result);
     }
 
-    // --- Геттеры / Сеттеры ---
     public boolean isFamilyEarlyASCVDorHighLDL() { return familyEarlyASCVDorHighLDL.get(); }
     public void setFamilyEarlyASCVDorHighLDL(boolean val) { familyEarlyASCVDorHighLDL.set(val); }
     public BooleanProperty familyEarlyASCVDorHighLDLProperty() { return familyEarlyASCVDorHighLDL; }
@@ -63,7 +62,6 @@ public class DLCNModel {
         setResult(res.toString());
     }
 
-    // --- Builder ---
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

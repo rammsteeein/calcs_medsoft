@@ -1,89 +1,127 @@
 package com.example.demo1.controls.SHOKS;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 public class SHOKSModel {
 
-    private final StringProperty odyshka = new SimpleStringProperty();
-    private final StringProperty ves = new SimpleStringProperty();
-    private final StringProperty pereboi = new SimpleStringProperty();
-    private final StringProperty polozhenie = new SimpleStringProperty();
-    private final StringProperty sheinyeVeny = new SimpleStringProperty();
-    private final StringProperty hripy = new SimpleStringProperty();
-    private final StringProperty galop = new SimpleStringProperty();
-    private final StringProperty pechen = new SimpleStringProperty();
-    private final StringProperty oteki = new SimpleStringProperty();
-    private final StringProperty SAD = new SimpleStringProperty();
+    private final IntegerProperty odyshka = new SimpleIntegerProperty();
+    private final IntegerProperty ves = new SimpleIntegerProperty();
+    private final IntegerProperty pereboi = new SimpleIntegerProperty();
+    private final IntegerProperty polozhenie = new SimpleIntegerProperty();
+    private final IntegerProperty sheinyeVeny = new SimpleIntegerProperty();
+    private final IntegerProperty hripy = new SimpleIntegerProperty();
+    private final IntegerProperty galop = new SimpleIntegerProperty();
+    private final IntegerProperty pechen = new SimpleIntegerProperty();
+    private final IntegerProperty oteki = new SimpleIntegerProperty();
+    private final IntegerProperty SAD = new SimpleIntegerProperty();
+
     private final StringProperty result = new SimpleStringProperty();
+
+    private SHOKSModel(Builder builder) {
+        this.odyshka.set(builder.odyshka);
+        this.ves.set(builder.ves);
+        this.pereboi.set(builder.pereboi);
+        this.polozhenie.set(builder.polozhenie);
+        this.sheinyeVeny.set(builder.sheinyeVeny);
+        this.hripy.set(builder.hripy);
+        this.galop.set(builder.galop);
+        this.pechen.set(builder.pechen);
+        this.oteki.set(builder.oteki);
+        this.SAD.set(builder.SAD);
+        this.result.set(builder.result);
+    }
+
+    public int getOdyshka() { return odyshka.get(); }
+    public void setOdyshka(int val) { odyshka.set(val); }
+    public IntegerProperty odyshkaProperty() { return odyshka; }
+
+    public int getVes() { return ves.get(); }
+    public void setVes(int val) { ves.set(val); }
+    public IntegerProperty vesProperty() { return ves; }
+
+    public int getPereboi() { return pereboi.get(); }
+    public void setPereboi(int val) { pereboi.set(val); }
+    public IntegerProperty pereboiProperty() { return pereboi; }
+
+    public int getPolozhenie() { return polozhenie.get(); }
+    public void setPolozhenie(int val) { polozhenie.set(val); }
+    public IntegerProperty polozhenieProperty() { return polozhenie; }
+
+    public int getSheinyeVeny() { return sheinyeVeny.get(); }
+    public void setSheinyeVeny(int val) { sheinyeVeny.set(val); }
+    public IntegerProperty sheinyeVenyProperty() { return sheinyeVeny; }
+
+    public int getHripy() { return hripy.get(); }
+    public void setHripy(int val) { hripy.set(val); }
+    public IntegerProperty hripyProperty() { return hripy; }
+
+    public int getGalop() { return galop.get(); }
+    public void setGalop(int val) { galop.set(val); }
+    public IntegerProperty galopProperty() { return galop; }
+
+    public int getPechen() { return pechen.get(); }
+    public void setPechen(int val) { pechen.set(val); }
+    public IntegerProperty pechenProperty() { return pechen; }
+
+    public int getOteki() { return oteki.get(); }
+    public void setOteki(int val) { oteki.set(val); }
+    public IntegerProperty otekiProperty() { return oteki; }
+
+    public int getSAD() { return SAD.get(); }
+    public void setSAD(int val) { SAD.set(val); }
+    public IntegerProperty SADProperty() { return SAD; }
+
+    public String getResult() { return result.get(); }
+    public void setResult(String val) { result.set(val); }
+    public StringProperty resultProperty() { return result; }
 
     public void calc() {
         try {
-            int sum = Integer.parseInt(getOdyshka()) +
-                    Integer.parseInt(getVes()) +
-                    Integer.parseInt(getPereboi()) +
-                    Integer.parseInt(getPolozhenie()) +
-                    Integer.parseInt(getSheinyeVeny()) +
-                    Integer.parseInt(getHripy()) +
-                    Integer.parseInt(getGalop()) +
-                    Integer.parseInt(getPechen()) +
-                    Integer.parseInt(getOteki()) +
-                    Integer.parseInt(getSAD());
-
-            String functionalClass;
-            if (sum <= 3) functionalClass = "I ФК";
-            else if (sum <= 6) functionalClass = "II ФК";
-            else if (sum <= 9) functionalClass = "III ФК";
-            else functionalClass = "IV ФК";
-
-            setResult("Баллы: " + sum + ", ФК: " + functionalClass);
+            SHOKSResult res = SHOKSCalculator.calc(
+                    getOdyshka(),
+                    getVes(),
+                    getPereboi(),
+                    getPolozhenie(),
+                    getSheinyeVeny(),
+                    getHripy(),
+                    getGalop(),
+                    getPechen(),
+                    getOteki(),
+                    getSAD()
+            );
+            setResult(res.toString());
         } catch (Exception e) {
             setResult("Ошибка: " + e.getMessage());
         }
     }
 
-    // Геттеры и сеттеры
-    public String getOdyshka() { return odyshka.get(); }
-    public void setOdyshka(String value) { odyshka.set(value); }
-    public StringProperty odyshkaProperty() { return odyshka; }
+    public static Builder builder() { return new Builder(); }
 
-    public String getVes() { return ves.get(); }
-    public void setVes(String value) { ves.set(value); }
-    public StringProperty vesProperty() { return ves; }
+    public static class Builder {
+        private int odyshka = 0;
+        private int ves = 0;
+        private int pereboi = 0;
+        private int polozhenie = 0;
+        private int sheinyeVeny = 0;
+        private int hripy = 0;
+        private int galop = 0;
+        private int pechen = 0;
+        private int oteki = 0;
+        private int SAD = 0;
+        private String result = "";
 
-    public String getPereboi() { return pereboi.get(); }
-    public void setPereboi(String value) { pereboi.set(value); }
-    public StringProperty pereboiProperty() { return pereboi; }
+        public Builder withOdyshka(int val) { this.odyshka = val; return this; }
+        public Builder withVes(int val) { this.ves = val; return this; }
+        public Builder withPereboi(int val) { this.pereboi = val; return this; }
+        public Builder withPolozhenie(int val) { this.polozhenie = val; return this; }
+        public Builder withSheinyeVeny(int val) { this.sheinyeVeny = val; return this; }
+        public Builder withHripy(int val) { this.hripy = val; return this; }
+        public Builder withGalop(int val) { this.galop = val; return this; }
+        public Builder withPechen(int val) { this.pechen = val; return this; }
+        public Builder withOteki(int val) { this.oteki = val; return this; }
+        public Builder withSAD(int val) { this.SAD = val; return this; }
+        public Builder withResult(String val) { this.result = val; return this; }
 
-    public String getPolozhenie() { return polozhenie.get(); }
-    public void setPolozhenie(String value) { polozhenie.set(value); }
-    public StringProperty polozhenieProperty() { return polozhenie; }
-
-    public String getSheinyeVeny() { return sheinyeVeny.get(); }
-    public void setSheinyeVeny(String value) { sheinyeVeny.set(value); }
-    public StringProperty sheinyeVenyProperty() { return sheinyeVeny; }
-
-    public String getHripy() { return hripy.get(); }
-    public void setHripy(String value) { hripy.set(value); }
-    public StringProperty hripyProperty() { return hripy; }
-
-    public String getGalop() { return galop.get(); }
-    public void setGalop(String value) { galop.set(value); }
-    public StringProperty galopProperty() { return galop; }
-
-    public String getPechen() { return pechen.get(); }
-    public void setPechen(String value) { pechen.set(value); }
-    public StringProperty pechenProperty() { return pechen; }
-
-    public String getOteki() { return oteki.get(); }
-    public void setOteki(String value) { oteki.set(value); }
-    public StringProperty otekiProperty() { return oteki; }
-
-    public String getSAD() { return SAD.get(); }
-    public void setSAD(String value) { SAD.set(value); }
-    public StringProperty SADProperty() { return SAD; }
-
-    public String getResult() { return result.get(); }
-    public void setResult(String value) { result.set(value); }
-    public StringProperty resultProperty() { return result; }
+        public SHOKSModel build() { return new SHOKSModel(this); }
+    }
 }

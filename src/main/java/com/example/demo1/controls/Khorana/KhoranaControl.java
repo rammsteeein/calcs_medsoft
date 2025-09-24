@@ -24,7 +24,6 @@ public class KhoranaControl extends StackPane implements AutoCloseable {
     }
 
     private void initialize() {
-        // ComboBox с локализацией опухоли
         cmbTumor = new ComboBox<>();
         cmbTumor.getItems().addAll(
                 "Желудок", "Поджелудочная железа", "Легкие", "Лимфома",
@@ -32,7 +31,6 @@ public class KhoranaControl extends StackPane implements AutoCloseable {
         );
         cmbTumor.setPromptText("Выберите локализацию опухоли");
 
-        // CheckBox с факторами риска
         cbPlatelets = new CheckBox("Тромбоциты > 350 х10⁹/л");
         cbHemoglobin = new CheckBox("Гемоглобин < 100 г/л или эритропоэтин");
         cbLeukocytes = new CheckBox("Лейкоциты > 11 х10⁹/л");
@@ -60,21 +58,18 @@ public class KhoranaControl extends StackPane implements AutoCloseable {
     }
 
     private void calculateResult() {
-        // Очищаем текущие факторы пациента
         model.getPatientFactors().clear();
         if (cbPlatelets.isSelected()) model.getPatientFactors().add(cbPlatelets.getText());
         if (cbHemoglobin.isSelected()) model.getPatientFactors().add(cbHemoglobin.getText());
         if (cbLeukocytes.isSelected()) model.getPatientFactors().add(cbLeukocytes.getText());
         if (cbHighBMI.isSelected()) model.getPatientFactors().add(cbHighBMI.getText());
 
-        // Вычисляем результат
         try {
             model.calc();
         } catch (Exception ex) {
             txtResult.setText("Ошибка: " + ex.getMessage());
         }
 
-        // Показываем результат
         txtResult.setText(model.resultProperty().get());
     }
 

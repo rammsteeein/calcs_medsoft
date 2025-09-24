@@ -21,13 +21,11 @@ public class WellsCalculator {
         if (clinicalDVT) score += 3;
         if (alternativeLessLikely) score += 3;
 
-        // Трехуровневая шкала
         String threeLevel = "";
         if (score >= 0 && score <= 1) threeLevel = "низкая";
         else if (score >= 2 && score <= 6) threeLevel = "средняя";
         else if (score > 7) threeLevel = "высокая";
 
-        // Двухуровневая шкала
         String twoLevel = "";
         if (score >= 0 && score <= 4) twoLevel = "ТЭЛА маловероятна";
         else if (score > 5) twoLevel = "ТЭЛА вероятна";

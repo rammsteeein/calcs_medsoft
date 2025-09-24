@@ -15,7 +15,6 @@ public class REACHModel {
     private final BooleanProperty oralAnticoagulant = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    // --- Конструктор приватный, используем Builder ---
     private REACHModel(Builder builder) {
         this.age.set(builder.age);
         this.peripheralAtherosclerosis.set(builder.peripheralAtherosclerosis);
@@ -29,7 +28,6 @@ public class REACHModel {
         this.result.set(builder.result);
     }
 
-    // --- Геттеры/Сеттеры ---
     public String getAge() { return age.get(); }
     public void setAge(String value) { age.set(value); }
     public StringProperty ageProperty() { return age; }
@@ -70,7 +68,6 @@ public class REACHModel {
     public void setResult(String val) { result.set(val); }
     public StringProperty resultProperty() { return result; }
 
-    // --- Метод расчета ---
     public void calc() {
         try {
             int ageVal = Integer.parseInt(getAge());
@@ -91,7 +88,6 @@ public class REACHModel {
         }
     }
 
-    // --- Builder ---
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

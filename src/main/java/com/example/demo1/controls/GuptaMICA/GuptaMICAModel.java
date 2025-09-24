@@ -13,7 +13,6 @@ public class GuptaMICAModel {
     private final ObjectProperty<String> surgeryType = new SimpleObjectProperty<>();
     private final StringProperty result = new SimpleStringProperty();
 
-    // Соответствие названия → коэффициент
     public static final Map<String, Double> functionalStatusMap = Map.of(
             "Полностью независимый", 0.0,
             "Частично зависимый", 0.65,
@@ -56,7 +55,6 @@ public class GuptaMICAModel {
             Map.entry("Операции на венах", -1.09),
             Map.entry("Урологические операции", -0.26)
     );
-    // Геттеры/сеттеры
     public double getAgeYears() { return ageYears.get(); }
     public void setAgeYears(double val) { ageYears.set(val); }
     public DoubleProperty ageYearsProperty() { return ageYears; }
@@ -92,7 +90,6 @@ public class GuptaMICAModel {
         setResult(r.toString());
     }
 
-    // Builder (по примеру CKDEPI)
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

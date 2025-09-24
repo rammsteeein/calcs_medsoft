@@ -42,11 +42,21 @@ public class Mehran2Control extends StackPane {
     }
 
     private void bind() {
+        // --- чекбоксы ---
         chkHypotension.selectedProperty().bindBidirectional(model.hypotensionProperty());
+        chkHypotension.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
+
         chkBalloonPump.selectedProperty().bindBidirectional(model.balloonPumpProperty());
+        chkBalloonPump.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
+
         chkHeartFailure.selectedProperty().bindBidirectional(model.heartFailureProperty());
+        chkHeartFailure.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
+
         chkAnemia.selectedProperty().bindBidirectional(model.anemiaProperty());
+        chkAnemia.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
+
         chkDiabetes.selectedProperty().bindBidirectional(model.diabetesProperty());
+        chkDiabetes.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
 
         txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
             try { model.setAge(Integer.parseInt(newVal)); } catch (Exception ignored) {}

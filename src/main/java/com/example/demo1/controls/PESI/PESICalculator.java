@@ -1,10 +1,12 @@
 package com.example.demo1.controls.PESI;
 
+import com.example.demo1.common.enums.Gender;
+
 public class PESICalculator {
 
     public static PESIResult calc(
             int age,
-            boolean isMale,
+            Gender gender,
             boolean hasCancer,
             boolean hasCHF,
             boolean hasChronicLungDisease,
@@ -18,8 +20,8 @@ public class PESICalculator {
         int score = 0;
 
         // Баллы по показателям
-        score += age; // возраст = баллы
-        if (isMale) score += 10;
+        score += age;
+        if (gender == Gender.MALE) score += 10;
         if (hasCancer) score += 30;
         if (hasCHF) score += 10;
         if (hasChronicLungDisease) score += 10;
@@ -30,7 +32,6 @@ public class PESICalculator {
         if (alteredMentalStatus) score += 60;
         if (oxygenSaturation < 90.0) score += 20;
 
-        // Стратификация риска
         String riskClass;
         if (score <= 65) riskClass = "Класс I — Очень низкий риск (0–1.6%)";
         else if (score <= 85) riskClass = "Класс II — Низкий риск (1.7–3.5%)";
@@ -38,8 +39,6 @@ public class PESICalculator {
         else if (score <= 125) riskClass = "Класс IV — Высокий риск (4.0–11.4%)";
         else riskClass = "Класс V — Очень высокий риск (10.0–24.5%)";
 
-        String resultStr = String.format("Сумма баллов: %d\n%s", score, riskClass);
-
-        return new PESIResult(resultStr);
+        return new PESIResult(String.format("Сумма баллов: %d\n%s", score, riskClass));
     }
 }

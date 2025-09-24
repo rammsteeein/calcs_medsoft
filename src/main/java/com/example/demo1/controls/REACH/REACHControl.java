@@ -54,7 +54,6 @@ public class REACHControl extends StackPane {
     }
 
     private void bind() {
-        // Привязка UI к модели
         txtAge.textProperty().bindBidirectional(model.ageProperty());
 
         chkPeripheral.selectedProperty().bindBidirectional(model.peripheralAtherosclerosisProperty());
@@ -64,7 +63,6 @@ public class REACHControl extends StackPane {
         chkHypertension.selectedProperty().bindBidirectional(model.hypertensionProperty());
         chkOAC.selectedProperty().bindBidirectional(model.oralAnticoagulantProperty());
 
-        // Для ComboBox нужно слушать изменения и устанавливать значения в модель
         cmbSmoking.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             model.setSmokingStatus(newVal.intValue());
             model.calc();
@@ -75,7 +73,6 @@ public class REACHControl extends StackPane {
             model.calc();
         });
 
-        // Слушаем изменения CheckBox и TextField, чтобы пересчитывать результат
         ChangeListener<Object> recalcListener = (obs, oldVal, newVal) -> model.calc();
 
         txtAge.textProperty().addListener(recalcListener);
@@ -86,7 +83,6 @@ public class REACHControl extends StackPane {
         chkHypertension.selectedProperty().addListener(recalcListener);
         chkOAC.selectedProperty().addListener(recalcListener);
 
-        // Привязываем результат к TextArea
         txtResult.textProperty().bind(model.resultProperty());
     }
 }

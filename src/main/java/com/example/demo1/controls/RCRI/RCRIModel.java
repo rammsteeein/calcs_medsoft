@@ -22,7 +22,6 @@ public class RCRIModel {
         this.result.set(builder.result);
     }
 
-    // --- Свойства ---
     public boolean isHighRiskSurgery() { return highRiskSurgery.get(); }
     public void setHighRiskSurgery(boolean val) { highRiskSurgery.set(val); }
     public BooleanProperty highRiskSurgeryProperty() { return highRiskSurgery; }
@@ -63,7 +62,6 @@ public class RCRIModel {
         setResult(res.toString());
     }
 
-    // --- Builder ---
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

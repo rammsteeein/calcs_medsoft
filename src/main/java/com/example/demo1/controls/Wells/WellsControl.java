@@ -52,7 +52,6 @@ public class WellsControl extends StackPane {
         chkClinicalDVT.selectedProperty().bindBidirectional(model.clinicalDVTProperty());
         chkAlternativeLessLikely.selectedProperty().bindBidirectional(model.alternativeLessLikelyProperty());
 
-        // Автоматический расчёт при изменении
         chkPrevPEorDVT.selectedProperty().addListener(recalcListener);
         chkTachycardia.selectedProperty().addListener(recalcListener);
         chkSurgeryOrImmobilization.selectedProperty().addListener(recalcListener);

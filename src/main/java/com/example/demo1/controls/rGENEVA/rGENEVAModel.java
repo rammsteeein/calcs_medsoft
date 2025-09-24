@@ -26,7 +26,6 @@ public class rGENEVAModel {
         this.result.set(builder.result);
     }
 
-    // --- Геттеры / Сеттеры ---
     public boolean isPrevPEorDVT() { return prevPEorDVT.get(); }
     public void setPrevPEorDVT(boolean val) { prevPEorDVT.set(val); }
     public BooleanProperty prevPEorDVTProperty() { return prevPEorDVT; }
@@ -77,7 +76,6 @@ public class rGENEVAModel {
         setResult(res.toString());
     }
 
-    // --- Builder ---
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

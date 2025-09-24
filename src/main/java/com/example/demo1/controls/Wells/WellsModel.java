@@ -70,7 +70,6 @@ public class WellsModel {
         setResult(res.toString());
     }
 
-    // --- Builder ---
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

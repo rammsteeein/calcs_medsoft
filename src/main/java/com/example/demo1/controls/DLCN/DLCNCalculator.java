@@ -3,12 +3,12 @@ package com.example.demo1.controls.DLCN;
 public class DLCNCalculator {
 
     public static DLCNResult calc(
-            boolean familyEarlyASCVDorHighLDL,  // 1 балл
-            boolean familyTendonXanthomasOrChildHighLDL, // 2 балла
-            boolean personalEarlyCHD, // 2 балла
-            boolean personalEarlyCerebrovascularDisease, // 1 балл
-            boolean tendonXanthomas, // 6 баллов
-            boolean cornealArcusUnder45 // 4 балла
+            boolean familyEarlyASCVDorHighLDL,
+            boolean familyTendonXanthomasOrChildHighLDL,
+            boolean personalEarlyCHD,
+            boolean personalEarlyCerebrovascularDisease,
+            boolean tendonXanthomas,
+            boolean cornealArcusUnder45
     ) {
         int score = 0;
 

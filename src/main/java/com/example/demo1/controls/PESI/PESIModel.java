@@ -1,45 +1,30 @@
 package com.example.demo1.controls.PESI;
 
+import com.example.demo1.common.enums.Gender;
 import javafx.beans.property.*;
 
 public class PESIModel {
 
     private final IntegerProperty age = new SimpleIntegerProperty();
-    private final BooleanProperty isMale = new SimpleBooleanProperty();
+    private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>(Gender.FEMALE);
     private final BooleanProperty hasCancer = new SimpleBooleanProperty();
     private final BooleanProperty hasCHF = new SimpleBooleanProperty();
     private final BooleanProperty hasChronicLungDisease = new SimpleBooleanProperty();
     private final IntegerProperty heartRate = new SimpleIntegerProperty();
     private final IntegerProperty systolicBP = new SimpleIntegerProperty();
     private final IntegerProperty respiratoryRate = new SimpleIntegerProperty();
-    private final DoubleProperty temperature = new SimpleDoubleProperty();
+    private final DoubleProperty temperature = new SimpleDoubleProperty(36.6);
     private final BooleanProperty alteredMentalStatus = new SimpleBooleanProperty();
-    private final DoubleProperty oxygenSaturation = new SimpleDoubleProperty();
+    private final DoubleProperty oxygenSaturation = new SimpleDoubleProperty(100);
     private final StringProperty result = new SimpleStringProperty();
 
-    private PESIModel(Builder builder) {
-        this.age.set(builder.age);
-        this.isMale.set(builder.isMale);
-        this.hasCancer.set(builder.hasCancer);
-        this.hasCHF.set(builder.hasCHF);
-        this.hasChronicLungDisease.set(builder.hasChronicLungDisease);
-        this.heartRate.set(builder.heartRate);
-        this.systolicBP.set(builder.systolicBP);
-        this.respiratoryRate.set(builder.respiratoryRate);
-        this.temperature.set(builder.temperature);
-        this.alteredMentalStatus.set(builder.alteredMentalStatus);
-        this.oxygenSaturation.set(builder.oxygenSaturation);
-        this.result.set(builder.result);
-    }
-
-    // --- Геттеры / Сеттеры ---
     public int getAge() { return age.get(); }
     public void setAge(int val) { age.set(val); }
     public IntegerProperty ageProperty() { return age; }
 
-    public boolean isMale() { return isMale.get(); }
-    public void setMale(boolean val) { isMale.set(val); }
-    public BooleanProperty isMaleProperty() { return isMale; }
+    public Gender getGender() { return gender.get(); }
+    public void setGender(Gender val) { gender.set(val); }
+    public ObjectProperty<Gender> genderProperty() { return gender; }
 
     public boolean hasCancer() { return hasCancer.get(); }
     public void setHasCancer(boolean val) { hasCancer.set(val); }
@@ -84,7 +69,7 @@ public class PESIModel {
     public void calc() {
         PESIResult res = PESICalculator.calc(
                 getAge(),
-                isMale(),
+                getGender(),
                 hasCancer(),
                 hasCHF(),
                 hasChronicLungDisease(),
@@ -98,12 +83,12 @@ public class PESIModel {
         setResult(res.toString());
     }
 
-    // --- Builder ---
+
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {
         private int age = 0;
-        private boolean isMale = false;
+        private Gender gender = Gender.FEMALE;
         private boolean hasCancer = false;
         private boolean hasCHF = false;
         private boolean hasChronicLungDisease = false;
@@ -116,7 +101,7 @@ public class PESIModel {
         private String result = "";
 
         public Builder withAge(int val) { this.age = val; return this; }
-        public Builder withIsMale(boolean val) { this.isMale = val; return this; }
+        public Builder withGender(Gender val) { this.gender = val; return this; }
         public Builder withHasCancer(boolean val) { this.hasCancer = val; return this; }
         public Builder withHasCHF(boolean val) { this.hasCHF = val; return this; }
         public Builder withHasChronicLungDisease(boolean val) { this.hasChronicLungDisease = val; return this; }
@@ -129,5 +114,20 @@ public class PESIModel {
         public Builder withResult(String val) { this.result = val; return this; }
 
         public PESIModel build() { return new PESIModel(this); }
+    }
+
+    private PESIModel(Builder builder) {
+        this.age.set(builder.age);
+        this.gender.set(builder.gender);
+        this.hasCancer.set(builder.hasCancer);
+        this.hasCHF.set(builder.hasCHF);
+        this.hasChronicLungDisease.set(builder.hasChronicLungDisease);
+        this.heartRate.set(builder.heartRate);
+        this.systolicBP.set(builder.systolicBP);
+        this.respiratoryRate.set(builder.respiratoryRate);
+        this.temperature.set(builder.temperature);
+        this.alteredMentalStatus.set(builder.alteredMentalStatus);
+        this.oxygenSaturation.set(builder.oxygenSaturation);
+        this.result.set(builder.result);
     }
 }

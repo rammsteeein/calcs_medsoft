@@ -8,9 +8,6 @@ import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 
-/**
- * Контрол для расчета CKDEPI.
- */
 public class CKDEPIControl extends StackPane implements Closeable {
     CKDEPIModel model = CKDEPIModel.builder().build();
 

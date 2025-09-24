@@ -19,7 +19,6 @@ public class MifflinStJeorModel {
         this.result.set(builder.result);
     }
 
-    // --- Геттеры и свойства ---
     public Gender getGender() { return gender.get(); }
     public void setGender(Gender val) { gender.set(val); }
     public ObjectProperty<Gender> genderProperty() { return gender; }
@@ -45,7 +44,6 @@ public class MifflinStJeorModel {
         setResult(res.toString());
     }
 
-    // --- Builder ---
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

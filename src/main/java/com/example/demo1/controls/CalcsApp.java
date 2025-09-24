@@ -12,6 +12,7 @@ import com.example.demo1.controls.DLCN.DLCNModel;
 import com.example.demo1.controls.FIB4.FIB4Control;
 import com.example.demo1.controls.FIB4.FIB4Model;
 import com.example.demo1.controls.GRACE.GRACEControl;
+import com.example.demo1.controls.GRACE.GRACEModel;
 import com.example.demo1.controls.GuptaMICA.GuptaMICAControl;
 import com.example.demo1.controls.GuptaMICA.GuptaMICAModel;
 import com.example.demo1.controls.HSI.HSIControl;
@@ -90,14 +91,14 @@ public class CalcsApp extends Application {
         calculatorMap.put("DLCN", () -> new DLCNControl(DLCNModel.builder().build()));
         calculatorMap.put("Mifflin-St Jeor", () -> new MifflinStJeorControl(MifflinStJeorModel.builder().build()));
         calculatorMap.put("HSI", () -> new HSIControl(HSIModel.builder().build()));
-        calculatorMap.put("GRACE", () -> new GRACEControl());
-        calculatorMap.put("Шкала ШОКС", () -> new SHOKSControl());
+        calculatorMap.put("GRACE", () -> new GRACEControl(GRACEModel.builder().build()));
+        calculatorMap.put("Шкала ШОКС", () -> new SHOKSControl(SHOKSModel.builder().build()));
         calculatorMap.put("Алгоритм оценки острого повреждения почек", () -> new AKIControl(AKIModel.builder().build()));
         calculatorMap.put("Mehran-2", () -> new Mehran2Control(Mehran2Model.builder().build()));
         calculatorMap.put("RCRI", () -> new RCRIControl(RCRIModel.builder().build()));
         calculatorMap.put("GuptaMICA", () -> new GuptaMICAControl(GuptaMICAModel.builder().build()));
         calculatorMap.put("DASI", () -> new DASIControl(DASIModel.builder().build()));
-        calculatorMap.put("IDA_Chronic_Anemia", () -> new IDAChronicAnemiaControl(IDAChronicAnemiaModel.builder().build()));
+        calculatorMap.put("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний", () -> new IDAChronicAnemiaControl(IDAChronicAnemiaModel.builder().build()));
 
 
         ComboBox<String> comboBox = new ComboBox<>();

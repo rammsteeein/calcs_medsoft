@@ -9,19 +9,17 @@ public class REACHCalculator {
             boolean diabetes,
             boolean hypercholesterolemia,
             boolean hypertension,
-            int smokingStatus, // 0 - никогда, 1 - раньше, 2 - продолжается
-            int antiplatelet,  // 0 - нет, 1 - аспирин, 2 - другие, 4 - комбинация
+            int smokingStatus,
+            int antiplatelet,
             boolean oralAnticoagulant
     ) {
         int score = 0;
 
-        // Возраст
         if (age >= 45 && age <= 54) score += 0;
         else if (age >= 55 && age <= 64) score += 2;
         else if (age >= 65 && age <= 74) score += 4;
         else if (age >= 75) score += 6;
 
-        // Другие факторы
         if (peripheralAtherosclerosis) score += 2;
         if (heartFailure) score += 2;
         if (diabetes) score += 1;
@@ -31,7 +29,6 @@ public class REACHCalculator {
         score += antiplatelet;
         if (oralAnticoagulant) score += 2;
 
-        // Определяем степень риска по таблице
         String riskCategory = "";
         double riskPercent = 0.0;
 

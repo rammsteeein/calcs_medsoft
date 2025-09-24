@@ -26,13 +26,11 @@ public class rGENEVACalculator {
         if (painAndSwelling) score += 4;
         if (age > 65) score += 1;
 
-        // Трехуровневая шкала
         String threeLevel;
         if (score >= 0 && score <= 1) threeLevel = "низкая";
         else if (score >= 2 && score <= 6) threeLevel = "средняя";
         else threeLevel = "высокая";
 
-        // Двухуровневая шкала
         String twoLevel;
         if (score >= 0 && score <= 4) twoLevel = "ТЭЛА маловероятна";
         else twoLevel = "ТЭЛА вероятна";

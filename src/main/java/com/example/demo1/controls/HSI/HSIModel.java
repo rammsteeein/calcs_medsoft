@@ -21,7 +21,6 @@ public class HSIModel {
         this.result.set(builder.result);
     }
 
-    // --- Геттеры и свойства ---
     public double getAlt() { return alt.get(); }
     public void setAlt(double val) { alt.set(val); }
     public DoubleProperty altProperty() { return alt; }
@@ -51,7 +50,6 @@ public class HSIModel {
         setResult(res.toString());
     }
 
-    // --- Builder ---
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

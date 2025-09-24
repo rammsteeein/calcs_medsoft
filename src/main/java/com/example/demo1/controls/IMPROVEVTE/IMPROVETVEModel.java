@@ -24,7 +24,6 @@ public class IMPROVETVEModel {
         this.result.set(builder.result);
     }
 
-    // --- Геттеры / Сеттеры ---
     public boolean isPriorVTE() { return priorVTE.get(); }
     public void setPriorVTE(boolean val) { priorVTE.set(val); }
     public BooleanProperty priorVTEProperty() { return priorVTE; }
@@ -70,7 +69,6 @@ public class IMPROVETVEModel {
         setResult(res.toString());
     }
 
-    // --- Builder ---
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {

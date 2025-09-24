@@ -10,7 +10,6 @@ public class SAMSCIModel {
     private final IntegerProperty statinRechallenge = new SimpleIntegerProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    // Приватный конструктор для Builder
     private SAMSCIModel(Builder builder) {
         this.muscleLocation.set(builder.muscleLocation);
         this.symptomTiming.set(builder.symptomTiming);

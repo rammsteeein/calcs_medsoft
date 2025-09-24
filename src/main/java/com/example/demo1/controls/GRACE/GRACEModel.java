@@ -8,7 +8,7 @@ public class GRACEModel {
     private final StringProperty agePoints = new SimpleStringProperty();
     private final StringProperty hrPoints = new SimpleStringProperty();
     private final StringProperty sbpPoints = new SimpleStringProperty();
-    private final StringProperty killipClass = new SimpleStringProperty(); // I, II, III, IV
+    private final StringProperty killipClass = new SimpleStringProperty();
     private final StringProperty creatininePoints = new SimpleStringProperty();
     private final StringProperty otherPoints = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty();

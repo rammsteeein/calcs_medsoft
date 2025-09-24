@@ -1,23 +1,21 @@
 package com.example.demo1.controls.GRACE;
 
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class GRACEControl extends StackPane implements AutoCloseable {
+import java.io.Closeable;
 
-    private GRACEModel model = GRACEModel.builder().build();
+public class GRACEControl extends StackPane implements Closeable {
+
+    private GRACEModel model;
 
     private TextField txtAgePoints, txtHRPoints, txtSBPPoints, txtCreatininePoints, txtOtherPoints;
     private ComboBox<String> cmbKillip;
     private Button btnCalc;
     private TextArea txtResult;
 
-    public GRACEControl() {
+    public GRACEControl(GRACEModel model) {
         this.model = model;
         initialize();
         bind();
@@ -50,11 +48,8 @@ public class GRACEControl extends StackPane implements AutoCloseable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        this.getChildren().add(new VBox(10.0, new Node[]{
-                txtAgePoints, txtHRPoints, txtSBPPoints, cmbKillip,
-                txtCreatininePoints, txtOtherPoints,
-                btnCalc, txtResult
-        }));
+        getChildren().add(new VBox(10, txtAgePoints, txtHRPoints, txtSBPPoints, cmbKillip,
+                txtCreatininePoints, txtOtherPoints, btnCalc, txtResult));
     }
 
     private void bind() {
@@ -80,8 +75,8 @@ public class GRACEControl extends StackPane implements AutoCloseable {
     private void calculateResult() {
         try {
             model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка ввода: " + ex.getMessage());
+        } catch (Exception e) {
+            txtResult.setText("Ошибка ввода: " + e.getMessage());
         }
     }
 

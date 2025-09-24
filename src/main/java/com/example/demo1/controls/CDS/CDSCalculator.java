@@ -7,7 +7,7 @@ public class CDSCalculator {
             return new CDSResult("Ошибка: заполните все поля");
         }
 
-        int scoreAppearance = mapAppearance(appearance) - 1; // переводим в 0..2
+        int scoreAppearance = mapAppearance(appearance) - 1;
         int scoreEyes = mapEyes(eyes) - 1;
         int scoreMucous = mapMucous(mucous) - 1;
         int scoreTears = mapTears(tears) - 1;
