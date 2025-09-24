@@ -1,3 +1,4 @@
+Сделанные калькуляторы:
 2. CKФ по формуле CKD-EPI 2021;
 3. CKФ по формуле EKFC (European Kidney Function Consortium);
 4. Клиренс креатинина по формуле Cockroft;
