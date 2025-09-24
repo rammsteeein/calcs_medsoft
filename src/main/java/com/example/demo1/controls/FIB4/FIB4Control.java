@@ -1,5 +1,6 @@
 package com.example.demo1.controls.FIB4;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -41,7 +42,8 @@ public class FIB4Control extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
 
-        vbox.getChildren().addAll(txtAge, txtAst, txtAlt, txtPlatelets, btnCalc, txtResult);
+        vbox.getChildren().addAll(CalculatorHeader.createHeader("Индекс FIB-4"),
+                txtAge, txtAst, txtAlt, txtPlatelets, btnCalc, txtResult);
 
         getChildren().add(vbox);
     }

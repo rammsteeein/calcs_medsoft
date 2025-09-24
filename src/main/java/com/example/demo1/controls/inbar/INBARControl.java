@@ -1,6 +1,7 @@
 package com.example.demo1.controls.inbar;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -42,7 +43,9 @@ public class INBARControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, nmrAge, nmrWeight, cmbGender, btnCalc, txtResult));
+        getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Расчет максимальной ЧСС по формуле Inbar"),
+                nmrAge, nmrWeight, cmbGender, btnCalc, txtResult));
     }
 
     private void bind() {

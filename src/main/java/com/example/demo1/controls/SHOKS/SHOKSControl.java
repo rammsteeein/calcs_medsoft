@@ -1,5 +1,6 @@
 package com.example.demo1.controls.SHOKS;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -48,6 +49,7 @@ public class SHOKSControl extends StackPane {
         btnCalc = new Button("Рассчитать");
 
         vbox.getChildren().addAll(
+                CalculatorHeader.createHeader("Шкала SHOKS"),
                 txtOdyshka, txtVes, txtPereboi, txtPolozhenie, txtSheinyeVeny,
                 txtHripy, txtGalop, txtPechen, txtOteki, txtSAD,
                 btnCalc, txtResult

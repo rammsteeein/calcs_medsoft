@@ -1,6 +1,6 @@
 package com.example.demo1.controls.SAMSCI;
 
-import javafx.beans.value.ChangeListener;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -33,9 +33,7 @@ public class SAMSCIControl extends StackPane {
 
         cmbSymptomTiming = new ComboBox<>();
         cmbSymptomTiming.getItems().addAll(
-                "< 4 недели (3)",
-                "4-12 недель (2)",
-                "> 12 недель (1)"
+                "< 4 недели (3)", "4-12 недель (2)", "> 12 недель (1)"
         );
         cmbSymptomTiming.setPromptText("Время появления симптомов");
 
@@ -49,8 +47,7 @@ public class SAMSCIControl extends StackPane {
 
         cmbStatinRechallenge = new ComboBox<>();
         cmbStatinRechallenge.getItems().addAll(
-                "Симптомы снова < 4 недель (3)",
-                "Симптомы снова 4-12 недель (1)"
+                "Симптомы снова < 4 недель (3)", "Симптомы снова 4-12 недель (1)"
         );
         cmbStatinRechallenge.setPromptText("Повторное назначение статинов");
 
@@ -58,18 +55,20 @@ public class SAMSCIControl extends StackPane {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        this.getChildren().add(new VBox(10,
+        VBox root = new VBox(10);
+        root.getChildren().addAll(
+                CalculatorHeader.createHeader("SAMS-CI – Статин-индуцированная миалгия"),
                 cmbMuscleLocation,
                 cmbSymptomTiming,
                 cmbStatinDiscontinuation,
                 cmbStatinRechallenge,
                 txtResult
-        ));
+        );
+
+        this.getChildren().add(root);
     }
 
     private void bind() {
-        ChangeListener<Number> recalcListener = (obs, oldVal, newVal) -> model.calc();
-
         cmbMuscleLocation.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             switch (newVal.intValue()) {
                 case 0 -> model.setMuscleLocation(3);

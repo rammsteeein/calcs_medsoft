@@ -1,5 +1,6 @@
 package com.example.demo1.controls.CDS;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -64,6 +65,7 @@ public class CDSControl extends StackPane implements AutoCloseable {
         txtResult.setPromptText("Результат расчёта");
 
         this.getChildren().add(new VBox(10.0, new Node[]{
+                CalculatorHeader.createHeader("Шкала CDS"),
                 cmbAppearance, cmbEyes, cmbMucous, cmbTears, btnCalc, txtResult
         }));
     }

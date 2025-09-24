@@ -1,5 +1,6 @@
 package com.example.demo1.controls.rGENEVA;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
@@ -37,7 +38,9 @@ public class rGENEVAControl extends StackPane {
 
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10, chkPrevPEorDVT, txtHeartRate, chkSurgeryOrFracture,
+        this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("rGENEVA"),
+                chkPrevPEorDVT, txtHeartRate, chkSurgeryOrFracture,
                 chkHemoptysis, chkActiveCancer, chkLegPain, chkPainAndSwelling, txtAge, txtResult));
     }
 

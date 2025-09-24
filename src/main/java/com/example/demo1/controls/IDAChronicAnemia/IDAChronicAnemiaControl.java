@@ -1,5 +1,6 @@
 package com.example.demo1.controls.IDAChronicAnemia;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -30,7 +31,9 @@ public class IDAChronicAnemiaControl extends StackPane {
         Button btnCalc = new Button("Рассчитать");
         btnCalc.setOnAction(e -> model.calc());
 
-        this.getChildren().add(new VBox(5, txtSerumIron, txtTIBC, txtTransferrinSat, txtFerritin, btnCalc, txtResult));
+        this.getChildren().add(new VBox(5,
+                CalculatorHeader.createHeader("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний"),
+                txtSerumIron, txtTIBC, txtTransferrinSat, txtFerritin, btnCalc, txtResult));
     }
 
     private void bind() {

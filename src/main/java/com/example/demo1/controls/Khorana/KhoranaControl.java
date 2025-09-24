@@ -1,5 +1,6 @@
 package com.example.demo1.controls.Khorana;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -44,6 +45,7 @@ public class KhoranaControl extends StackPane implements AutoCloseable {
         txtResult.setPromptText("Результат расчёта");
 
         this.getChildren().add(new VBox(10.0, new Node[]{
+                CalculatorHeader.createHeader("Шкала Khorana"),
                 cmbTumor, cbPlatelets, cbHemoglobin, cbLeukocytes, cbHighBMI,
                 btnCalc, txtResult
         }));

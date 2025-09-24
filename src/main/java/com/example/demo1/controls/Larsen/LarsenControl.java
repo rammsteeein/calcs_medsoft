@@ -1,5 +1,6 @@
 package com.example.demo1.controls.Larsen;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -49,6 +50,7 @@ public class LarsenControl extends StackPane implements AutoCloseable {
         txtResult.setPromptText("Результат расчёта");
 
         this.getChildren().add(new VBox(10.0, new Node[]{
+                CalculatorHeader.createHeader("Оценка кардиотоксичности перед противоопухолевой терапией (по Larsen CM, 2017)"),
                 cmbDrug, cbCardiomegalia, cbIBS, cbAG, cbSD,
                 cbAnthraHistory, cbRadiation, cbAge, cbFemale,
                 btnCalc, txtResult

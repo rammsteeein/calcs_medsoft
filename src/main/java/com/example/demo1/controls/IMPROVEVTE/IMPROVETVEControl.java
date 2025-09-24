@@ -1,5 +1,6 @@
 package com.example.demo1.controls.IMPROVEVTE;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
@@ -35,6 +36,7 @@ public class IMPROVETVEControl extends StackPane {
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
         this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("шкала IMPROVE VTE"),
                 chkPriorVTE, chkKnownThrombophilia, chkLowerLimbParalysis,
                 chkActiveCancer, chkImmobilization7Days, chkICUstay,
                 txtAge, txtResult));

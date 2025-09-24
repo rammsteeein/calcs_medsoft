@@ -1,5 +1,6 @@
 package com.example.demo1.controls.LDL;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -35,7 +36,9 @@ public class LDLControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, nmrNonHDL, nmrTG, btnCalc, txtResult));
+        getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("ХС-ЛНП на основании современной парадигмы метаболизма липидов"),
+                nmrNonHDL, nmrTG, btnCalc, txtResult));
     }
 
     private void bind() {

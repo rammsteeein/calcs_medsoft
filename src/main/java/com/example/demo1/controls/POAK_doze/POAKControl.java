@@ -1,5 +1,6 @@
 package com.example.demo1.controls.POAK_doze;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -34,7 +35,9 @@ public class POAKControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, nmrKreatinin, btnCalc, txtResult));
+        getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Выбор дозы ПОАК в зависимости от клиренса креатинина"),
+                nmrKreatinin, btnCalc, txtResult));
     }
 
     private void bind() {

@@ -2,6 +2,7 @@ package com.example.demo1.controls.CKDEPI;
 
 import com.example.demo1.common.enums.CreatininUnit;
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -51,7 +52,8 @@ public class CKDEPIControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, cmbGender, nmrKreatinin, cmbCreatininUnit, nmrAge, btnCalc, txtResult));
+        getChildren().add(new VBox(10, CalculatorHeader.createHeader("CKФ по формуле CKD-EPI 2021"),
+                cmbGender, nmrKreatinin, cmbCreatininUnit, nmrAge, btnCalc, txtResult));
     }
 
     private void bind() {

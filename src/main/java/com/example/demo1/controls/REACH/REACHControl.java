@@ -1,5 +1,6 @@
 package com.example.demo1.controls.REACH;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -49,7 +50,9 @@ public class REACHControl extends StackPane {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        this.getChildren().add(new VBox(10, txtAge, chkPeripheral, chkHF, chkDiabetes,
+        this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Индекс REACH"),
+                txtAge, chkPeripheral, chkHF, chkDiabetes,
                 chkCholesterol, chkHypertension, cmbSmoking, cmbAntiplatelet, chkOAC, txtResult));
     }
 

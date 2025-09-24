@@ -1,5 +1,6 @@
 package com.example.demo1.controls.Mehran2;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -36,6 +37,7 @@ public class Mehran2Control extends StackPane {
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
         this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Шкала Mehran-2"),
                 chkHypotension, chkBalloonPump, chkHeartFailure,
                 txtAge, chkAnemia, chkDiabetes,
                 txtContrastVolume, txtGfr, txtResult));

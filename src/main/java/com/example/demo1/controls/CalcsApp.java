@@ -103,8 +103,9 @@ public class CalcsApp extends Application {
 
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(calculatorMap.keySet());
+        comboBox.setPromptText("Выбрать калькулятор ССЗ");
 
-        Button openButton = new Button("Открыть калькулятор");
+        Button openButton = new Button("Открыть");
         openButton.setOnAction(e -> {
             String selected = comboBox.getValue();
             if (selected != null && calculatorMap.containsKey(selected)) {

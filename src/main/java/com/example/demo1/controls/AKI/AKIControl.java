@@ -1,5 +1,6 @@
 package com.example.demo1.controls.AKI;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -30,6 +31,7 @@ public class AKIControl extends StackPane {
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
         this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Алгоритм оценки острого повреждения почек"),
                 txtBaselineCreatinine,
                 txtCurrentCreatinine,
                 txtUrineOutput,
@@ -37,6 +39,7 @@ public class AKIControl extends StackPane {
                 txtHours,
                 txtResult));
     }
+
 
     private void bind() {
         txtBaselineCreatinine.textProperty().addListener((obs, oldVal, newVal) -> {

@@ -1,6 +1,7 @@
 package com.example.demo1.controls.HSI;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -45,6 +46,7 @@ public class HSIControl extends StackPane {
 
 
         VBox vbox = new VBox(10,
+                CalculatorHeader.createHeader(" Индекс стеатоза печени HSI"),
                 new VBox(new Label("АЛТ (Ед/л)"), txtALT),
                 new VBox(new Label("АСТ (Ед/л)"), txtAST),
                 new VBox(new Label("ИМТ"), txtBMI),

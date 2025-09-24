@@ -1,5 +1,6 @@
 package com.example.demo1.controls.PERC;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
@@ -39,6 +40,7 @@ public class PERCControl extends StackPane {
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
         this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Шкала PERC"),
                 txtAge, txtHeartRate, txtOxygen,
                 chkUnilateralLegEdema, chkHemoptysis,
                 chkRecentSurgeryOrTrauma, chkSurgeryWithin4Weeks,

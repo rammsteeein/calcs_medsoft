@@ -1,6 +1,7 @@
 package com.example.demo1.controls.MifflinStJeor;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -32,7 +33,9 @@ public class MifflinStJeorControl extends StackPane {
 
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10, cmbGender, txtWeight, txtHeight, txtAge, txtResult));
+        this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Формула Миффлина-Сан Жеора"),
+                cmbGender, txtWeight, txtHeight, txtAge, txtResult));
     }
 
     private void bind() {

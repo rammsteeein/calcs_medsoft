@@ -1,5 +1,6 @@
 package com.example.demo1.controls.RCRI;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -33,6 +34,7 @@ public class RCRIControl extends StackPane {
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
         this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Индекс RCRI"),
                 chkHighRiskSurgery, chkIschemicHeartDisease, chkHeartFailure,
                 chkCerebrovascularDisease, chkInsulinTreatment, chkHighCreatinine,
                 txtResult));

@@ -1,6 +1,7 @@
 package com.example.demo1.controls.Cockroft;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
@@ -51,7 +52,8 @@ public class CockroftControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, cmbGender, nmrKreatinin, nmrAge, nmrWeight, btnCalc, txtResult));
+        getChildren().add(new VBox(10, CalculatorHeader.createHeader("Клиренс креатинина по формуле Cockroft"),
+                cmbGender, nmrKreatinin, nmrAge, nmrWeight, btnCalc, txtResult));
     }
 
     private void bind() {

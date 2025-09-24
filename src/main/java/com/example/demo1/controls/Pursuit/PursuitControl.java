@@ -1,6 +1,7 @@
 package com.example.demo1.controls.Pursuit;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -41,7 +42,9 @@ public class PursuitControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, txtAge, cmbGender, chkAngina, chkHeartFailure, btnCalc, txtResult));
+        getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Шкала Pursuit (оценка риска при ОКСбпST)"),
+                txtAge, cmbGender, chkAngina, chkHeartFailure, btnCalc, txtResult));
     }
 
     private void bind() {

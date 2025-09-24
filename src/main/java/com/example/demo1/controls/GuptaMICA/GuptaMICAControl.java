@@ -1,5 +1,6 @@
 package com.example.demo1.controls.GuptaMICA;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -42,7 +43,9 @@ public class GuptaMICAControl extends StackPane {
 
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10, txtAge, cmbFunctionalStatus, cmbAsaStatus, cmbCreatinine, cmbSurgeryType, txtResult));
+        this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Расчет риска MICA (Myocardial Infarction or Cardiac Arrest) по шкале Gupta"),
+                txtAge, cmbFunctionalStatus, cmbAsaStatus, cmbCreatinine, cmbSurgeryType, txtResult));
     }
 
     private void bind() {

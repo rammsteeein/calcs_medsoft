@@ -1,5 +1,6 @@
 package com.example.demo1.controls.FLI;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -47,7 +48,9 @@ public class FLIControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, nmrTriglycerides, nmrBMI, nmrGGT, nmrWaistCircumference, btnCalc, txtResult));
+        getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("индекс стеатоза печени FLI"),
+                nmrTriglycerides, nmrBMI, nmrGGT, nmrWaistCircumference, btnCalc, txtResult));
     }
 
     private void bind() {

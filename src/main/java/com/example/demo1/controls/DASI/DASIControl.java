@@ -1,5 +1,6 @@
 package com.example.demo1.controls.DASI;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -46,6 +47,7 @@ public class DASIControl extends StackPane {
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
         this.getChildren().add(new VBox(5,
+                CalculatorHeader.createHeader("Индекс DASI"),
                 chkSelfCare, chkWalkIndoors, chkWalk1to2Blocks, chkClimbStairsOrHill,
                 chkRunShortDistance, chkLightHousework, chkModerateHousework, chkHeavyHousework,
                 chkYardWork, chkSexualActivity, chkModerateRecreation, chkStrenuousSports,

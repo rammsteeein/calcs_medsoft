@@ -1,6 +1,7 @@
 package com.example.demo1.controls.NoSAS;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -37,7 +38,9 @@ public class NoSASControl extends StackPane {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10, txtNeck, txtBmi, chkSnoring, txtAge, cmbGender, txtResult));
+        this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Шкала NoSAS"),
+                txtNeck, txtBmi, chkSnoring, txtAge, cmbGender, txtResult));
     }
 
     private void bind() {

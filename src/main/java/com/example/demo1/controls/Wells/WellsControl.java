@@ -1,5 +1,6 @@
 package com.example.demo1.controls.Wells;
 
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
@@ -37,7 +38,9 @@ public class WellsControl extends StackPane {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10, chkPrevPEorDVT, chkTachycardia, chkSurgeryOrImmobilization,
+        this.getChildren().add(new VBox(10,
+                CalculatorHeader.createHeader("Индекс Wells"),
+                chkPrevPEorDVT, chkTachycardia, chkSurgeryOrImmobilization,
                 chkHemoptysis, chkActiveCancer, chkClinicalDVT, chkAlternativeLessLikely, txtResult));
     }
 

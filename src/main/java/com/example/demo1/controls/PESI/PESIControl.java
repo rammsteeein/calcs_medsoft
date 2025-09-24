@@ -1,6 +1,7 @@
 package com.example.demo1.controls.PESI;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
@@ -51,6 +52,7 @@ public class PESIControl extends StackPane {
         txtResult.setPrefHeight(100);
 
         VBox content = new VBox(10,
+                CalculatorHeader.createHeader("PESI"),
                 txtAge, choiceGender, chkCancer, chkCHF, chkChronicLung,
                 txtHeartRate, txtSystolicBP, txtRespiratoryRate, txtTemperature,
                 chkAlteredMental, txtOxygenSaturation, txtResult
