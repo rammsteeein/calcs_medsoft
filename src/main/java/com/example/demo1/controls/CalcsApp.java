@@ -74,7 +74,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("Cockroft", () -> new CockroftControl(CockroftModel.builder().build()));
         calculatorMap.put("CKD-EPI", () -> new CKDEPIControl(CKDEPIModel.builder().build()));
         calculatorMap.put("Доза ПОАК", () -> new POAKControl(POAKModel.builder().build()));
-        calculatorMap.put("ХС-ЛНП (LDL)", () -> new LDLControl(LDLModel.builder().build()));
+        calculatorMap.put("ХС-ЛНП", () -> new LDLControl(LDLModel.builder().build()));
         calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(INBARModel.builder().build()));
         calculatorMap.put("FIB-4", () -> new FIB4Control(FIB4Model.builder().build()));
         calculatorMap.put("CDS", () -> new CDSControl(CDSModel.builder().build()));
