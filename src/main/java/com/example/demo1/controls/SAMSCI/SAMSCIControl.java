@@ -29,6 +29,7 @@ public class SAMSCIControl extends StackPane {
                 "Симметричная боль в проксимальных мышцах верхних конечностей (2)",
                 "Неспецифическая асимметричная боль (1)"
         );
+        cmbMuscleLocation.setPromptText("Локализация и характер боли");
 
         cmbSymptomTiming = new ComboBox<>();
         cmbSymptomTiming.getItems().addAll(
@@ -36,6 +37,7 @@ public class SAMSCIControl extends StackPane {
                 "4-12 недель (2)",
                 "> 12 недель (1)"
         );
+        cmbSymptomTiming.setPromptText("Время появления симптомов");
 
         cmbStatinDiscontinuation = new ComboBox<>();
         cmbStatinDiscontinuation.getItems().addAll(
@@ -43,12 +45,14 @@ public class SAMSCIControl extends StackPane {
                 "Уменьшение проявлений 2-4 недели (1)",
                 "Не уменьшается даже через 4 недели (0)"
         );
+        cmbStatinDiscontinuation.setPromptText("Ответ на отмену статинов");
 
         cmbStatinRechallenge = new ComboBox<>();
         cmbStatinRechallenge.getItems().addAll(
                 "Симптомы снова < 4 недель (3)",
                 "Симптомы снова 4-12 недель (1)"
         );
+        cmbStatinRechallenge.setPromptText("Повторное назначение статинов");
 
         txtResult = new TextArea();
         txtResult.setEditable(false);

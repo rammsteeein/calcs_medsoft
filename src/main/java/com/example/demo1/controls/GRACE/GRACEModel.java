@@ -5,81 +5,80 @@ import javafx.beans.property.StringProperty;
 
 public class GRACEModel {
 
-    private final StringProperty agePoints = new SimpleStringProperty();
-    private final StringProperty hrPoints = new SimpleStringProperty();
-    private final StringProperty sbpPoints = new SimpleStringProperty();
+    private final StringProperty age = new SimpleStringProperty();
+    private final StringProperty hr = new SimpleStringProperty();
+    private final StringProperty sbp = new SimpleStringProperty();
     private final StringProperty killipClass = new SimpleStringProperty();
-    private final StringProperty creatininePoints = new SimpleStringProperty();
+    private final StringProperty creatinine = new SimpleStringProperty();
     private final StringProperty otherPoints = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    private GRACEModel(Builder builder) {
-        this.agePoints.set(builder.agePoints);
-        this.hrPoints.set(builder.hrPoints);
-        this.sbpPoints.set(builder.sbpPoints);
-        this.killipClass.set(builder.killipClass);
-        this.creatininePoints.set(builder.creatininePoints);
-        this.otherPoints.set(builder.otherPoints);
-        this.result.set(builder.result);
+    public GRACEModel() {
+        // пустой конструктор для прямого создания
     }
 
-    public StringProperty agePointsProperty() { return agePoints; }
-    public StringProperty hrPointsProperty() { return hrPoints; }
-    public StringProperty sbpPointsProperty() { return sbpPoints; }
+    // Properties
+    public StringProperty ageProperty() { return age; }
+    public StringProperty hrProperty() { return hr; }
+    public StringProperty sbpProperty() { return sbp; }
     public StringProperty killipClassProperty() { return killipClass; }
-    public StringProperty creatininePointsProperty() { return creatininePoints; }
+    public StringProperty creatinineProperty() { return creatinine; }
     public StringProperty otherPointsProperty() { return otherPoints; }
     public StringProperty resultProperty() { return result; }
 
-    public void setResult(String result) { this.result.set(result); }
-
     public void calc() {
         try {
-            int age = Integer.parseInt(agePoints.get());
-            int hr = Integer.parseInt(hrPoints.get());
-            int sbp = Integer.parseInt(sbpPoints.get());
-            int creat = Integer.parseInt(creatininePoints.get());
-            int other = Integer.parseInt(otherPoints.get());
+            int ageVal = Integer.parseInt(age.get());
+            int hrVal = Integer.parseInt(hr.get());
+            int sbpVal = Integer.parseInt(sbp.get());
+            double creatVal = Double.parseDouble(creatinine.get());
 
-            int killipPoints = mapKillipToPoints(killipClass.get());
+            int other = GRACECalculator.mapOtherPoints(otherPoints.get());
+            int agePoints = GRACECalculator.getAgePoints(ageVal);
+            int hrPoints = GRACECalculator.getHRPoints(hrVal);
+            int sbpPoints = GRACECalculator.getSBPPoints(sbpVal);
+            int creatPoints = GRACECalculator.getCreatininePoints(creatVal);
+            int killipPoints = GRACECalculator.mapKillipToPoints(killipClass.get());
 
-            GRACEResult res = GRACECalculator.calc(age, hr, sbp, killipPoints, creat, other);
-            setResult(res.toString());
+            GRACEResult res = GRACECalculator.calc(agePoints, hrPoints, sbpPoints, killipPoints, creatPoints, other);
+            result.set(res.toString());
         } catch (Exception e) {
-            setResult("Ошибка: " + e.getMessage());
+            result.set("Ошибка: " + e.getMessage());
         }
     }
 
-    private int mapKillipToPoints(String killip) {
-        if (killip == null) return 0;
-        switch (killip) {
-            case "I": return 0;
-            case "II": return 20;
-            case "III": return 39;
-            case "IV": return 59;
-            default: return 0;
-        }
+    // Для совместимости с прежним кодом
+    public static Builder builder() {
+        return new Builder();
     }
-
-    public static Builder builder() { return new Builder(); }
 
     public static class Builder {
-        private String agePoints = "";
-        private String hrPoints = "";
-        private String sbpPoints = "";
+        private String age = "";
+        private String hr = "";
+        private String sbp = "";
         private String killipClass = "";
-        private String creatininePoints = "";
+        private String creatinine = "";
         private String otherPoints = "";
         private String result = "";
 
-        public Builder withAgePoints(String agePoints) { this.agePoints = agePoints; return this; }
-        public Builder withHRPoints(String hrPoints) { this.hrPoints = hrPoints; return this; }
-        public Builder withSBPPoints(String sbpPoints) { this.sbpPoints = sbpPoints; return this; }
+        public Builder withAge(String age) { this.age = age; return this; }
+        public Builder withHR(String hr) { this.hr = hr; return this; }
+        public Builder withSBP(String sbp) { this.sbp = sbp; return this; }
         public Builder withKillipClass(String killipClass) { this.killipClass = killipClass; return this; }
-        public Builder withCreatininePoints(String creatininePoints) { this.creatininePoints = creatininePoints; return this; }
+        public Builder withCreatinine(String creatinine) { this.creatinine = creatinine; return this; }
         public Builder withOtherPoints(String otherPoints) { this.otherPoints = otherPoints; return this; }
         public Builder withResult(String result) { this.result = result; return this; }
 
-        public GRACEModel build() { return new GRACEModel(this); }
+        public GRACEModel build() {
+            GRACEModel model = new GRACEModel();
+            model.ageProperty().set(age);
+            model.hrProperty().set(hr);
+            model.sbpProperty().set(sbp);
+            model.killipClassProperty().set(killipClass);
+            model.creatinineProperty().set(creatinine);
+            model.otherPointsProperty().set(otherPoints);
+            model.resultProperty().set(result);
+            return model;
+        }
     }
 }

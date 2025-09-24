@@ -65,6 +65,69 @@ public class GRACECalculator {
      * - Рекомендуется применять совместно с клиническими данными для принятия решений о лечении.
      */
 
+    public static int getAgePoints(int age) {
+        if (age <= 30) return 0;
+        else if (age <= 39) return 8;
+        else if (age <= 49) return 25;
+        else if (age <= 59) return 41;
+        else if (age <= 69) return 58;
+        else if (age <= 79) return 75;
+        else if (age <= 89) return 91;
+        else return 100;
+    }
+
+    public static int getHRPoints(int hr) {
+        if (hr <= 50) return 0;
+        else if (hr <= 69) return 3;
+        else if (hr <= 89) return 9;
+        else if (hr <= 109) return 15;
+        else if (hr <= 149) return 24;
+        else if (hr <= 199) return 38;
+        else return 46;
+    }
+
+    public static int getSBPPoints(int sbp) {
+        if (sbp <= 80) return 58;
+        else if (sbp <= 99) return 53;
+        else if (sbp <= 119) return 43;
+        else if (sbp <= 139) return 34;
+        else if (sbp <= 159) return 24;
+        else if (sbp <= 199) return 10;
+        else return 0;
+    }
+
+    public static int getCreatininePoints(double creat) {
+        if (creat < 0.4) return 1;
+        else if (creat < 0.8) return 4;
+        else if (creat < 1.2) return 7;
+        else if (creat < 1.6) return 10;
+        else if (creat < 2.0) return 13;
+        else if (creat < 4.0) return 21;
+        else return 28;
+    }
+
+    public static int mapKillipToPoints(String killip) {
+        if (killip == null) return 0;
+        switch (killip) {
+            case "Нет признаков сердечной недостаточности. Пациент в относительно стабильном состоянии": return 0;
+            case "Лёгкая сердечная недостаточность: хрипы в лёгких, небольшие застойные явления, лёгкие одышка или отёки": return 20;
+            case "Выраженная сердечная недостаточность: крупные хрипы, отёки лёгких, острый лёгочный отёк, выраженная одышка": return 39;
+            case "Кардиогенный шок: низкое АД, холодные конечности, тахикардия, олигурия, признаки гипоперфузии органов": return 59;
+            default: return 0;
+        }
+    }
+
+    public static int mapOtherPoints(String other) {
+        if (other == null) return 0;
+        switch (other) {
+            case "Нет": return 0;
+            case "Остановка сердца при поступлении": return 39;
+            case "Смещения сегмента ST, инверсия зубца T": return 28;
+            case "Повышенный уровень маркеров некроза миокарда": return 14;
+            default: return 0;
+        }
+    }
+
     public static GRACEResult calc(int agePoints, int hrPoints, int sbpPoints, int killipPoints,
                                    int creatininePoints, int otherPoints) {
         int total = agePoints + hrPoints + sbpPoints + killipPoints + creatininePoints + otherPoints;
@@ -83,7 +146,7 @@ public class GRACECalculator {
         sb.append("Возраст: ").append(agePoints).append("\n");
         sb.append("ЧСС: ").append(hrPoints).append("\n");
         sb.append("Систолическое АД: ").append(sbpPoints).append("\n");
-        sb.append("Класс по Киллип: ").append(killipPoints).append("\n");
+        sb.append("Класс по Killip: ").append(killipPoints).append("\n");
         sb.append("Креатинин: ").append(creatininePoints).append("\n");
         sb.append("Другие факторы: ").append(otherPoints).append("\n");
         sb.append("Сумма баллов: ").append(total).append("\n");

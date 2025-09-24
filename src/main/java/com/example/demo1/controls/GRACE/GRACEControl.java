@@ -10,8 +10,8 @@ public class GRACEControl extends StackPane implements Closeable {
 
     private GRACEModel model;
 
-    private TextField txtAgePoints, txtHRPoints, txtSBPPoints, txtCreatininePoints, txtOtherPoints;
-    private ComboBox<String> cmbKillip;
+    private TextField txtAge, txtHR, txtSBP, txtCreatinine;
+    private ComboBox<String> cmbKillip, cmbOtherPoints;
     private Button btnCalc;
     private TextArea txtResult;
 
@@ -22,23 +22,29 @@ public class GRACEControl extends StackPane implements Closeable {
     }
 
     private void initialize() {
-        txtAgePoints = new TextField();
-        txtAgePoints.setPromptText("Баллы за возраст");
+        txtAge = new TextField();
+        txtAge.setPromptText("Возраст (лет)");
 
-        txtHRPoints = new TextField();
-        txtHRPoints.setPromptText("Баллы за ЧСС");
+        txtHR = new TextField();
+        txtHR.setPromptText("ЧСС (уд/мин)");
 
-        txtSBPPoints = new TextField();
-        txtSBPPoints.setPromptText("Баллы за САД");
+        txtSBP = new TextField();
+        txtSBP.setPromptText("САД (мм рт. ст.)");
 
-        txtCreatininePoints = new TextField();
-        txtCreatininePoints.setPromptText("Баллы за креатинин");
+        txtCreatinine = new TextField();
+        txtCreatinine.setPromptText("Креатинин (мг/дл)");
 
-        txtOtherPoints = new TextField();
-        txtOtherPoints.setPromptText("Баллы за другие факторы");
+        cmbOtherPoints = new ComboBox<>();
+        cmbOtherPoints.getItems().addAll("Нет", "Остановка сердца при поступлении",
+                "Смещения сегмента ST, инверсия зубца T",
+                "Повышенный уровень маркеров некроза миокарда");
+        cmbOtherPoints.setPromptText("Другие факторы");
 
         cmbKillip = new ComboBox<>();
-        cmbKillip.getItems().addAll("I", "II", "III", "IV");
+        cmbKillip.getItems().addAll("Нет признаков сердечной недостаточности. Пациент в относительно стабильном состоянии",
+                "Лёгкая сердечная недостаточность: хрипы в лёгких, небольшие застойные явления, лёгкие одышка или отёки",
+                "Выраженная сердечная недостаточность: крупные хрипы, отёки лёгких, острый лёгочный отёк, выраженная одышка",
+                "Кардиогенный шок: низкое АД, холодные конечности, тахикардия, олигурия, признаки гипоперфузии органов");
         cmbKillip.setPromptText("Класс Killip");
 
         btnCalc = new Button("Рассчитать");
@@ -48,36 +54,32 @@ public class GRACEControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, txtAgePoints, txtHRPoints, txtSBPPoints, cmbKillip,
-                txtCreatininePoints, txtOtherPoints, btnCalc, txtResult));
+        getChildren().add(new VBox(10, txtAge, txtHR, txtSBP, cmbKillip,
+                txtCreatinine, cmbOtherPoints, btnCalc, txtResult));
     }
 
     private void bind() {
-        model.agePointsProperty().bindBidirectional(txtAgePoints.textProperty());
-        model.hrPointsProperty().bindBidirectional(txtHRPoints.textProperty());
-        model.sbpPointsProperty().bindBidirectional(txtSBPPoints.textProperty());
+        model.ageProperty().bindBidirectional(txtAge.textProperty());
+        model.hrProperty().bindBidirectional(txtHR.textProperty());
+        model.sbpProperty().bindBidirectional(txtSBP.textProperty());
         model.killipClassProperty().bindBidirectional(cmbKillip.valueProperty());
-        model.creatininePointsProperty().bindBidirectional(txtCreatininePoints.textProperty());
-        model.otherPointsProperty().bindBidirectional(txtOtherPoints.textProperty());
+        model.creatinineProperty().bindBidirectional(txtCreatinine.textProperty());
+        model.otherPointsProperty().bindBidirectional(cmbOtherPoints.valueProperty());
         model.resultProperty().bindBidirectional(txtResult.textProperty());
     }
 
     private void unbind() {
-        model.agePointsProperty().unbindBidirectional(txtAgePoints.textProperty());
-        model.hrPointsProperty().unbindBidirectional(txtHRPoints.textProperty());
-        model.sbpPointsProperty().unbindBidirectional(txtSBPPoints.textProperty());
+        model.ageProperty().unbindBidirectional(txtAge.textProperty());
+        model.hrProperty().unbindBidirectional(txtHR.textProperty());
+        model.sbpProperty().unbindBidirectional(txtSBP.textProperty());
         model.killipClassProperty().unbindBidirectional(cmbKillip.valueProperty());
-        model.creatininePointsProperty().unbindBidirectional(txtCreatininePoints.textProperty());
-        model.otherPointsProperty().unbindBidirectional(txtOtherPoints.textProperty());
+        model.creatinineProperty().unbindBidirectional(txtCreatinine.textProperty());
+        model.otherPointsProperty().unbindBidirectional(cmbOtherPoints.valueProperty());
         model.resultProperty().unbindBidirectional(txtResult.textProperty());
     }
 
     private void calculateResult() {
-        try {
-            model.calc();
-        } catch (Exception e) {
-            txtResult.setText("Ошибка ввода: " + e.getMessage());
-        }
+        model.calc();
     }
 
     @Override
