@@ -27,7 +27,6 @@ public class MifflinStJeorModel {
         calculation.set(result.getCalculation());
     }
 
-    // getters/properties
     public ObjectProperty<Gender> genderProperty() { return gender; }
     public Gender getGender() { return gender.get(); }
     public void setGender(Gender val) { gender.set(val); }

@@ -2,11 +2,13 @@ package com.example.demo1.controls.MifflinStJeor;
 
 import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.CalculatorDescription;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class MifflinStJeorControl extends StackPane {
+public class MifflinStJeorControl extends BorderPane {
 
     private final MifflinStJeorModel model;
 
@@ -33,9 +35,29 @@ public class MifflinStJeorControl extends StackPane {
 
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10,
+        // Левая часть — поля ввода
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Формула Миффлина-Сан Жеора"),
-                cmbGender, txtWeight, txtHeight, txtAge, txtResult));
+                cmbGender, txtWeight, txtHeight, txtAge, txtResult
+        );
+        leftBox.setAlignment(Pos.TOP_LEFT);
+
+        // Правая часть — описание
+        Label lblDescription = CalculatorDescription.createDescription(
+                "Формула Миффлина-Сан Жеора используется для расчёта базального уровня метаболизма (BMR).\n\n" +
+                        "BMR показывает, сколько энергии тратит организм в состоянии покоя. " +
+                        "Формула учитывает вес, рост, возраст и пол."
+        );
+
+        VBox rightBox = new VBox(lblDescription);
+        rightBox.setAlignment(Pos.CENTER);
+
+        // Раскладываем
+        this.setLeft(leftBox);
+        this.setCenter(rightBox);
+        leftBox.setPrefWidth(250);
+
+        this.setPrefSize(700, 600);
     }
 
     private void bind() {

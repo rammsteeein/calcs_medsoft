@@ -116,7 +116,7 @@ public class CalcsApp extends Application {
         VBox root = new VBox(15, comboBox, openButton);
         root.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
-        Scene scene = new Scene(root, 400, 200);
+        Scene scene = new Scene(root, 300, 300);
         primaryStage.setTitle("Выбор калькулятора");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -124,7 +124,7 @@ public class CalcsApp extends Application {
 
     private void openCalculator(String title, javafx.scene.Parent control) {
         Stage stage = new Stage();
-        Scene scene = new Scene(control, 400, 300);
+        Scene scene = new Scene(control, 550, 350);
         stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
