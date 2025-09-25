@@ -1,6 +1,6 @@
 package com.example.demo1.controls.CKDEPI;
 
-import com.example.demo1.common.enums.CreatininUnit;
+import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
 
 public class CKDEPICalculator {
@@ -26,10 +26,10 @@ public class CKDEPICalculator {
      * - Множитель 1.012 применяется только для женщин.
      */
 
-    public static CKDEPIResult calc(Gender gender, double kreatinin, CreatininUnit creatininUnit, int age) {
-        if (creatininUnit == CreatininUnit.MKMOL) {
+    public static CKDEPIResult calc(Gender gender, double kreatinin, Unit unit, int age) {
+        if (unit == Unit.MKMOL) {
             kreatinin /= 88.4;
-        } else if (creatininUnit != CreatininUnit.MGDL) {
+        } else if (unit != Unit.MGDL) {
             return new CKDEPIResult("Некорректная единица измерения");
         }
 

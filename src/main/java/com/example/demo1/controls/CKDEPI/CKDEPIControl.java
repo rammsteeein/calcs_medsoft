@@ -1,6 +1,6 @@
 package com.example.demo1.controls.CKDEPI;
 
-import com.example.demo1.common.enums.CreatininUnit;
+import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
@@ -14,7 +14,7 @@ public class CKDEPIControl extends StackPane implements Closeable {
 
     private ComboBox<Gender> cmbGender;
     private TextField nmrKreatinin;
-    private ComboBox<CreatininUnit> cmbCreatininUnit;
+    private ComboBox<Unit> cmbCreatininUnit;
     private TextField nmrAge;
     private Button btnCalc;
     private TextArea txtResult;
@@ -38,7 +38,7 @@ public class CKDEPIControl extends StackPane implements Closeable {
         nmrKreatinin.setPromptText("Креатинин");
 
         cmbCreatininUnit = new ComboBox<>();
-        cmbCreatininUnit.getItems().addAll(CreatininUnit.values());
+        cmbCreatininUnit.getItems().addAll(Unit.values());
         cmbCreatininUnit.setPromptText("Ед. измерения");
 
         nmrAge = new TextField();

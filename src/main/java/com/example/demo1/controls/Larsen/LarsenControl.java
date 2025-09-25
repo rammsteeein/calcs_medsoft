@@ -2,15 +2,12 @@ package com.example.demo1.controls.Larsen;
 
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class LarsenControl extends StackPane implements AutoCloseable {
-    private LarsenModel model = LarsenModel.builder().build();
+    private LarsenModel model;
 
     private ComboBox<String> cmbDrug;
     private CheckBox cbCardiomegalia, cbIBS, cbAG, cbSD, cbAnthraHistory, cbRadiation, cbAge, cbFemale;
@@ -78,11 +75,10 @@ public class LarsenControl extends StackPane implements AutoCloseable {
 
         try {
             model.calc();
+            txtResult.setText(model.calculationProperty().get());
         } catch (Exception ex) {
             txtResult.setText("Ошибка: " + ex.getMessage());
         }
-
-        txtResult.setText(model.resultProperty().get());
     }
 
     @Override

@@ -78,7 +78,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(INBARModel.builder().build()));
         calculatorMap.put("FIB-4", () -> new FIB4Control(FIB4Model.builder().build()));
         calculatorMap.put("CDS", () -> new CDSControl(CDSModel.builder().build()));
-        calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(LarsenModel.builder().build()));
+        calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel()));
         calculatorMap.put("Khorana", () -> new KhoranaControl(KhoranaModel.builder().build()));
         calculatorMap.put("REACH", () -> new REACHControl(REACHModel.builder().build()));
         calculatorMap.put("SAMSCI", () -> new SAMSCIControl(SAMSCIModel.builder().build()));
@@ -89,7 +89,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("PERC", () -> new PERCControl(PERCModel.builder().build()));
         calculatorMap.put("IMPROVE VTE", () -> new IMPROVETVEControl(IMPROVETVEModel.builder().build()));
         calculatorMap.put("DLCN", () -> new DLCNControl(DLCNModel.builder().build()));
-        calculatorMap.put("Mifflin-St Jeor", () -> new MifflinStJeorControl(MifflinStJeorModel.builder().build()));
+        calculatorMap.put("Mifflin-St Jeor", () -> new MifflinStJeorControl(new MifflinStJeorModel()));
         calculatorMap.put("HSI", () -> new HSIControl(HSIModel.builder().build()));
         calculatorMap.put("GRACE", () -> new GRACEControl(GRACEModel.builder().build()));
         calculatorMap.put("Шкала ШОКС", () -> new SHOKSControl(SHOKSModel.builder().build()));

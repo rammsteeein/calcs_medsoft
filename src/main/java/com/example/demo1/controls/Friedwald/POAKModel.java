@@ -1,6 +1,6 @@
 package com.example.demo1.controls.Friedwald;
 
-import com.example.demo1.common.enums.CreatininUnit;
+import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -10,7 +10,7 @@ import javafx.beans.property.StringProperty;
 public class POAKModel {
     private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>();
     private final StringProperty kreatinin = new SimpleStringProperty();
-    private final ObjectProperty<CreatininUnit> creatininUnit = new SimpleObjectProperty<>();
+    private final ObjectProperty<Unit> creatininUnit = new SimpleObjectProperty<>();
     private final StringProperty age = new SimpleStringProperty();
     private final StringProperty weight = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty();
@@ -44,15 +44,15 @@ public class POAKModel {
         return kreatinin;
     }
 
-    public CreatininUnit getCreatininUnit() {
+    public Unit getCreatininUnit() {
         return creatininUnit.get();
     }
 
-    public void setCreatininUnit(CreatininUnit creatininUnit) {
-        this.creatininUnit.set(creatininUnit);
+    public void setCreatininUnit(Unit unit) {
+        this.creatininUnit.set(unit);
     }
 
-    public ObjectProperty<CreatininUnit> creatininUnitProperty() {
+    public ObjectProperty<Unit> creatininUnitProperty() {
         return creatininUnit;
     }
 

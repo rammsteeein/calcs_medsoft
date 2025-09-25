@@ -1,6 +1,6 @@
 package com.example.demo1.controls.Cockroft;
 
-import com.example.demo1.common.enums.CreatininUnit;
+import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -10,7 +10,7 @@ import javafx.beans.property.StringProperty;
 public class CockroftModel {
     private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>();
     private final StringProperty kreatinin = new SimpleStringProperty();
-    private final ObjectProperty<CreatininUnit> creatininUnit = new SimpleObjectProperty<>();
+    private final ObjectProperty<Unit> creatininUnit = new SimpleObjectProperty<>();
     private final StringProperty age = new SimpleStringProperty();
     private final StringProperty weight = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty();
@@ -18,7 +18,7 @@ public class CockroftModel {
     private CockroftModel(Builder builder) {
         this.gender.set(builder.gender);
         this.kreatinin.set(builder.kreatinin);
-        this.creatininUnit.set(builder.creatininUnit);
+        this.creatininUnit.set(builder.unit);
         this.age.set(builder.age);
         this.weight.set(builder.weight);
         this.result.set(builder.result);
@@ -48,15 +48,15 @@ public class CockroftModel {
         return kreatinin;
     }
 
-    public CreatininUnit getCreatininUnit() {
+    public Unit getCreatininUnit() {
         return creatininUnit.get();
     }
 
-    public void setCreatininUnit(CreatininUnit creatininUnit) {
-        this.creatininUnit.set(creatininUnit);
+    public void setCreatininUnit(Unit unit) {
+        this.creatininUnit.set(unit);
     }
 
-    public ObjectProperty<CreatininUnit> creatininUnitProperty() {
+    public ObjectProperty<Unit> creatininUnitProperty() {
         return creatininUnit;
     }
 
@@ -100,7 +100,7 @@ public class CockroftModel {
         try {
             Gender genderValue = getGender();
             double kreatininValue = Double.parseDouble(getKreatinin());
-            CreatininUnit creatininUnitValue = getCreatininUnit();
+            Unit unitValue = getCreatininUnit();
             int ageValue = Integer.parseInt(getAge());
             double weightValue = Double.parseDouble(getWeight());
 
@@ -118,7 +118,7 @@ public class CockroftModel {
     public static class Builder {
         private Gender gender;
         private String kreatinin;
-        private CreatininUnit creatininUnit;
+        private Unit unit;
         private String age;
         private String weight;
         private String result = "";
@@ -133,8 +133,8 @@ public class CockroftModel {
             return this;
         }
 
-        public Builder withCreatininUnit(CreatininUnit creatininUnit) {
-            this.creatininUnit = creatininUnit;
+        public Builder withCreatininUnit(Unit unit) {
+            this.unit = unit;
             return this;
         }
 

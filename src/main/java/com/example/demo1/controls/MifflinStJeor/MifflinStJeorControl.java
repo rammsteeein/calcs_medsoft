@@ -56,6 +56,6 @@ public class MifflinStJeorControl extends StackPane {
             model.calc();
         });
 
-        txtResult.textProperty().bind(model.resultProperty());
+        txtResult.textProperty().bind(model.calculationProperty());
     }
 }

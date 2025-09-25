@@ -31,12 +31,11 @@ public class LarsenCalculator {
 
     public static LarsenResult calc(String drug, List<String> patientFactors) {
         if (drug == null || patientFactors == null) {
-            return new LarsenResult("Ошибка: выберите препарат и факторы пациента");
+            return new LarsenResult(0, "Ошибка", "Ошибка: выберите препарат и факторы пациента");
         }
 
         int drugScore = mapDrug(drug);
-        int patientScore = patientFactors.size(); // каждый выбранный фактор = 1 балл
-
+        int patientScore = patientFactors.size(); // каждый фактор = 1 балл
         int totalScore = drugScore + patientScore;
 
         String interpretation;
@@ -59,7 +58,7 @@ public class LarsenCalculator {
         details.append("Суммарный балл: ").append(totalScore).append("\n");
         details.append("Интерпретация: ").append(interpretation);
 
-        return new LarsenResult(details.toString());
+        return new LarsenResult(totalScore, interpretation, details.toString());
     }
 
     private static int mapDrug(String drug) {
@@ -69,21 +68,21 @@ public class LarsenCalculator {
             case "Ифосфамид":
             case "Клофарабин":
             case "Герцептин":
-                return 4; // высокий риск
+                return 4;
             case "Доцетаксел":
             case "Пертузумаб":
             case "Сунитиниб":
             case "Сорафениб":
-                return 2; // промежуточный риск
+                return 2;
             case "Бевацизумаб":
             case "Дазатиниб":
             case "Иматиниб":
             case "Лапатиниб":
-                return 1; // низкий риск
+                return 1;
             case "Этопозид":
             case "Ритуксимаб":
             case "Талидомид":
-                return 0; // отсутствие риска
+                return 0;
             default:
                 throw new IllegalArgumentException("Неизвестный препарат: " + drug);
         }

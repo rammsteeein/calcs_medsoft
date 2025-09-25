@@ -1,6 +1,6 @@
 package com.example.demo1.controls.CKDEPI;
 
-import com.example.demo1.common.enums.CreatininUnit;
+import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -10,14 +10,14 @@ import javafx.beans.property.StringProperty;
 public class CKDEPIModel {
     private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>();
     private final StringProperty kreatinin = new SimpleStringProperty();
-    private final ObjectProperty<CreatininUnit> creatininUnit = new SimpleObjectProperty<>();
+    private final ObjectProperty<Unit> creatininUnit = new SimpleObjectProperty<>();
     private final StringProperty age = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty();
 
     private CKDEPIModel(Builder builder) {
         this.gender.set(builder.gender);
         this.kreatinin.set(builder.kreatinin);
-        this.creatininUnit.set(builder.creatininUnit);
+        this.creatininUnit.set(builder.unit);
         this.age.set(builder.age);
         this.result.set(builder.result);
     }
@@ -46,15 +46,15 @@ public class CKDEPIModel {
         return kreatinin;
     }
 
-    public CreatininUnit getCreatininUnit() {
+    public Unit getCreatininUnit() {
         return creatininUnit.get();
     }
 
-    public void setCreatininUnit(CreatininUnit creatininUnit) {
-        this.creatininUnit.set(creatininUnit);
+    public void setCreatininUnit(Unit unit) {
+        this.creatininUnit.set(unit);
     }
 
-    public ObjectProperty<CreatininUnit> creatininUnitProperty() {
+    public ObjectProperty<Unit> creatininUnitProperty() {
         return creatininUnit;
     }
 
@@ -86,10 +86,10 @@ public class CKDEPIModel {
         try {
             Gender genderValue = getGender();
             double kreatininValue = Double.parseDouble(getKreatinin());
-            CreatininUnit creatininUnitValue = getCreatininUnit();
+            Unit unitValue = getCreatininUnit();
             int ageValue = Integer.parseInt(getAge());
 
-            CKDEPIResult calcResult = CKDEPICalculator.calc(genderValue, kreatininValue, creatininUnitValue, ageValue);
+            CKDEPIResult calcResult = CKDEPICalculator.calc(genderValue, kreatininValue, unitValue, ageValue);
             setResult(calcResult.toString());
         } catch (Exception e) {
             setResult("Ошибка: " + e.getMessage());
@@ -102,7 +102,7 @@ public class CKDEPIModel {
     public static class Builder {
         private Gender gender;
         private String kreatinin;
-        private CreatininUnit creatininUnit;
+        private Unit unit;
         private String age;
         private String result = "";
 
@@ -116,8 +116,8 @@ public class CKDEPIModel {
             return this;
         }
 
-        public Builder withCreatininUnit(CreatininUnit creatininUnit) {
-            this.creatininUnit = creatininUnit;
+        public Builder withCreatininUnit(Unit unit) {
+            this.unit = unit;
             return this;
         }
 
