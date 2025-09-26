@@ -45,38 +45,9 @@ public class NoSASModel {
                     getAge(),
                     getGender()
             );
-            setResult(res.toString());
+            setResult(String.format("Сумма баллов: %d\nРиск: %s", res.getScore(), res.getRiskLevel()));
         } catch (Exception e) {
             setResult("Ошибка: " + e.getMessage());
         }
-    }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private double neckCircumference = 0;
-        private double bmi = 0;
-        private boolean hasSnoring = false;
-        private int age = 0;
-        private Gender gender = Gender.MALE;
-        private String result = "";
-
-        public Builder withNeckCircumference(double val) { this.neckCircumference = val; return this; }
-        public Builder withBmi(double val) { this.bmi = val; return this; }
-        public Builder withHasSnoring(boolean val) { this.hasSnoring = val; return this; }
-        public Builder withAge(int val) { this.age = val; return this; }
-        public Builder withGender(Gender val) { this.gender = val; return this; }
-        public Builder withResult(String val) { this.result = val; return this; }
-
-        public NoSASModel build() { return new NoSASModel(this); }
-    }
-
-    private NoSASModel(Builder builder) {
-        this.neckCircumference.set(builder.neckCircumference);
-        this.bmi.set(builder.bmi);
-        this.hasSnoring.set(builder.hasSnoring);
-        this.age.set(builder.age);
-        this.gender.set(builder.gender);
-        this.result.set(builder.result);
     }
 }

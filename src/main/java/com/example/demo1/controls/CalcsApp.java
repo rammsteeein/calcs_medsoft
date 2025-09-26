@@ -69,25 +69,25 @@ public class CalcsApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        calculatorMap.put("Pursuit", () -> new PursuitControl(PursuitModel.builder().build()));
-        calculatorMap.put("FLI", () -> new FLIControl(FLIModel.builder().build()));
-        calculatorMap.put("Cockroft", () -> new CockroftControl(CockroftModel.builder().build()));
-        calculatorMap.put("CKD-EPI", () -> new CKDEPIControl(CKDEPIModel.builder().build()));
-        calculatorMap.put("Доза ПОАК", () -> new POAKControl(POAKModel.builder().build()));
-        calculatorMap.put("ХС-ЛНП", () -> new LDLControl(LDLModel.builder().build()));
-        calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(INBARModel.builder().build()));
-        calculatorMap.put("FIB-4", () -> new FIB4Control(FIB4Model.builder().build()));
-        calculatorMap.put("CDS", () -> new CDSControl(CDSModel.builder().build()));
-        calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel()));
-        calculatorMap.put("Khorana", () -> new KhoranaControl(KhoranaModel.builder().build()));
-        calculatorMap.put("REACH", () -> new REACHControl(REACHModel.builder().build()));
-        calculatorMap.put("SAMSCI", () -> new SAMSCIControl(SAMSCIModel.builder().build()));
-        calculatorMap.put("NoSAS", () -> new NoSASControl(NoSASModel.builder().build()));
-        calculatorMap.put("Wells", () -> new WellsControl(WellsModel.builder().build()));
-        calculatorMap.put("rGENEVA", () -> new rGENEVAControl(rGENEVAModel.builder().build()));
-        calculatorMap.put("PESI", () -> new PESIControl(PESIModel.builder().build()));
-        calculatorMap.put("PERC", () -> new PERCControl(PERCModel.builder().build()));
-        calculatorMap.put("IMPROVE VTE", () -> new IMPROVETVEControl(IMPROVETVEModel.builder().build()));
+        calculatorMap.put("Pursuit", () -> new PursuitControl(new PursuitModel()));
+        calculatorMap.put("FLI", () -> new FLIControl(new FLIModel()));
+        calculatorMap.put("Cockroft", () -> new CockroftControl(new CockroftModel()));
+        calculatorMap.put("CKD-EPI", () -> new CKDEPIControl(new CKDEPIModel()));
+        calculatorMap.put("Доза ПОАК", () -> new POAKControl(new POAKModel()));
+        calculatorMap.put("ХС-ЛНП", () -> new LDLControl(new LDLModel()));
+        calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(new INBARModel()));
+        calculatorMap.put("FIB-4", () -> new FIB4Control(new FIB4Model()));
+        calculatorMap.put("CDS", () -> new CDSControl(new CDSModel()));
+        calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel())); //
+        calculatorMap.put("Khorana", () -> new KhoranaControl(new KhoranaModel()));
+        calculatorMap.put("REACH", () -> new REACHControl(new REACHModel()));
+        calculatorMap.put("SAMSCI", () -> new SAMSCIControl(new SAMSCIModel()));
+        calculatorMap.put("NoSAS", () -> new NoSASControl(new NoSASModel()));
+        calculatorMap.put("Wells", () -> new WellsControl(new WellsModel()));
+        calculatorMap.put("rGENEVA", () -> new rGENEVAControl(new rGENEVAModel()));
+        calculatorMap.put("PESI", () -> new PESIControl(new PESIModel()));
+        calculatorMap.put("PERC", () -> new PERCControl(new PERCModel()));
+        calculatorMap.put("IMPROVE VTE", () -> new IMPROVETVEControl(new IMPROVETVEModel()));
         calculatorMap.put("DLCN", () -> new DLCNControl(DLCNModel.builder().build()));
         calculatorMap.put("Mifflin-St Jeor", () -> new MifflinStJeorControl(new MifflinStJeorModel()));
         calculatorMap.put("HSI", () -> new HSIControl(HSIModel.builder().build()));
@@ -124,12 +124,20 @@ public class CalcsApp extends Application {
 
     private void openCalculator(String title, javafx.scene.Parent control) {
         Stage stage = new Stage();
-        Scene scene = new Scene(control, 550, 350);
+
+        Scene scene;
+        if ("PESI".equals(title)) {
+
+            scene = new Scene(control, 700, 500);
+        } else {
+
+            scene = new Scene(control, 550, 350);
+        }
+
         stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
     }
-
     public static void main(String[] args) {
         launch(args);
     }

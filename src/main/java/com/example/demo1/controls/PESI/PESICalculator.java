@@ -49,7 +49,6 @@ public class PESICalculator {
     ) {
         int score = 0;
 
-        // Баллы по показателям
         score += age;
         if (gender == Gender.MALE) score += 10;
         if (hasCancer) score += 30;
@@ -69,6 +68,6 @@ public class PESICalculator {
         else if (score <= 125) riskClass = "Класс IV — Высокий риск (4.0–11.4%)";
         else riskClass = "Класс V — Очень высокий риск (10.0–24.5%)";
 
-        return new PESIResult(String.format("Сумма баллов: %d\n%s", score, riskClass));
+        return new PESIResult(score, riskClass);
     }
 }

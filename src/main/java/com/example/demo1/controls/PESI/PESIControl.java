@@ -2,8 +2,10 @@ package com.example.demo1.controls.PESI;
 
 import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.CalculatorDescription;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -11,17 +13,9 @@ public class PESIControl extends StackPane {
 
     private final PESIModel model;
 
-    private TextField txtAge;
+    private TextField txtAge, txtHeartRate, txtSystolicBP, txtRespiratoryRate, txtTemperature, txtOxygenSaturation;
     private ChoiceBox<Gender> choiceGender;
-    private CheckBox chkCancer;
-    private CheckBox chkCHF;
-    private CheckBox chkChronicLung;
-    private TextField txtHeartRate;
-    private TextField txtSystolicBP;
-    private TextField txtRespiratoryRate;
-    private TextField txtTemperature;
-    private CheckBox chkAlteredMental;
-    private TextField txtOxygenSaturation;
+    private CheckBox chkCancer, chkCHF, chkChronicLung, chkAlteredMental;
     private TextArea txtResult;
 
     public PESIControl(PESIModel model) {
@@ -32,43 +26,56 @@ public class PESIControl extends StackPane {
 
     private void initialize() {
         txtAge = new TextField(); txtAge.setPromptText("Возраст (годы)");
-
-        choiceGender = new ChoiceBox<>();
-        choiceGender.getItems().addAll(Gender.MALE, Gender.FEMALE);
-
+        choiceGender = new ChoiceBox<>(); choiceGender.getItems().addAll(Gender.MALE, Gender.FEMALE);
         chkCancer = new CheckBox("Рак");
         chkCHF = new CheckBox("Хроническая сердечная недостаточность");
         chkChronicLung = new CheckBox("Хроническое заболевание легких");
-
         txtHeartRate = new TextField(); txtHeartRate.setPromptText("ЧСС (уд/мин)");
         txtSystolicBP = new TextField(); txtSystolicBP.setPromptText("Систолическое АД (мм рт.ст.)");
         txtRespiratoryRate = new TextField(); txtRespiratoryRate.setPromptText("Частота дыхания (раз/мин)");
         txtTemperature = new TextField(); txtTemperature.setPromptText("Температура (°С)");
-
         chkAlteredMental = new CheckBox("Нарушение сознания");
         txtOxygenSaturation = new TextField(); txtOxygenSaturation.setPromptText("Сатурация (%)");
 
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
-        txtResult.setPrefHeight(100);
 
-        VBox content = new VBox(10,
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("PESI"),
                 txtAge, choiceGender, chkCancer, chkCHF, chkChronicLung,
                 txtHeartRate, txtSystolicBP, txtRespiratoryRate, txtTemperature,
                 chkAlteredMental, txtOxygenSaturation, txtResult
         );
-        content.setPrefWidth(350);
-        content.setPrefHeight(600);
 
-        ScrollPane scrollPane = new ScrollPane(content);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(600);
+        HBox container = new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала PESI — прогноз 30-дневной летальности при ТЭЛА.\n\n" +
+                                "Критерии:\n" +
+                                "- Возраст: баллы = возраст\n" +
+                                "- Мужской пол: +10\n" +
+                                "- Рак: +30\n" +
+                                "- ХСН: +10\n" +
+                                "- Хроническое заболевание легких: +10\n" +
+                                "- ЧСС ≥110: +20\n" +
+                                "- Систолическое АД <100: +30\n" +
+                                "- Частота дыхания >30: +20\n" +
+                                "- Температура <36°C: +20\n" +
+                                "- Нарушение сознания: +60\n" +
+                                "- SpO₂ <90%: +20\n\n" +
+                                "Классы риска:\n" +
+                                "I: ≤65 — очень низкий\n" +
+                                "II: 66–85 — низкий\n" +
+                                "III: 86–105 — умеренный\n" +
+                                "IV: 106–125 — высокий\n" +
+                                "V: >125 — очень высокий"
+                )
+        );
 
-        this.getChildren().add(scrollPane);
+        getChildren().add(container);
     }
 
     private void bind() {
-        ChangeListener<Object> recalcListener = (obs, oldVal, newVal) -> model.calc();
+        ChangeListener<Object> listener = (obs, oldVal, newVal) -> model.calc();
 
         choiceGender.valueProperty().bindBidirectional(model.genderProperty());
         chkCancer.selectedProperty().bindBidirectional(model.hasCancerProperty());
@@ -76,36 +83,18 @@ public class PESIControl extends StackPane {
         chkChronicLung.selectedProperty().bindBidirectional(model.hasChronicLungDiseaseProperty());
         chkAlteredMental.selectedProperty().bindBidirectional(model.alteredMentalStatusProperty());
 
-        choiceGender.valueProperty().addListener(recalcListener);
-        chkCancer.selectedProperty().addListener(recalcListener);
-        chkCHF.selectedProperty().addListener(recalcListener);
-        chkChronicLung.selectedProperty().addListener(recalcListener);
-        chkAlteredMental.selectedProperty().addListener(recalcListener);
+        choiceGender.valueProperty().addListener(listener);
+        chkCancer.selectedProperty().addListener(listener);
+        chkCHF.selectedProperty().addListener(listener);
+        chkChronicLung.selectedProperty().addListener(listener);
+        chkAlteredMental.selectedProperty().addListener(listener);
 
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setAge(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-        txtHeartRate.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setHeartRate(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-        txtSystolicBP.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setSystolicBP(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-        txtRespiratoryRate.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setRespiratoryRate(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-        txtTemperature.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setTemperature(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-        txtOxygenSaturation.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setOxygenSaturation(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
+        txtAge.textProperty().addListener((obs, oldVal, newVal) -> { try { model.ageProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
+        txtHeartRate.textProperty().addListener((obs, oldVal, newVal) -> { try { model.heartRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
+        txtSystolicBP.textProperty().addListener((obs, oldVal, newVal) -> { try { model.systolicBPProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
+        txtRespiratoryRate.textProperty().addListener((obs, oldVal, newVal) -> { try { model.respiratoryRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
+        txtTemperature.textProperty().addListener((obs, oldVal, newVal) -> { try { model.temperatureProperty().set(Double.parseDouble(newVal)); } catch (Exception ignored) {} model.calc(); });
+        txtOxygenSaturation.textProperty().addListener((obs, oldVal, newVal) -> { try { model.oxygenSaturationProperty().set(Double.parseDouble(newVal)); } catch (Exception ignored) {} model.calc(); });
 
         txtResult.textProperty().bind(model.resultProperty());
     }

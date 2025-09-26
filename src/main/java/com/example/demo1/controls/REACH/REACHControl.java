@@ -1,13 +1,15 @@
 package com.example.demo1.controls.REACH;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import javafx.beans.value.ChangeListener;
-import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class REACHControl extends StackPane {
+import java.io.Closeable;
+
+public class REACHControl extends StackPane implements Closeable {
 
     private final REACHModel model;
 
@@ -40,9 +42,11 @@ public class REACHControl extends StackPane {
 
         cmbSmoking = new ComboBox<>();
         cmbSmoking.getItems().addAll("Никогда", "Раньше", "Продолжает");
+        cmbSmoking.getSelectionModel().select(0);
 
         cmbAntiplatelet = new ComboBox<>();
         cmbAntiplatelet.getItems().addAll("Нет", "Аспирин", "Другие", "Комбинация");
+        cmbAntiplatelet.getSelectionModel().select(0);
 
         chkOAC = new CheckBox("Прием оральных антикоагулянтов");
 
@@ -50,15 +54,29 @@ public class REACHControl extends StackPane {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        this.getChildren().add(new VBox(10,
-                CalculatorHeader.createHeader("Индекс REACH"),
+        VBox leftBox = new VBox(10,
+                CalculatorHeader.createHeader("Шкала REACH"),
                 txtAge, chkPeripheral, chkHF, chkDiabetes,
-                chkCholesterol, chkHypertension, cmbSmoking, cmbAntiplatelet, chkOAC, txtResult));
+                chkCholesterol, chkHypertension, cmbSmoking, cmbAntiplatelet, chkOAC, txtResult
+        );
+
+        this.getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала REACH используется для оценки риска кровотечений у пациентов с атеросклерозом.\n\n" +
+                                "Факторы риска включают:\n" +
+                                "- возраст,\n- наличие ССЗ и сопутствующих заболеваний,\n- курение,\n- терапию антиагрегантами/антикоагулянтами.\n\n" +
+                                "Интерпретация:\n" +
+                                "0–6 = низкий риск (0,46%)\n" +
+                                "7–8 = умеренный риск (0,95%)\n" +
+                                "9–10 = высокий риск (1,25%)\n" +
+                                "≥11 = очень высокий риск (2,76%)"
+                )
+        ));
     }
 
     private void bind() {
         txtAge.textProperty().bindBidirectional(model.ageProperty());
-
         chkPeripheral.selectedProperty().bindBidirectional(model.peripheralAtherosclerosisProperty());
         chkHF.selectedProperty().bindBidirectional(model.heartFailureProperty());
         chkDiabetes.selectedProperty().bindBidirectional(model.diabetesProperty());
@@ -66,26 +84,25 @@ public class REACHControl extends StackPane {
         chkHypertension.selectedProperty().bindBidirectional(model.hypertensionProperty());
         chkOAC.selectedProperty().bindBidirectional(model.oralAnticoagulantProperty());
 
-        cmbSmoking.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-            model.setSmokingStatus(newVal.intValue());
-            model.calc();
-        });
+        cmbSmoking.getSelectionModel().selectedIndexProperty()
+                .addListener((obs, o, n) -> { model.smokingStatusProperty().set(n.intValue()); model.calc(); });
 
-        cmbAntiplatelet.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-            model.setAntiplatelet(newVal.intValue());
-            model.calc();
-        });
+        cmbAntiplatelet.getSelectionModel().selectedIndexProperty()
+                .addListener((obs, o, n) -> { model.antiplateletProperty().set(n.intValue()); model.calc(); });
 
-        ChangeListener<Object> recalcListener = (obs, oldVal, newVal) -> model.calc();
-
-        txtAge.textProperty().addListener(recalcListener);
-        chkPeripheral.selectedProperty().addListener(recalcListener);
-        chkHF.selectedProperty().addListener(recalcListener);
-        chkDiabetes.selectedProperty().addListener(recalcListener);
-        chkCholesterol.selectedProperty().addListener(recalcListener);
-        chkHypertension.selectedProperty().addListener(recalcListener);
-        chkOAC.selectedProperty().addListener(recalcListener);
+        txtAge.textProperty().addListener((obs, o, n) -> model.calc());
+        chkPeripheral.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkHF.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkDiabetes.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkCholesterol.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkHypertension.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkOAC.selectedProperty().addListener((obs, o, n) -> model.calc());
 
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    @Override
+    public void close() {
+        // если понадобится — можно разлинковать
     }
 }

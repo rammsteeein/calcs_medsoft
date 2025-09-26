@@ -1,8 +1,10 @@
 package com.example.demo1.controls.NoSAS;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -15,6 +17,7 @@ public class NoSASControl extends StackPane {
     private CheckBox chkSnoring;
     private TextField txtAge;
     private ComboBox<Gender> cmbGender;
+    private Button btnCalc;
     private TextArea txtResult;
 
     public NoSASControl(NoSASModel model) {
@@ -34,37 +37,51 @@ public class NoSASControl extends StackPane {
         cmbGender.setPromptText("Пол");
         cmbGender.setValue(model.getGender());
 
+        btnCalc = new Button("Рассчитать");
+        btnCalc.setOnAction(e -> model.calc());
+
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10,
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Шкала NoSAS"),
-                txtNeck, txtBmi, chkSnoring, txtAge, cmbGender, txtResult));
+                txtNeck, txtBmi, chkSnoring, txtAge, cmbGender, btnCalc, txtResult
+        );
+
+        HBox container = new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала NoSAS используется для оценки риска обструктивного апноэ сна.\n\n" +
+                                "Критерии:\n" +
+                                "- Окружность шеи ≥ 40 см: 4 балла\n" +
+                                "- ИМТ ≥ 30: 5 баллов, 25–29.9: 3 балла\n" +
+                                "- Наличие храпа: 2 балла\n" +
+                                "- Возраст > 55 лет: 4 балла\n" +
+                                "- Мужской пол: 2 балла\n\n" +
+                                "Интерпретация:\n" +
+                                "- ≥8 баллов: высокий риск\n" +
+                                "- <8 баллов: низкий риск"
+                )
+        );
+
+        getChildren().add(container);
     }
 
     private void bind() {
+        txtNeck.textProperty().addListener((obs, oldVal, newVal) -> {
+            try { model.setNeckCircumference(Double.parseDouble(newVal)); } catch (Exception ignored) {}
+        });
+        txtBmi.textProperty().addListener((obs, oldVal, newVal) -> {
+            try { model.setBmi(Double.parseDouble(newVal)); } catch (Exception ignored) {}
+        });
+        txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
+            try { model.setAge(Integer.parseInt(newVal)); } catch (Exception ignored) {}
+        });
         chkSnoring.selectedProperty().bindBidirectional(model.hasSnoringProperty());
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
 
-        txtNeck.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setNeckCircumference(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        txtBmi.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setBmi(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setAge(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        chkSnoring.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> model.calc());
-
+        // Результат обновляется автоматически при пересчете
         txtResult.textProperty().bind(model.resultProperty());
     }
 }

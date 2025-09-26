@@ -1,15 +1,14 @@
 package com.example.demo1.controls.CDS;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class CDSControl extends StackPane implements AutoCloseable {
-    private CDSModel model = CDSModel.builder().build();
+    private final CDSModel model;
 
     private ComboBox<String> cmbAppearance;
     private ComboBox<String> cmbEyes;
@@ -62,12 +61,29 @@ public class CDSControl extends StackPane implements AutoCloseable {
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
-        txtResult.setPromptText("Результат расчёта");
+        txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10.0, new Node[]{
-                CalculatorHeader.createHeader("Шкала CDS"),
-                cmbAppearance, cmbEyes, cmbMucous, cmbTears, btnCalc, txtResult
-        }));
+        VBox leftBox = new VBox(10,
+                CalculatorHeader.createHeader("Шкала CDS (оценка дегидратации)"),
+                cmbAppearance, cmbEyes, cmbMucous, cmbTears,
+                btnCalc, txtResult
+        );
+
+        this.getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала Clinical Dehydration Scale (CDS) используется для оценки степени обезвоживания.\n\n" +
+                                "Параметры:\n" +
+                                "1. Внешний вид (норма, раздражительность, вялость)\n" +
+                                "2. Глазные яблоки (норма, слегка запавшие, запавшие)\n" +
+                                "3. Слизистые оболочки (влажные, липкие, сухие)\n" +
+                                "4. Слезы (норма, снижены, отсутствуют)\n\n" +
+                                "Интерпретация:\n" +
+                                "- 0 баллов — дегидратация отсутствует\n" +
+                                "- 1–4 балла — лёгкая дегидратация\n" +
+                                "- 5–8 баллов — средняя или тяжёлая дегидратация"
+                )
+        ));
     }
 
     private void bind() {
@@ -87,11 +103,7 @@ public class CDSControl extends StackPane implements AutoCloseable {
     }
 
     private void calculateResult() {
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка: " + ex.getMessage());
-        }
+        model.calc();
     }
 
     @Override

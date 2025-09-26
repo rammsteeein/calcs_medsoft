@@ -8,61 +8,27 @@ public class LDLModel {
     private final StringProperty tg = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    private LDLModel(Builder builder) {
-        this.nonHDL.set(builder.nonHDL);
-        this.tg.set(builder.tg);
-        this.result.set(builder.result);
-    }
+    public String getNonHDL() { return nonHDL.get(); }
+    public void setNonHDL(String value) { nonHDL.set(value); }
+    public StringProperty nonHDLProperty() { return nonHDL; }
 
-    public StringProperty nonHDLProperty() {
-        return nonHDL;
-    }
+    public String getTG() { return tg.get(); }
+    public void setTG(String value) { tg.set(value); }
+    public StringProperty tgProperty() { return tg; }
 
-    public StringProperty tgProperty() {
-        return tg;
-    }
-
-    public StringProperty resultProperty() {
-        return result;
-    }
+    public String getResult() { return result.get(); }
+    public void setResult(String value) { result.set(value); }
+    public StringProperty resultProperty() { return result; }
 
     public void calc() {
         try {
-            double nonHDLValue = Double.parseDouble(nonHDL.get());
-            double tgValue = Double.parseDouble(tg.get());
+            double nonHDLValue = Double.parseDouble(getNonHDL());
+            double tgValue = Double.parseDouble(getTG());
+
             LDLResult calcResult = LDLCalculator.calc(nonHDLValue, tgValue);
-            result.set(calcResult.toString());
+            setResult(calcResult.toString());
         } catch (Exception e) {
-            result.set("Ошибка: " + e.getMessage());
-        }
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private String nonHDL = "";
-        private String tg = "";
-        private String result = "";
-
-        public Builder withNonHDL(String nonHDL) {
-            this.nonHDL = nonHDL;
-            return this;
-        }
-
-        public Builder withTG(String tg) {
-            this.tg = tg;
-            return this;
-        }
-
-        public Builder withResult(String result) {
-            this.result = result;
-            return this;
-        }
-
-        public LDLModel build() {
-            return new LDLModel(this);
+            setResult("Ошибка: " + e.getMessage());
         }
     }
 }

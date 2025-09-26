@@ -1,7 +1,7 @@
 package com.example.demo1.controls.PERC;
 
-import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.CalculatorDescription;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -10,17 +10,10 @@ public class PERCControl extends BorderPane {
 
     private final PERCModel model;
 
-    private TextField txtAge;
-    private TextField txtHeartRate;
-    private TextField txtOxygen;
-    private CheckBox chkUnilateralLegEdema;
-    private CheckBox chkHemoptysis;
-    private CheckBox chkRecentSurgeryOrTrauma;
-    private CheckBox chkSurgeryWithin4Weeks;
-    private CheckBox chkPrevPEorDVT;
-    private CheckBox chkHormoneUse;
+    private TextField txtAge, txtHeartRate, txtOxygen;
+    private CheckBox chkUnilateralLegEdema, chkHemoptysis,
+            chkRecentSurgeryOrTrauma, chkSurgeryWithin4Weeks, chkPrevPEorDVT, chkHormoneUse;
     private TextArea txtResult;
-    private Label lblDescription;
 
     public PERCControl(PERCModel model) {
         this.model = model;
@@ -29,7 +22,6 @@ public class PERCControl extends BorderPane {
     }
 
     private void initialize() {
-        // Левая часть (калькулятор)
         txtAge = new TextField(); txtAge.setPromptText("Возраст (годы)");
         txtHeartRate = new TextField(); txtHeartRate.setPromptText("ЧСС (уд/мин)");
         txtOxygen = new TextField(); txtOxygen.setPromptText("O₂ (%)");
@@ -37,7 +29,7 @@ public class PERCControl extends BorderPane {
         chkUnilateralLegEdema = new CheckBox("Односторонний отек ног");
         chkHemoptysis = new CheckBox("Кровохарканье");
         chkRecentSurgeryOrTrauma = new CheckBox("Недавняя операция или травма");
-        chkSurgeryWithin4Weeks = new CheckBox("Операция или травма ≤4 недель назад");
+        chkSurgeryWithin4Weeks = new CheckBox("Операция/травма ≤4 недель");
         chkPrevPEorDVT = new CheckBox("Предшествующая ТЭЛА или ТГВ");
         chkHormoneUse = new CheckBox("Использование гормонов / ОК / заместительная терапия");
 
@@ -47,30 +39,28 @@ public class PERCControl extends BorderPane {
         txtResult.setPrefHeight(100);
 
         VBox leftBox = new VBox(10,
-                CalculatorHeader.createHeader("Шкала PERC"),
+                CalculatorHeader.createHeader("PERC"),
                 txtAge, txtHeartRate, txtOxygen,
                 chkUnilateralLegEdema, chkHemoptysis,
                 chkRecentSurgeryOrTrauma, chkSurgeryWithin4Weeks,
                 chkPrevPEorDVT, chkHormoneUse, txtResult
         );
-        leftBox.setPrefSize(400, 600); // делаем шире и выше
+        leftBox.setPrefSize(400, 600);
 
         Label lblDescription = CalculatorDescription.createDescription(
-                "Описание шкалы PERC:\n\n" +
+                "Шкала PERC:\n\n" +
                         "Используется для исключения риска ТЭЛА у пациентов с низкой вероятностью.\n" +
-                        "Если все критерии отрицательные (0 баллов), можно отказаться от дополнительных тестов.\n" +
-                        "Если ≥1 балла — требуется дальнейшее обследование."
+                        "0 баллов — крайне низкий риск, дополнительные тесты не нужны.\n" +
+                        "≥1 балла — требуется дальнейшее обследование (D-димер, КТ-ангиография)."
         );
 
-// Раскладываем
         this.setLeft(leftBox);
         this.setCenter(lblDescription);
-
         this.setPrefSize(700, 600);
     }
 
     private void bind() {
-        ChangeListener<Object> recalcListener = (obs, oldVal, newVal) -> model.calc();
+        ChangeListener<Object> listener = (obs, oldVal, newVal) -> model.calc();
 
         chkUnilateralLegEdema.selectedProperty().bindBidirectional(model.unilateralLegEdemaProperty());
         chkHemoptysis.selectedProperty().bindBidirectional(model.hemoptysisProperty());
@@ -79,30 +69,26 @@ public class PERCControl extends BorderPane {
         chkPrevPEorDVT.selectedProperty().bindBidirectional(model.prevPEorDVTProperty());
         chkHormoneUse.selectedProperty().bindBidirectional(model.hormoneUseProperty());
 
-        chkUnilateralLegEdema.selectedProperty().addListener(recalcListener);
-        chkHemoptysis.selectedProperty().addListener(recalcListener);
-        chkRecentSurgeryOrTrauma.selectedProperty().addListener(recalcListener);
-        chkSurgeryWithin4Weeks.selectedProperty().addListener(recalcListener);
-        chkPrevPEorDVT.selectedProperty().addListener(recalcListener);
-        chkHormoneUse.selectedProperty().addListener(recalcListener);
+        chkUnilateralLegEdema.selectedProperty().addListener(listener);
+        chkHemoptysis.selectedProperty().addListener(listener);
+        chkRecentSurgeryOrTrauma.selectedProperty().addListener(listener);
+        chkSurgeryWithin4Weeks.selectedProperty().addListener(listener);
+        chkPrevPEorDVT.selectedProperty().addListener(listener);
+        chkHormoneUse.selectedProperty().addListener(listener);
 
         txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setAge(Integer.parseInt(newVal)); } catch (Exception ignored) {}
+            try { model.ageProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
             model.calc();
         });
         txtHeartRate.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setHeartRate(Integer.parseInt(newVal)); } catch (Exception ignored) {}
+            try { model.heartRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
             model.calc();
         });
         txtOxygen.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setOxygen(Double.parseDouble(newVal)); } catch (Exception ignored) {}
+            try { model.oxygenProperty().set(Double.parseDouble(newVal)); } catch (Exception ignored) {}
             model.calc();
         });
 
         txtResult.textProperty().bind(model.resultProperty());
-    }
-
-    public void setDescription(String text) {
-        lblDescription.setText(text);
     }
 }

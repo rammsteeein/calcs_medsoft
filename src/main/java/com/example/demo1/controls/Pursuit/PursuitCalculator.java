@@ -28,6 +28,7 @@ public class PursuitCalculator {
      * - Баллы суммируются по всем критериям, итоговое значение определяет категорию риска.
      */
 
+
     public static PursuitResult calc(int age, Gender gender, boolean hasAngina, boolean hasHeartFailure) {
         int score = 0;
 
@@ -41,11 +42,19 @@ public class PursuitCalculator {
         if (hasHeartFailure) score += 2;
 
         String riskCategory;
-        if (score <= 12) riskCategory = "Низкий риск (<10%)";
-        else if (score <= 14) riskCategory = "Средний риск (10–19%)";
-        else riskCategory = "Высокий риск (>19%)";
+        double mortality;
 
-        String result = String.format("Сумма баллов: %d, Категория: %s", score, riskCategory);
-        return new PursuitResult(result);
+        if (score <= 12) {
+            riskCategory = "Низкий риск";
+            mortality = 9.9;
+        } else if (score <= 14) {
+            riskCategory = "Средний риск";
+            mortality = 15.0;
+        } else {
+            riskCategory = "Высокий риск";
+            mortality = 20.0;
+        }
+
+        return new PursuitResult(score, riskCategory, mortality);
     }
 }

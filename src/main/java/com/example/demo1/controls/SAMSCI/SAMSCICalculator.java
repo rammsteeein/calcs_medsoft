@@ -46,13 +46,16 @@ public class SAMSCICalculator {
     ) {
         int score = muscleLocation + symptomTiming + statinDiscontinuation + statinRechallenge;
 
-        String likelihood = "";
-        if (score >= 9 && score <= 11) likelihood = "Достоверный";
-        else if (score >= 7 && score <= 8) likelihood = "Возможен";
-        else if (score < 7) likelihood = "Маловероятный";
+        String likelihood;
+        if (score >= 9 && score <= 11) {
+            likelihood = "Достоверная статин-индуцированная миалгия";
+        } else if (score >= 7 && score <= 8) {
+            likelihood = "Возможная статин-индуцированная миалгия";
+        } else {
+            likelihood = "Маловероятная связь с приёмом статинов";
+        }
 
-        String resultStr = String.format("Сумма баллов: %d\nКлинический индекс: %s", score, likelihood);
-
+        String resultStr = String.format("Сумма баллов: %d\nЗаключение: %s", score, likelihood);
         return new SAMSCIResult(resultStr);
     }
 }

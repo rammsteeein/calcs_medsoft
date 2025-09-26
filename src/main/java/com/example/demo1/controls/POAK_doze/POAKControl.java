@@ -1,9 +1,11 @@
 package com.example.demo1.controls.POAK_doze;
 
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.CalculatorDescription;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -25,19 +27,37 @@ public class POAKControl extends StackPane implements Closeable {
 
     private void initialize() {
         nmrKreatinin = new TextField();
-        nmrKreatinin.setPromptText("Клиренс креатинина");
+        nmrKreatinin.setPromptText("Клиренс креатинина (мл/мин)");
 
-        btnCalc = new Button();
-        btnCalc.setText(BUTTON_TEXT);
+        btnCalc = new Button(BUTTON_TEXT);
         btnCalc.setOnAction(e -> calculateResult());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10,
-                CalculatorHeader.createHeader("Выбор дозы ПОАК в зависимости от клиренса креатинина"),
-                nmrKreatinin, btnCalc, txtResult));
+        getChildren().add(
+                new HBox(
+                        20,
+                        new VBox(
+                                10,
+                                CalculatorHeader.createHeader("Выбор дозы ПОАК"),
+                                nmrKreatinin,
+                                btnCalc,
+                                txtResult
+                        ),
+                        CalculatorDescription.createDescription(
+                                "Формула позволяет определить периодичность наблюдения за пациентами,\n" +
+                                        "получающими ПОАК, в зависимости от клиренса креатинина.\n\n" +
+                                        "Формула:\n" +
+                                        "N = клиренс креатинина / 10\n\n" +
+                                        "Условие применения:\n" +
+                                        "- Только если клиренс креатинина < 60 мл/мин\n\n" +
+                                        "Результат:\n" +
+                                        "- N — количество месяцев между наблюдениями"
+                        )
+                )
+        );
     }
 
     private void bind() {

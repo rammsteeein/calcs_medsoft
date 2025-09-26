@@ -1,8 +1,10 @@
 package com.example.demo1.controls.inbar;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -43,9 +45,23 @@ public class INBARControl extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10,
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Расчет максимальной ЧСС по формуле Inbar"),
-                nmrAge, nmrWeight, cmbGender, btnCalc, txtResult));
+                nmrAge, nmrWeight, cmbGender, btnCalc, txtResult
+        );
+
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Формула Inbar используется для оценки максимальной частоты сердечных сокращений (ЧССmax).\n\n" +
+                                "Для мужчин: ЧССmax = 210 - возраст - (0,11 × вес) + 4\n" +
+                                "Для женщин: ЧССmax = 210 - возраст - (0,11 × вес)\n\n" +
+                                "Простая альтернатива: ЧССmax = 220 - возраст\n\n" +
+                                "Применение:\n" +
+                                "- Подбор тренировочных зон\n" +
+                                "- Оценка кардиореспираторной выносливости"
+                )
+        ));
     }
 
     private void bind() {
@@ -63,11 +79,7 @@ public class INBARControl extends StackPane implements Closeable {
     }
 
     private void calculateResult() {
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка ввода: " + ex.getMessage());
-        }
+        model.calc();
     }
 
     @Override

@@ -38,36 +38,32 @@ public class KhoranaCalculator {
         }
 
         int tumorScore = mapTumorLocation(tumorLocation);
-        int factorsScore = patientFactors.size(); // каждый выбранный фактор = 1 балл
-
+        int factorsScore = patientFactors.size();
         int totalScore = tumorScore + factorsScore;
 
         String riskGroup;
         String riskPercent;
-
         if (totalScore == 0) {
             riskGroup = "Низкий риск";
-            riskPercent = "0,3 – 0,8%";
-        } else if (totalScore == 2) {
+            riskPercent = "0.3–0.8%";
+        } else if (totalScore <= 2) {
             riskGroup = "Умеренный риск";
-            riskPercent = "1,8 – 2,0%";
-        } else if (totalScore >= 3) {
-            riskGroup = "Высокий риск";
-            riskPercent = "6,7 – 7,1%";
+            riskPercent = "1.8–2.0%";
         } else {
-            riskGroup = "Промежуточный риск";
-            riskPercent = "?";
+            riskGroup = "Высокий риск";
+            riskPercent = "6.7–7.1%";
         }
 
         StringBuilder details = new StringBuilder();
-        details.append("Локализация опухоли: ").append(tumorLocation).append(" (").append(tumorScore).append(" балла)\n");
+        details.append("Локализация опухоли: ").append(tumorLocation)
+                .append(" (").append(tumorScore).append(" балла)\n");
         details.append("Факторы пациента:\n");
         for (String f : patientFactors) {
             details.append(" - ").append(f).append(" (1 балл)\n");
         }
         details.append("Суммарный балл: ").append(totalScore).append("\n");
         details.append("Группа риска: ").append(riskGroup).append("\n");
-        details.append("Риск ВТЭО в течение 2,5 месяцев: ").append(riskPercent);
+        details.append("Риск ВТЭО в течение 2.5 мес: ").append(riskPercent);
 
         return new KhoranaResult(details.toString());
     }

@@ -46,7 +46,6 @@ public class rGENEVACalculator {
         int score = 0;
 
         if (prevPEorDVT) score += 3;
-
         if (heartRate >= 75 && heartRate <= 94) score += 3;
         else if (heartRate >= 95) score += 5;
 
@@ -58,17 +57,12 @@ public class rGENEVACalculator {
         if (age > 65) score += 1;
 
         String threeLevel;
-        if (score >= 0 && score <= 1) threeLevel = "низкая";
-        else if (score >= 2 && score <= 6) threeLevel = "средняя";
+        if (score <= 1) threeLevel = "низкая";
+        else if (score <= 6) threeLevel = "средняя";
         else threeLevel = "высокая";
 
-        String twoLevel;
-        if (score >= 0 && score <= 4) twoLevel = "ТЭЛА маловероятна";
-        else twoLevel = "ТЭЛА вероятна";
+        String twoLevel = score <= 4 ? "ТЭЛА маловероятна" : "ТЭЛА вероятна";
 
-        String resultStr = String.format("Сумма баллов: %d\nТрехуровневая шкала: %s\nДвухуровневая шкала: %s",
-                score, threeLevel, twoLevel);
-
-        return new rGENEVAResult(resultStr);
+        return new rGENEVAResult(score, threeLevel, twoLevel);
     }
 }

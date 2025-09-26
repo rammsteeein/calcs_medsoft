@@ -1,34 +1,35 @@
 package com.example.demo1.controls.POAK_doze;
 
-import com.example.demo1.controls.POAK_doze.POAKResult;
-
+/**
+ * Выбор дозы ПОАК в зависимости от клиренса креатинина.
+ *
+ * Формула:
+ * N = клиренс креатинина / 10
+ *
+ * Условия применения:
+ * - Используется только при клиренсе креатинина < 60 мл/мин
+ *
+ * Где:
+ * клиренс креатинина — скорость клубочковой фильтрации (мл/мин),
+ *                      рассчитанная по CKD-EPI или Cockcroft-Gault
+ * N                  — количество месяцев между наблюдениями
+ *
+ * Примечания:
+ * - Значение N округляется до ближайшего целого числа.
+ * - Формула нужна для планирования периодичности наблюдения
+ *   за пациентами с ХБП.
+ */
 public class POAKCalculator {
 
-    /**
-     * Выбор дозы ПОАК в зависимости от клиренса креатинина;
-     *
-     * Формула:
-     * N = клиренс креатинина / 10
-     *
-     * Условия применения:
-     * - Применимо только, если клиренс креатинина < 60 мл/мин
-     *
-     * Где:
-     * клиренс креатинина - скорость клубочковой фильтрации (мл/мин), рассчитанная по CKD-EPI или Cockcroft-Gault
-     * N                  - количество месяцев между наблюдениями
-     *
-     * Примечания:
-     * - Формула используется для планирования периодичности наблюдения за пациентами с хронической болезнью почек.
-     * - Значение N округляется до целого числа месяцев.
-     */
-
-    public static POAKResult calc(double kreatinin) {
-        if (kreatinin > 60) {
-            return new POAKResult("Некорректные входные данные");
+    public static POAKResult calc(double clearance) {
+        if (clearance > 60) {
+            return new POAKResult(Double.NaN, "Некорректные входные данные");
         }
-        double poak = kreatinin / 10;
-        int poakInt = (int) Math.round(poak);
-        String result = String.format("1 раз в %d месяца(ев)", poakInt);
-        return new POAKResult(result);
+
+        double raw = clearance / 10;
+        int rounded = (int) Math.round(raw);
+
+        String formatted = String.format("1 раз в %d месяца(ев)", rounded);
+        return new POAKResult(rounded, formatted);
     }
 }

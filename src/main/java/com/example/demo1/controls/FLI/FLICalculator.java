@@ -26,7 +26,7 @@ public class FLICalculator {
 
     public static FLIResult calc(double triglycerides, double bmi, double ggtp, double waist) {
         if (triglycerides <= 0 || ggtp <= 0 || bmi <= 0 || waist <= 0) {
-            return new FLIResult("Ошибка: все значения должны быть положительными");
+            return new FLIResult(-1, "Ошибка: все значения должны быть положительными");
         }
 
         double L = 0.953 * Math.log(triglycerides) +
@@ -40,13 +40,12 @@ public class FLICalculator {
         String interpretation;
         if (fli < 30) {
             interpretation = "Низкий риск стеатоза печени";
-        } else if (fli >= 30 && fli < 60) {
+        } else if (fli < 60) {
             interpretation = "Промежуточный риск стеатоза печени";
         } else {
             interpretation = "Высокий риск стеатоза печени";
         }
 
-        String result = String.format("FLI: %.2f\nИнтерпретация: %s", fli, interpretation);
-        return new FLIResult(result);
+        return new FLIResult(fli, interpretation);
     }
 }

@@ -1,7 +1,7 @@
 package com.example.demo1.controls.inbar;
 
 public class INBARResult {
-    private String result;
+    private final String result;
 
     public INBARResult(String result) {
         this.result = result;

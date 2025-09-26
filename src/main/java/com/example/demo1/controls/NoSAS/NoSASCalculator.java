@@ -48,6 +48,6 @@ public class NoSASCalculator {
 
         String risk = score >= 8 ? "Высокий риск нарушения дыхания во сне" : "Низкий риск";
 
-        return new NoSASResult(String.format("Сумма баллов: %d\n%s", score, risk));
+        return new NoSASResult(score, risk);
     }
 }

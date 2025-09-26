@@ -23,8 +23,8 @@ public class CockroftCalculator {
      * - Для точного расчета желательно использовать фактический вес пациента.
      */
 
-    public static double calc(Gender gender, double kreatinin, double weight, int age) {
-        double genderFactor = (gender == Gender.FEMALE) ? 0.85 : 1.0;
-        return ((140 - age) * weight * genderFactor) / (72 * kreatinin);
+        public static double calc(Gender gender, double kreatinin, double weight, int age) {
+            double genderFactor = (gender == Gender.FEMALE) ? 0.85 : 1.0;
+            return ((140 - age) * weight * genderFactor) / (72 * kreatinin);
+        }
     }
-}

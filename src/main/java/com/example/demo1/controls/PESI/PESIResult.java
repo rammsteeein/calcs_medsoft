@@ -1,10 +1,19 @@
 package com.example.demo1.controls.PESI;
 
 public class PESIResult {
-    private final String result;
+    private final int score;
+    private final String riskClass;
 
-    public PESIResult(String result) { this.result = result; }
+    public PESIResult(int score, String riskClass) {
+        this.score = score;
+        this.riskClass = riskClass;
+    }
+
+    public int getScore() { return score; }
+    public String getRiskClass() { return riskClass; }
 
     @Override
-    public String toString() { return result; }
+    public String toString() {
+        return String.format("Сумма баллов: %d\n%s", score, riskClass);
+    }
 }

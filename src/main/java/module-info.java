@@ -1,6 +1,7 @@
 module com.example.demo1 {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.graphics;
 
 
     opens com.example.demo1.controls.FLI to javafx.graphics;

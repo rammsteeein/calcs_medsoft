@@ -39,20 +39,19 @@ public class PERCCalculator {
     ) {
         int score = 0;
 
-        if (age >= 50) score += 1;
-        if (heartRate >= 100) score += 1;
-        if (oxygen < 95.0) score += 1;
-        if (unilateralLegEdema) score += 1;
-        if (hemoptysis) score += 1;
-        if (recentSurgeryOrTrauma) score += 1;
-        if (surgeryWithin4Weeks) score += 1;
-        if (prevPEorDVT) score += 1;
-        if (hormoneUse) score += 1;
+        if (age >= 50) score++;
+        if (heartRate >= 100) score++;
+        if (oxygen < 95.0) score++;
+        if (unilateralLegEdema) score++;
+        if (hemoptysis) score++;
+        if (recentSurgeryOrTrauma) score++;
+        if (surgeryWithin4Weeks) score++;
+        if (prevPEorDVT) score++;
+        if (hormoneUse) score++;
 
-        String riskStr = (score == 0) ? "Низкий риск ПЭ" : "Не исключен риск ПЭ";
+        String interpretation = (score == 0) ? "Низкий риск ПЭ — можно отказаться от дополнительных тестов"
+                : "Не исключён риск ПЭ — требуется дальнейшее обследование";
 
-        String resultStr = String.format("Сумма баллов: %d\n%s", score, riskStr);
-
-        return new PERCResult(resultStr);
+        return new PERCResult(score, interpretation);
     }
 }

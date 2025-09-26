@@ -9,46 +9,32 @@ public class INBARModel {
     private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>(Gender.MALE);
     private final StringProperty result = new SimpleStringProperty();
 
-    private INBARModel(Builder builder) {
-        this.age.set(builder.age);
-        this.weight.set(builder.weight);
-        this.result.set(builder.result);
-        this.gender.set(builder.gender);
-    }
-
-    public StringProperty resultProperty() { return result; }
+    public String getAge() { return age.get(); }
+    public void setAge(String value) { age.set(value); }
     public StringProperty ageProperty() { return age; }
+
+    public String getWeight() { return weight.get(); }
+    public void setWeight(String value) { weight.set(value); }
     public StringProperty weightProperty() { return weight; }
+
+    public Gender getGender() { return gender.get(); }
+    public void setGender(Gender value) { gender.set(value); }
     public ObjectProperty<Gender> genderProperty() { return gender; }
 
-    public void setResult(String result) { this.result.set(result); }
+    public String getResult() { return result.get(); }
+    public void setResult(String value) { result.set(value); }
+    public StringProperty resultProperty() { return result; }
 
     public void calc() {
         try {
-            double agrValue = Double.parseDouble(age.get());
-            double weightValue = Double.parseDouble(weight.get());
-            Gender g = gender.get();
+            double ageValue = Double.parseDouble(getAge());
+            double weightValue = Double.parseDouble(getWeight());
+            Gender g = getGender();
 
-            INBARResult calcResult = INBARCalculator.calc(agrValue, weightValue, g);
+            INBARResult calcResult = INBARCalculator.calc(ageValue, weightValue, g);
             setResult(calcResult.toString());
         } catch (Exception e) {
             setResult("Ошибка: " + e.getMessage());
         }
-    }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private String age = "";
-        private String weight = "";
-        private String result = "";
-        private Gender gender = Gender.MALE;
-
-        public Builder withAge(String age) { this.age = age; return this; }
-        public Builder withWeight(String weight) { this.weight = weight; return this; }
-        public Builder withResult(String result) { this.result = result; return this; }
-        public Builder withGender(Gender gender) { this.gender = gender; return this; }
-
-        public INBARModel build() { return new INBARModel(this); }
     }
 }

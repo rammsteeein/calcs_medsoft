@@ -1,11 +1,8 @@
 package com.example.demo1.controls.Cockroft;
 
-import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.example.demo1.common.enums.Unit;
+import javafx.beans.property.*;
 
 public class CockroftModel {
     private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>();
@@ -13,148 +10,32 @@ public class CockroftModel {
     private final ObjectProperty<Unit> creatininUnit = new SimpleObjectProperty<>();
     private final StringProperty age = new SimpleStringProperty();
     private final StringProperty weight = new SimpleStringProperty();
-    private final StringProperty result = new SimpleStringProperty();
+    private final ObjectProperty<CockroftResult> result = new SimpleObjectProperty<>();
 
-    private CockroftModel(Builder builder) {
-        this.gender.set(builder.gender);
-        this.kreatinin.set(builder.kreatinin);
-        this.creatininUnit.set(builder.unit);
-        this.age.set(builder.age);
-        this.weight.set(builder.weight);
-        this.result.set(builder.result);
-    }
-
-    public Gender getGender() {
-        return gender.get();
-    }
-
-    public void setGender(Gender gender) {
-        this.gender.set(gender);
-    }
-
-    public ObjectProperty<Gender> genderProperty() {
-        return gender;
-    }
-
-    public String getKreatinin() {
-        return kreatinin.get();
-    }
-
-    public void setKreatinin(String kreatinin) {
-        this.kreatinin.set(kreatinin);
-    }
-
-    public StringProperty kreatininProperty() {
-        return kreatinin;
-    }
-
-    public Unit getCreatininUnit() {
-        return creatininUnit.get();
-    }
-
-    public void setCreatininUnit(Unit unit) {
-        this.creatininUnit.set(unit);
-    }
-
-    public ObjectProperty<Unit> creatininUnitProperty() {
-        return creatininUnit;
-    }
-
-    public String getAge() {
-        return age.get();
-    }
-
-    public void setAge(String age) {
-        this.age.set(age);
-    }
-
-    public StringProperty ageProperty() {
-        return age;
-    }
-
-    public String getWeight() {
-        return weight.get();
-    }
-
-    public void setWeight(String weight) {
-        this.weight.set(weight);
-    }
-
-    public StringProperty weightProperty() {
-        return weight;
-    }
-
-    public String getResult() {
-        return result.get();
-    }
-
-    public void setResult(String result) {
-        this.result.set(result);
-    }
-
-    public StringProperty resultProperty() {
-        return result;
-    }
+    public ObjectProperty<Gender> genderProperty() { return gender; }
+    public StringProperty kreatininProperty() { return kreatinin; }
+    public ObjectProperty<Unit> creatininUnitProperty() { return creatininUnit; }
+    public StringProperty ageProperty() { return age; }
+    public StringProperty weightProperty() { return weight; }
+    public ObjectProperty<CockroftResult> resultProperty() { return result; }
 
     public void calc() {
         try {
-            Gender genderValue = getGender();
-            double kreatininValue = Double.parseDouble(getKreatinin());
-            Unit unitValue = getCreatininUnit();
-            int ageValue = Integer.parseInt(getAge());
-            double weightValue = Double.parseDouble(getWeight());
+            Gender genderValue = gender.get();
+            double kreatininValue = Double.parseDouble(kreatinin.get());
+            Unit unitValue = creatininUnit.get();
+            int ageValue = Integer.parseInt(age.get());
+            double weightValue = Double.parseDouble(weight.get());
 
-            double calcResult = CockroftCalculator.calc(genderValue, kreatininValue, weightValue, ageValue);
-            setResult(String.format("Клиренс креатинина: %.2f мл/мин", calcResult));
+            double calcValue = CockroftCalculator.calc(genderValue, kreatininValue, weightValue, ageValue);
+
+            result.set(new CockroftResult(
+                    calcValue,
+                    unitValue,
+                    String.format("Клиренс креатинина: %.2f мл/мин", calcValue)
+            ));
         } catch (Exception e) {
-            setResult("Ошибка: " + e.getMessage());
-        }
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private Gender gender;
-        private String kreatinin;
-        private Unit unit;
-        private String age;
-        private String weight;
-        private String result = "";
-
-        public Builder withGender(Gender gender) {
-            this.gender = gender;
-            return this;
-        }
-
-        public Builder withKreatinin(String kreatinin) {
-            this.kreatinin = kreatinin;
-            return this;
-        }
-
-        public Builder withCreatininUnit(Unit unit) {
-            this.unit = unit;
-            return this;
-        }
-
-        public Builder withAge(String age) {
-            this.age = age;
-            return this;
-        }
-
-        public Builder withWeight(String weight) {
-            this.weight = weight;
-            return this;
-        }
-
-        public Builder withResult(String result) {
-            this.result = result;
-            return this;
-        }
-
-        public CockroftModel build() {
-            return new CockroftModel(this);
+            result.set(new CockroftResult(Double.NaN, null, "Ошибка: " + e.getMessage()));
         }
     }
 }

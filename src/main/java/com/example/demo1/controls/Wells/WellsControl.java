@@ -1,8 +1,10 @@
 package com.example.demo1.controls.Wells;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -10,13 +12,8 @@ public class WellsControl extends StackPane {
 
     private final WellsModel model;
 
-    private CheckBox chkPrevPEorDVT;
-    private CheckBox chkTachycardia;
-    private CheckBox chkSurgeryOrImmobilization;
-    private CheckBox chkHemoptysis;
-    private CheckBox chkActiveCancer;
-    private CheckBox chkClinicalDVT;
-    private CheckBox chkAlternativeLessLikely;
+    private CheckBox chkPrevPEorDVT, chkTachycardia, chkSurgeryOrImmobilization;
+    private CheckBox chkHemoptysis, chkActiveCancer, chkClinicalDVT, chkAlternativeLessLikely;
     private TextArea txtResult;
 
     public WellsControl(WellsModel model) {
@@ -28,7 +25,7 @@ public class WellsControl extends StackPane {
     private void initialize() {
         chkPrevPEorDVT = new CheckBox("Предшествующие ТЭЛА или тромбозы глубоких вен");
         chkTachycardia = new CheckBox("ЧСС > 100 в минуту");
-        chkSurgeryOrImmobilization = new CheckBox("Хирургические операции или иммобилизация в последние 4 недели");
+        chkSurgeryOrImmobilization = new CheckBox("Хирургические операции или иммобилизация последние 4 недели");
         chkHemoptysis = new CheckBox("Кровохарканье");
         chkActiveCancer = new CheckBox("Активное злокачественное новообразование");
         chkClinicalDVT = new CheckBox("Клинические признаки тромбоза глубоких вен");
@@ -38,14 +35,33 @@ public class WellsControl extends StackPane {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10,
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Индекс Wells"),
                 chkPrevPEorDVT, chkTachycardia, chkSurgeryOrImmobilization,
-                chkHemoptysis, chkActiveCancer, chkClinicalDVT, chkAlternativeLessLikely, txtResult));
+                chkHemoptysis, chkActiveCancer, chkClinicalDVT, chkAlternativeLessLikely, txtResult
+        );
+
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала Wells используется для оценки вероятности тромбоэмболии лёгочной артерии (ТЭЛА).\n\n" +
+                                "Критерии начисления баллов:\n" +
+                                "- Предшествующие ТЭЛА или DVT: 1.5\n" +
+                                "- ЧСС > 100 уд/мин: 1.5\n" +
+                                "- Хирургия/иммобилизация: 1.5\n" +
+                                "- Кровохарканье: 1\n" +
+                                "- Активное злокачественное новообразование: 1\n" +
+                                "- Клинические признаки DVT: 3\n" +
+                                "- Альтернативный диагноз менее вероятен: 3\n\n" +
+                                "Интерпретация:\n" +
+                                "Трёхуровневая: низкая (0–1), средняя (2–6), высокая (>7)\n" +
+                                "Двухуровневая: ТЭЛА маловероятна (0–4), ТЭЛА вероятна (≥5)"
+                )
+        ));
     }
 
     private void bind() {
-        ChangeListener<Object> recalcListener = (obs, oldVal, newVal) -> model.calc();
+        ChangeListener<Object> listener = (obs, oldVal, newVal) -> model.calc();
 
         chkPrevPEorDVT.selectedProperty().bindBidirectional(model.prevPEorDVTProperty());
         chkTachycardia.selectedProperty().bindBidirectional(model.tachycardiaProperty());
@@ -55,13 +71,13 @@ public class WellsControl extends StackPane {
         chkClinicalDVT.selectedProperty().bindBidirectional(model.clinicalDVTProperty());
         chkAlternativeLessLikely.selectedProperty().bindBidirectional(model.alternativeLessLikelyProperty());
 
-        chkPrevPEorDVT.selectedProperty().addListener(recalcListener);
-        chkTachycardia.selectedProperty().addListener(recalcListener);
-        chkSurgeryOrImmobilization.selectedProperty().addListener(recalcListener);
-        chkHemoptysis.selectedProperty().addListener(recalcListener);
-        chkActiveCancer.selectedProperty().addListener(recalcListener);
-        chkClinicalDVT.selectedProperty().addListener(recalcListener);
-        chkAlternativeLessLikely.selectedProperty().addListener(recalcListener);
+        chkPrevPEorDVT.selectedProperty().addListener(listener);
+        chkTachycardia.selectedProperty().addListener(listener);
+        chkSurgeryOrImmobilization.selectedProperty().addListener(listener);
+        chkHemoptysis.selectedProperty().addListener(listener);
+        chkActiveCancer.selectedProperty().addListener(listener);
+        chkClinicalDVT.selectedProperty().addListener(listener);
+        chkAlternativeLessLikely.selectedProperty().addListener(listener);
 
         txtResult.textProperty().bind(model.resultProperty());
     }

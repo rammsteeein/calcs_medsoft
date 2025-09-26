@@ -1,9 +1,9 @@
 package com.example.demo1.controls.FLI;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -40,19 +40,37 @@ public class FLIControl extends StackPane implements Closeable {
         nmrWaistCircumference = new TextField();
         nmrWaistCircumference.setPromptText("Окружность талии (см)");
 
-        btnCalc = new Button();
-        btnCalc.setText(BUTTON_TEXT);
+        btnCalc = new Button(BUTTON_TEXT);
         btnCalc.setOnAction(e -> calculateResult());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10,
-                CalculatorHeader.createHeader("индекс стеатоза печени FLI"),
-                nmrTriglycerides, nmrBMI, nmrGGT, nmrWaistCircumference, btnCalc, txtResult));
-    }
+        VBox leftBox = new VBox(10,
+                CalculatorHeader.createHeader("Индекс стеатоза печени FLI"),
+                nmrTriglycerides, nmrBMI, nmrGGT, nmrWaistCircumference,
+                btnCalc, txtResult
+        );
 
+        getChildren().add(
+                new HBox(
+                        20,
+                        leftBox,
+                        CalculatorDescription.createDescription(
+                                "FLI (Fatty Liver Index) оценивает вероятность жировой болезни печени.\n\n" +
+                                        "Формула:\n" +
+                                        "FLI = [ e^(0.953 * ln(триглицериды) + 0.139 * ИМТ + 0.718 * ln(GGT) + 0.053 * окружность талии - 15.745) ] /\n" +
+                                        "[ 1 + e^(0.953 * ln(триглицериды) + 0.139 * ИМТ + 0.718 * ln(GGT) + 0.053 * окружность талии - 15.745) ] × 100\n\n" +
+                                        "Интерпретация:\n" +
+                                        "- FLI < 30: низкая вероятность стеатоза\n" +
+                                        "- 30 ≤ FLI ≤ 59: промежуточная вероятность\n" +
+                                        "- FLI ≥ 60: высокая вероятность\n\n" +
+                                        "Примечание: неинвазивный скрининг для выявления стеатоза печени."
+                        )
+                )
+        );
+    }
     private void bind() {
         nmrTriglycerides.textProperty().bindBidirectional(model.triglyceridesProperty());
         nmrBMI.textProperty().bindBidirectional(model.bmiProperty());

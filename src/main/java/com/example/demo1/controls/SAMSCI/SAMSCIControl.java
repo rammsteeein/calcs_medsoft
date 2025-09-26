@@ -1,7 +1,9 @@
 package com.example.demo1.controls.SAMSCI;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -26,28 +28,29 @@ public class SAMSCIControl extends StackPane {
         cmbMuscleLocation.getItems().addAll(
                 "Симметричная боль в мышцах бедер (3)",
                 "Симметричная боль в икроножных мышцах (2)",
-                "Симметричная боль в проксимальных мышцах верхних конечностей (2)",
+                "Симметричная боль в проксимальных мышцах рук (2)",
                 "Неспецифическая асимметричная боль (1)"
         );
         cmbMuscleLocation.setPromptText("Локализация и характер боли");
 
         cmbSymptomTiming = new ComboBox<>();
         cmbSymptomTiming.getItems().addAll(
-                "< 4 недели (3)", "4-12 недель (2)", "> 12 недель (1)"
+                "< 4 недель (3)", "4–12 недель (2)", "> 12 недель (1)"
         );
         cmbSymptomTiming.setPromptText("Время появления симптомов");
 
         cmbStatinDiscontinuation = new ComboBox<>();
         cmbStatinDiscontinuation.getItems().addAll(
-                "Уменьшение проявлений в течение 2 недель (2)",
-                "Уменьшение проявлений 2-4 недели (1)",
-                "Не уменьшается даже через 4 недели (0)"
+                "Уменьшение в течение 2 недель (2)",
+                "Уменьшение в течение 2–4 недель (1)",
+                "Нет улучшения > 4 недель (0)"
         );
         cmbStatinDiscontinuation.setPromptText("Ответ на отмену статинов");
 
         cmbStatinRechallenge = new ComboBox<>();
         cmbStatinRechallenge.getItems().addAll(
-                "Симптомы снова < 4 недель (3)", "Симптомы снова 4-12 недель (1)"
+                "Симптомы снова < 4 недель (3)",
+                "Симптомы снова 4–12 недель (1)"
         );
         cmbStatinRechallenge.setPromptText("Повторное назначение статинов");
 
@@ -55,9 +58,8 @@ public class SAMSCIControl extends StackPane {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        VBox root = new VBox(10);
-        root.getChildren().addAll(
-                CalculatorHeader.createHeader("SAMS-CI – Статин-индуцированная миалгия"),
+        VBox leftBox = new VBox(10,
+                CalculatorHeader.createHeader("SAMS-CI – шкала оценки вероятности статин-индуцированной миалгии"),
                 cmbMuscleLocation,
                 cmbSymptomTiming,
                 cmbStatinDiscontinuation,
@@ -65,7 +67,13 @@ public class SAMSCIControl extends StackPane {
                 txtResult
         );
 
-        this.getChildren().add(root);
+        this.getChildren().add(new HBox(
+                20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала SAMS-CI (Statin-Associated Muscle Symptoms – Clinical Index) позволяет оценить вероятность "
+                )
+        ));
     }
 
     private void bind() {

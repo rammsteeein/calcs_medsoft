@@ -1,9 +1,9 @@
 package com.example.demo1.controls.LDL;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -11,10 +11,13 @@ import java.io.Closeable;
 
 public class LDLControl extends StackPane implements Closeable {
     private final LDLModel model;
+
     private TextField nmrNonHDL;
     private TextField nmrTG;
     private Button btnCalc;
     private TextArea txtResult;
+
+    private static final String BUTTON_TEXT = "Рассчитать";
 
     public LDLControl(LDLModel model) {
         this.model = model;
@@ -29,16 +32,28 @@ public class LDLControl extends StackPane implements Closeable {
         nmrTG = new TextField();
         nmrTG.setPromptText("Триглицериды");
 
-        btnCalc = new Button("Рассчитать");
+        btnCalc = new Button(BUTTON_TEXT);
         btnCalc.setOnAction(e -> calculateResult());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10,
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("ХС-ЛНП на основании современной парадигмы метаболизма липидов"),
-                nmrNonHDL, nmrTG, btnCalc, txtResult));
+                nmrNonHDL, nmrTG, btnCalc, txtResult
+        );
+
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Формула Фридевальда рассчитывает уровень холестерина ЛПНП (LDL) как разницу " +
+                                "между общим холестерином, триглицеридами и HDL.\n\n" +
+                                "Применимость:\n" +
+                                "- Триглицериды < 4.5 ммоль/л\n" +
+                                "- При более высоких значениях результат может быть неточным"
+                )
+        ));
     }
 
     private void bind() {
@@ -54,11 +69,7 @@ public class LDLControl extends StackPane implements Closeable {
     }
 
     private void calculateResult() {
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка: " + ex.getMessage());
-        }
+        model.calc();
     }
 
     @Override

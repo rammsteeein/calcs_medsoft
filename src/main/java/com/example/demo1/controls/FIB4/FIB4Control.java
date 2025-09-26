@@ -1,14 +1,17 @@
 package com.example.demo1.controls.FIB4;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 
 public class FIB4Control extends StackPane implements Closeable {
+    private final FIB4Model model;
 
-    private FIB4Model model = FIB4Model.builder().build();
     private TextField txtAge, txtAst, txtAlt, txtPlatelets;
     private Button btnCalc;
     private TextArea txtResult;
@@ -20,9 +23,6 @@ public class FIB4Control extends StackPane implements Closeable {
     }
 
     private void initialize() {
-        VBox vbox = new VBox(10);
-        vbox.setStyle("-fx-padding: 15;");
-
         txtAge = new TextField();
         txtAge.setPromptText("Возраст (лет)");
 
@@ -42,10 +42,25 @@ public class FIB4Control extends StackPane implements Closeable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
 
-        vbox.getChildren().addAll(CalculatorHeader.createHeader("Индекс FIB-4"),
-                txtAge, txtAst, txtAlt, txtPlatelets, btnCalc, txtResult);
+        VBox leftBox = new VBox(10,
+                CalculatorHeader.createHeader("Индекс FIB-4"),
+                txtAge, txtAst, txtAlt, txtPlatelets, btnCalc, txtResult
+        );
 
-        getChildren().add(vbox);
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "FIB-4 используется для неинвазивной оценки фиброза печени.\n\n" +
+                                "Формула:\n" +
+                                "  FIB-4 = (Возраст × AST) / (Тромбоциты × √ALT)\n\n" +
+                                "Клиническое применение:\n" +
+                                "- Пациенты с хроническими гепатитами\n" +
+                                "- Неалкогольная жировая болезнь печени (НАЖБП)\n\n" +
+                                "Интерпретация:\n" +
+                                "- Низкие значения: низкий риск значимого фиброза\n" +
+                                "- Высокие значения: подозрение на выраженный фиброз"
+                )
+        ));
     }
 
     private void bind() {
@@ -65,11 +80,7 @@ public class FIB4Control extends StackPane implements Closeable {
     }
 
     private void calculate() {
-        try {
-            model.calc();
-        } catch (Exception e) {
-            txtResult.setText("Ошибка: " + e.getMessage());
-        }
+        model.calc();
     }
 
     @Override

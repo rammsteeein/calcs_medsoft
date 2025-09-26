@@ -2,15 +2,17 @@ package com.example.demo1.controls.CKDEPI;
 
 import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 
 public class CKDEPIControl extends StackPane implements Closeable {
-    CKDEPIModel model = CKDEPIModel.builder().build();
+    private final CKDEPIModel model;
 
     private ComboBox<Gender> cmbGender;
     private TextField nmrKreatinin;
@@ -28,7 +30,6 @@ public class CKDEPIControl extends StackPane implements Closeable {
         bind();
     }
 
-
     private void initialize() {
         cmbGender = new ComboBox<>();
         cmbGender.getItems().addAll(Gender.values());
@@ -44,34 +45,42 @@ public class CKDEPIControl extends StackPane implements Closeable {
         nmrAge = new TextField();
         nmrAge.setPromptText("Возраст");
 
-        btnCalc = new Button();
-        btnCalc.setText(BUTTON_TEXT);
+        btnCalc = new Button(BUTTON_TEXT);
         btnCalc.setOnAction(e -> calculateResult());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(new VBox(10, CalculatorHeader.createHeader("CKФ по формуле CKD-EPI 2021"),
-                cmbGender, nmrKreatinin, cmbCreatininUnit, nmrAge, btnCalc, txtResult));
+        getChildren().add(
+                new HBox(20,
+                        new VBox(10,
+                CalculatorHeader.createHeader("CKФ по формуле CKD-EPI 2021"),
+                cmbGender,
+                nmrKreatinin,
+                cmbCreatininUnit,
+                nmrAge,
+                btnCalc,
+                txtResult),
+                        CalculatorDescription.createDescription(
+                                "Формула Кокрофта-Голта позволяет оценить клиренс креатинина — показатель фильтрационной функции почек.\n" +
+                                        "CrCl = ((140 - возраст) * вес) * (0.85 если женщина) / (72 * Scr)"
+                        )
+        ));
     }
 
     private void bind() {
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
-
         cmbCreatininUnit.valueProperty().bindBidirectional(model.creatininUnitProperty());
-
         nmrKreatinin.textProperty().bindBidirectional(model.kreatininProperty());
-
         nmrAge.textProperty().bindBidirectional(model.ageProperty());
-
         txtResult.textProperty().bindBidirectional(model.resultProperty());
     }
 
     private void unbind() {
         cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
-        nmrKreatinin.textProperty().unbindBidirectional(model.kreatininProperty());
         cmbCreatininUnit.valueProperty().unbindBidirectional(model.creatininUnitProperty());
+        nmrKreatinin.textProperty().unbindBidirectional(model.kreatininProperty());
         nmrAge.textProperty().unbindBidirectional(model.ageProperty());
         txtResult.textProperty().unbindBidirectional(model.resultProperty());
     }

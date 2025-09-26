@@ -10,14 +10,6 @@ public class SAMSCIModel {
     private final IntegerProperty statinRechallenge = new SimpleIntegerProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    private SAMSCIModel(Builder builder) {
-        this.muscleLocation.set(builder.muscleLocation);
-        this.symptomTiming.set(builder.symptomTiming);
-        this.statinDiscontinuation.set(builder.statinDiscontinuation);
-        this.statinRechallenge.set(builder.statinRechallenge);
-        this.result.set(builder.result);
-    }
-
     public int getMuscleLocation() { return muscleLocation.get(); }
     public void setMuscleLocation(int val) { muscleLocation.set(val); }
     public IntegerProperty muscleLocationProperty() { return muscleLocation; }
@@ -46,25 +38,5 @@ public class SAMSCIModel {
                 getStatinRechallenge()
         );
         setResult(res.toString());
-    }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private int muscleLocation = 0;
-        private int symptomTiming = 0;
-        private int statinDiscontinuation = 0;
-        private int statinRechallenge = 0;
-        private String result = "";
-
-        public Builder withMuscleLocation(int val) { this.muscleLocation = val; return this; }
-        public Builder withSymptomTiming(int val) { this.symptomTiming = val; return this; }
-        public Builder withStatinDiscontinuation(int val) { this.statinDiscontinuation = val; return this; }
-        public Builder withStatinRechallenge(int val) { this.statinRechallenge = val; return this; }
-        public Builder withResult(String val) { this.result = val; return this; }
-
-        public SAMSCIModel build() {
-            return new SAMSCIModel(this);
-        }
     }
 }

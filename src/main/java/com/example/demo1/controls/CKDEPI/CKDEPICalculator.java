@@ -30,7 +30,7 @@ public class CKDEPICalculator {
         if (unit == Unit.MKMOL) {
             kreatinin /= 88.4;
         } else if (unit != Unit.MGDL) {
-            return new CKDEPIResult("Некорректная единица измерения");
+            return new CKDEPIResult(Double.NaN, "Некорректная единица измерения");
         }
 
         double kappa = (gender == Gender.MALE) ? 0.9 : 0.7;
@@ -39,9 +39,14 @@ public class CKDEPICalculator {
 
         double minValue = Math.min(kreatinin / kappa, 1.0);
         double maxValue = Math.max(kreatinin / kappa, 1.0);
-        double eGFR = 142 * Math.pow(minValue, alpha) * Math.pow(maxValue, -1.2) * Math.pow(0.9938, age) * genderMultiplier;
 
-        String result = String.format("%.2f мл/мин", eGFR);
-        return new CKDEPIResult(result);
+        double eGFR = 142
+                * Math.pow(minValue, alpha)
+                * Math.pow(maxValue, -1.2)
+                * Math.pow(0.9938, age)
+                * genderMultiplier;
+
+        String formatted = String.format("%.2f мл/мин", eGFR);
+        return new CKDEPIResult(eGFR, formatted);
     }
 }

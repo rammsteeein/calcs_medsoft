@@ -48,18 +48,13 @@ public class WellsCalculator {
         if (clinicalDVT) score += 3;
         if (alternativeLessLikely) score += 3;
 
-        String threeLevel = "";
-        if (score >= 0 && score <= 1) threeLevel = "низкая";
-        else if (score >= 2 && score <= 6) threeLevel = "средняя";
-        else if (score > 7) threeLevel = "высокая";
+        String threeLevel;
+        if (score <= 1) threeLevel = "низкая";
+        else if (score <= 6) threeLevel = "средняя";
+        else threeLevel = "высокая";
 
-        String twoLevel = "";
-        if (score >= 0 && score <= 4) twoLevel = "ТЭЛА маловероятна";
-        else if (score > 5) twoLevel = "ТЭЛА вероятна";
+        String twoLevel = score <= 4 ? "ТЭЛА маловероятна" : "ТЭЛА вероятна";
 
-        String resultStr = String.format("Сумма баллов: %.1f\nТрехуровневая шкала: %s\nДвухуровневая шкала: %s",
-                score, threeLevel, twoLevel);
-
-        return new WellsResult(resultStr);
+        return new WellsResult(score, threeLevel, twoLevel);
     }
 }

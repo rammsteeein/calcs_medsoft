@@ -10,12 +10,13 @@ public class PursuitModel {
     private final BooleanProperty hasHeartFailure = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    private PursuitModel(Builder builder) {
-        this.age.set(builder.age);
-        this.gender.set(builder.gender);
-        this.result.set(builder.result);
+    public PursuitModel() {
+        this.age.set("");
+        this.gender.set(Gender.MALE);
+        this.result.set("");
     }
 
+    // --- Getters / Setters ---
     public String getAge() { return age.get(); }
     public void setAge(String age) { this.age.set(age); }
     public StringProperty ageProperty() { return age; }
@@ -36,6 +37,7 @@ public class PursuitModel {
     public void setResult(String result) { this.result.set(result); }
     public StringProperty resultProperty() { return result; }
 
+    // --- Calculation ---
     public void calc() {
         try {
             int ageValue = Integer.parseInt(getAge());
@@ -45,38 +47,9 @@ public class PursuitModel {
                     isHasAngina(),
                     isHasHeartFailure()
             );
-            setResult(calcResult.toString());
+            setResult(calcResult.getInterpretation());
         } catch (Exception e) {
             setResult("Ошибка: " + e.getMessage());
-        }
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private String age = "";
-        private Gender gender = Gender.MALE;
-        private String result = "";
-
-        public Builder withAge(String age) {
-            this.age = age;
-            return this;
-        }
-
-        public Builder withGender(Gender gender) {
-            this.gender = gender;
-            return this;
-        }
-
-        public Builder withResult(String result) {
-            this.result = result;
-            return this;
-        }
-
-        public PursuitModel build() {
-            return new PursuitModel(this);
         }
     }
 }
