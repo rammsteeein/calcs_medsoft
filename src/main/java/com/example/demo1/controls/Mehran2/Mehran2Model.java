@@ -14,19 +14,7 @@ public class Mehran2Model {
     private final DoubleProperty gfr = new SimpleDoubleProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    private Mehran2Model(Builder builder) {
-        this.hypotension.set(builder.hypotension);
-        this.balloonPump.set(builder.balloonPump);
-        this.heartFailure.set(builder.heartFailure);
-        this.age.set(builder.age);
-        this.anemia.set(builder.anemia);
-        this.diabetes.set(builder.diabetes);
-        this.contrastVolume.set(builder.contrastVolume);
-        this.gfr.set(builder.gfr);
-        this.result.set(builder.result);
-    }
 
-    // --- Геттеры и свойства ---
     public boolean isHypotension() { return hypotension.get(); }
     public void setHypotension(boolean val) { hypotension.set(val); }
     public BooleanProperty hypotensionProperty() { return hypotension; }
@@ -75,31 +63,5 @@ public class Mehran2Model {
                 getGfr()
         );
         setResult(res.toString());
-    }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private boolean hypotension;
-        private boolean balloonPump;
-        private boolean heartFailure;
-        private int age;
-        private boolean anemia;
-        private boolean diabetes;
-        private double contrastVolume;
-        private double gfr;
-        private String result = "";
-
-        public Builder withHypotension(boolean val) { this.hypotension = val; return this; }
-        public Builder withBalloonPump(boolean val) { this.balloonPump = val; return this; }
-        public Builder withHeartFailure(boolean val) { this.heartFailure = val; return this; }
-        public Builder withAge(int val) { this.age = val; return this; }
-        public Builder withAnemia(boolean val) { this.anemia = val; return this; }
-        public Builder withDiabetes(boolean val) { this.diabetes = val; return this; }
-        public Builder withContrastVolume(double val) { this.contrastVolume = val; return this; }
-        public Builder withGfr(double val) { this.gfr = val; return this; }
-        public Builder withResult(String val) { this.result = val; return this; }
-
-        public Mehran2Model build() { return new Mehran2Model(this); }
     }
 }

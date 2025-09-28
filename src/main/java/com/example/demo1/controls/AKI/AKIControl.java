@@ -1,11 +1,11 @@
 package com.example.demo1.controls.AKI;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
-public class AKIControl extends StackPane {
+public class AKIControl extends BorderPane {
 
     private final AKIModel model;
 
@@ -25,21 +25,31 @@ public class AKIControl extends StackPane {
     private void initialize() {
         txtBaselineCreatinine = new TextField(); txtBaselineCreatinine.setPromptText("Исходный креатинин (мг/дл)");
         txtCurrentCreatinine = new TextField(); txtCurrentCreatinine.setPromptText("Текущий креатинин (мг/дл)");
-        txtUrineOutput = new TextField(); txtUrineOutput.setPromptText("Диурез (мл/кг/ч)");
+        txtUrineOutput = new TextField(); txtUrineOutput.setPromptText("Объем мочи (мл)");
         txtWeight = new TextField(); txtWeight.setPromptText("Вес (кг)");
-        txtHours = new TextField(); txtHours.setPromptText("Часы наблюдения");
-        txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
+        txtHours = new TextField(); txtHours.setPromptText("Время наблюдения (ч)");
+        txtResult = new TextArea(); txtResult.setEditable(false);
 
-        this.getChildren().add(new VBox(10,
+        VBox form = new VBox(10,
                 CalculatorHeader.createHeader("Алгоритм оценки острого повреждения почек"),
                 txtBaselineCreatinine,
                 txtCurrentCreatinine,
                 txtUrineOutput,
                 txtWeight,
                 txtHours,
-                txtResult));
-    }
+                txtResult
+        );
 
+        ScrollPane scrollPane = new ScrollPane(form);
+        scrollPane.setFitToWidth(true);
+
+        setCenter(scrollPane);
+        setRight(CalculatorDescription.createDescription(
+                "Калькулятор для оценки степени острого повреждения почек (AKI).\n" +
+                        "Используется уровень креатинина и темп диуреза.\n" +
+                        "Помогает клиницисту классифицировать стадию AKI по критериям KDIGO."
+        ));
+    }
 
     private void bind() {
         txtBaselineCreatinine.textProperty().addListener((obs, oldVal, newVal) -> {

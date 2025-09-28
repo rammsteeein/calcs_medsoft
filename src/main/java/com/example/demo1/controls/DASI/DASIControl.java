@@ -1,7 +1,9 @@
 package com.example.demo1.controls.DASI;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -9,18 +11,9 @@ public class DASIControl extends StackPane {
 
     private final DASIModel model;
 
-    private CheckBox chkSelfCare;
-    private CheckBox chkWalkIndoors;
-    private CheckBox chkWalk1to2Blocks;
-    private CheckBox chkClimbStairsOrHill;
-    private CheckBox chkRunShortDistance;
-    private CheckBox chkLightHousework;
-    private CheckBox chkModerateHousework;
-    private CheckBox chkHeavyHousework;
-    private CheckBox chkYardWork;
-    private CheckBox chkSexualActivity;
-    private CheckBox chkModerateRecreation;
-    private CheckBox chkStrenuousSports;
+    private CheckBox chkSelfCare, chkWalkIndoors, chkWalk1to2Blocks, chkClimbStairsOrHill,
+            chkRunShortDistance, chkLightHousework, chkModerateHousework, chkHeavyHousework,
+            chkYardWork, chkSexualActivity, chkModerateRecreation, chkStrenuousSports;
 
     private TextArea txtResult;
 
@@ -44,15 +37,28 @@ public class DASIControl extends StackPane {
         chkModerateRecreation = new CheckBox("Умеренные развлечения");
         chkStrenuousSports = new CheckBox("Интенсивные виды спорта");
 
-        txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
+        txtResult = new TextArea();
+        txtResult.setEditable(false);
+        txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(5,
+        VBox leftBox = new VBox(5,
                 CalculatorHeader.createHeader("Индекс DASI"),
                 chkSelfCare, chkWalkIndoors, chkWalk1to2Blocks, chkClimbStairsOrHill,
                 chkRunShortDistance, chkLightHousework, chkModerateHousework, chkHeavyHousework,
                 chkYardWork, chkSexualActivity, chkModerateRecreation, chkStrenuousSports,
                 txtResult
-        ));
+        );
+
+        HBox root = new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Индекс DASI позволяет оценить физическую выносливость пациента.\n" +
+                                "VO2 max (мл/кг/мин) = 0,43 * DASI + 9,6\n" +
+                                "MET = VO2 max / 3,5"
+                )
+        );
+
+        getChildren().add(root);
     }
 
     private void bind() {
@@ -69,20 +75,21 @@ public class DASIControl extends StackPane {
         chkModerateRecreation.selectedProperty().bindBidirectional(model.moderateRecreationProperty());
         chkStrenuousSports.selectedProperty().bindBidirectional(model.strenuousSportsProperty());
 
-        txtResult.textProperty().bind(model.resultProperty());
+        model.resultProperty().addListener((obs, oldVal, newVal) -> {
+            txtResult.setText(newVal != null ? newVal.toString() : "");
+        });
 
-        // Пересчет при изменении галочек
-        chkSelfCare.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkWalkIndoors.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkWalk1to2Blocks.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkClimbStairsOrHill.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkRunShortDistance.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkLightHousework.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkModerateHousework.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkHeavyHousework.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkYardWork.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkSexualActivity.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkModerateRecreation.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkStrenuousSports.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
+        chkSelfCare.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkWalkIndoors.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkWalk1to2Blocks.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkClimbStairsOrHill.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkRunShortDistance.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkLightHousework.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkModerateHousework.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkHeavyHousework.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkYardWork.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkSexualActivity.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkModerateRecreation.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkStrenuousSports.selectedProperty().addListener((obs, o, n) -> model.calc());
     }
 }

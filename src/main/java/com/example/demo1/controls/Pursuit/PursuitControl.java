@@ -58,7 +58,7 @@ public class PursuitControl extends BorderPane {
         );
 
         HBox mainBox = new HBox(20, leftBox, rightBox);
-        this.setCenter(mainBox); // помещаем всё в центр BorderPane
+        this.setCenter(mainBox);
         this.setPrefSize(700, 600);
     }
 

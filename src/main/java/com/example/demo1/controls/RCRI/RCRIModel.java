@@ -12,16 +12,6 @@ public class RCRIModel {
     private final BooleanProperty highCreatinine = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    private RCRIModel(Builder builder) {
-        this.highRiskSurgery.set(builder.highRiskSurgery);
-        this.ischemicHeartDisease.set(builder.ischemicHeartDisease);
-        this.heartFailure.set(builder.heartFailure);
-        this.cerebrovascularDisease.set(builder.cerebrovascularDisease);
-        this.insulinTreatment.set(builder.insulinTreatment);
-        this.highCreatinine.set(builder.highCreatinine);
-        this.result.set(builder.result);
-    }
-
     public boolean isHighRiskSurgery() { return highRiskSurgery.get(); }
     public void setHighRiskSurgery(boolean val) { highRiskSurgery.set(val); }
     public BooleanProperty highRiskSurgeryProperty() { return highRiskSurgery; }
@@ -59,28 +49,6 @@ public class RCRIModel {
                 isInsulinTreatment(),
                 isHighCreatinine()
         );
-        setResult(res.toString());
-    }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private boolean highRiskSurgery;
-        private boolean ischemicHeartDisease;
-        private boolean heartFailure;
-        private boolean cerebrovascularDisease;
-        private boolean insulinTreatment;
-        private boolean highCreatinine;
-        private String result = "";
-
-        public Builder withHighRiskSurgery(boolean val) { this.highRiskSurgery = val; return this; }
-        public Builder withIschemicHeartDisease(boolean val) { this.ischemicHeartDisease = val; return this; }
-        public Builder withHeartFailure(boolean val) { this.heartFailure = val; return this; }
-        public Builder withCerebrovascularDisease(boolean val) { this.cerebrovascularDisease = val; return this; }
-        public Builder withInsulinTreatment(boolean val) { this.insulinTreatment = val; return this; }
-        public Builder withHighCreatinine(boolean val) { this.highCreatinine = val; return this; }
-        public Builder withResult(String val) { this.result = val; return this; }
-
-        public RCRIModel build() { return new RCRIModel(this); }
+        setResult(String.format("Баллы: %d\n%s", res.getScore(), res.getInterpretation()));
     }
 }

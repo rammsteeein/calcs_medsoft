@@ -1,7 +1,9 @@
 package com.example.demo1.controls.IDAChronicAnemia;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -23,7 +25,7 @@ public class IDAChronicAnemiaControl extends StackPane {
 
     private void initialize() {
         txtSerumIron = new TextField(); txtSerumIron.setPromptText("Сывороточное железо (мкмоль/л)");
-        txtTIBC = new TextField(); txtTIBC.setPromptText("ОЖСС (TIBC) мкмоль/л");
+        txtTIBC = new TextField(); txtTIBC.setPromptText("ОЖСС (мкмоль/л)");
         txtTransferrinSat = new TextField(); txtTransferrinSat.setPromptText("НТЖ (%)");
         txtFerritin = new TextField(); txtFerritin.setPromptText("Ферритин (нг/мл)");
         txtResult = new TextArea(); txtResult.setEditable(false);
@@ -31,9 +33,25 @@ public class IDAChronicAnemiaControl extends StackPane {
         Button btnCalc = new Button("Рассчитать");
         btnCalc.setOnAction(e -> model.calc());
 
-        this.getChildren().add(new VBox(5,
-                CalculatorHeader.createHeader("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний"),
-                txtSerumIron, txtTIBC, txtTransferrinSat, txtFerritin, btnCalc, txtResult));
+        getChildren().add(
+                new HBox(20,
+                        new VBox(10,
+                                CalculatorHeader.createHeader("Дифференциальная диагностика ЖДА и АХЗ"),
+                                txtSerumIron, txtTIBC, txtTransferrinSat, txtFerritin,
+                                btnCalc, txtResult
+                        ),
+                        CalculatorDescription.createDescription(
+                                "Калькулятор используется для различения железодефицитной анемии (ЖДА) " +
+                                        "и анемии хронических заболеваний (АХЗ) на основании лабораторных показателей:\n" +
+                                        "- Сывороточное железо\n" +
+                                        "- Общая железосвязывающая способность сыворотки (ОЖСС)\n" +
+                                        "- Насыщение трансферрина железом (НТЖ)\n" +
+                                        "- Ферритин\n\n" +
+                                        "ЖДА чаще сопровождается снижением железа, ферритина и НТЖ с повышением ОЖСС.\n" +
+                                        "АХЗ — нормальным/сниженным железом, нормальным/сниженным ОЖСС и нормальным/повышенным ферритином."
+                        )
+                )
+        );
     }
 
     private void bind() {

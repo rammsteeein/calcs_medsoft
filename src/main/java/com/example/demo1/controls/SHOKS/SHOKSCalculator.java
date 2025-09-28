@@ -65,16 +65,17 @@ public class SHOKSCalculator {
             int sheinyeVeny, int hripy, int galop, int pechen,
             int oteki, int SAD) {
 
-        int sum = odyshka + ves + pereboi + polozhenie + sheinyeVeny +
+        int score;
+
+        score = odyshka + ves + pereboi + polozhenie + sheinyeVeny +
                 hripy + galop + pechen + oteki + SAD;
 
-        String functionalClass;
-        if (sum <= 3) functionalClass = "I ФК";
-        else if (sum <= 6) functionalClass = "II ФК";
-        else if (sum <= 9) functionalClass = "III ФК";
-        else functionalClass = "IV ФК";
+        String interpretation;
+        if (score <= 3) interpretation = "I ФК";
+        else if (score <= 6) interpretation = "II ФК";
+        else if (score <= 9) interpretation = "III ФК";
+        else interpretation = "IV ФК";
 
-        String result = "Баллы: " + sum + ", ФК: " + functionalClass;
-        return new SHOKSResult(result);
+        return new SHOKSResult(interpretation, score);
     }
 }

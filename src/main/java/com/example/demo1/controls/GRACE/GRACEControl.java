@@ -1,18 +1,18 @@
 package com.example.demo1.controls.GRACE;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.io.Closeable;
+public class GRACEControl extends StackPane {
 
-public class GRACEControl extends StackPane implements Closeable {
-
-    private GRACEModel model;
+    private final GRACEModel model;
 
     private TextField txtAge, txtHR, txtSBP, txtCreatinine;
-    private ComboBox<String> cmbKillip, cmbOtherPoints;
+    private ComboBox<String> cmbKillip, cmbOther;
     private Button btnCalc;
     private TextArea txtResult;
 
@@ -30,63 +30,73 @@ public class GRACEControl extends StackPane implements Closeable {
         txtHR.setPromptText("ЧСС (уд/мин)");
 
         txtSBP = new TextField();
-        txtSBP.setPromptText("САД (мм рт. ст.)");
+        txtSBP.setPromptText("САД (мм рт.ст.)");
 
         txtCreatinine = new TextField();
         txtCreatinine.setPromptText("Креатинин (мг/дл)");
 
-        cmbOtherPoints = new ComboBox<>();
-        cmbOtherPoints.getItems().addAll("Нет", "Остановка сердца при поступлении",
-                "Смещения сегмента ST, инверсия зубца T",
-                "Повышенный уровень маркеров некроза миокарда");
-        cmbOtherPoints.setPromptText("Другие факторы");
-
         cmbKillip = new ComboBox<>();
-        cmbKillip.getItems().addAll("Нет признаков сердечной недостаточности. Пациент в относительно стабильном состоянии",
-                "Лёгкая сердечная недостаточность: хрипы в лёгких, небольшие застойные явления, лёгкие одышка или отёки",
-                "Выраженная сердечная недостаточность: крупные хрипы, отёки лёгких, острый лёгочный отёк, выраженная одышка",
-                "Кардиогенный шок: низкое АД, холодные конечности, тахикардия, олигурия, признаки гипоперфузии органов");
-        cmbKillip.setPromptText("Класс Killip");
+        cmbKillip.getItems().addAll("I","II","III","IV");
+        cmbKillip.setPromptText("Killip");
+
+        cmbOther = new ComboBox<>();
+        cmbOther.getItems().addAll(
+                "Нет",
+                "Остановка сердца при поступлении",
+                "Смещение ST / инверсия T",
+                "Повышенные маркеры некроза"
+        );
+        cmbOther.setPromptText("Другие факторы");
 
         btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> calculateResult());
+        btnCalc.setOnAction(e -> calculate());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
-        txtResult.setPromptText("Результат расчёта");
+        txtResult.setPromptText("Результат");
 
-        getChildren().add(new VBox(10,
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Шкала GRACE"),
-                txtAge, txtHR, txtSBP, cmbKillip,
-                txtCreatinine, cmbOtherPoints, btnCalc, txtResult));
+                txtAge, txtHR, txtSBP, txtCreatinine,
+                cmbKillip, cmbOther,
+                btnCalc,
+                txtResult
+        );
+
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала GRACE (Global Registry of Acute Coronary Events) – это инструмент оценки риска смерти" +
+                                " и инфаркта миокарда у пациентов с острым коронарным синдромом (ОКС)," +
+                                " позволяющий определить тяжесть состояния пациента и выбрать оптимальную стратегию лечения." +
+                                " Шкала основана на клинических параметрах, ЭКГ-изменениях и биохимических маркерах," +
+                                " и ее результаты помогают стратифицировать пациентов на группы низкого, среднего и" +
+                                " высокого риска для прогнозирования летального исхода на госпитальном этапе и в течение" +
+                                " 6 месяцев после выписки. " +
+                                "\n" +
+                                "\n" +
+                                "Факторы риска: Шкала учитывает такие факторы, как возраст, частота сердечных сокращений," +
+                                " систолическое артериальное давление, степень сердечной недостаточности (классификация Killip)," +
+                                " наличие остановки сердца, изменения на ЭКГ и уровень кардиоспецифических ферментов и креатинина.\n" +
+                                "Интерпретация результатов:\n" +
+                                "Низкий риск: Менее 1% смертности (менее 109 баллов).\n" +
+                                "Средний риск: От 1 до 3% смертности (109–140 баллов).\n" +
+                                "Высокий риск: Более 3% смертности (более 140 баллов)."
+                )
+        ));
     }
 
     private void bind() {
-        model.ageProperty().bindBidirectional(txtAge.textProperty());
-        model.hrProperty().bindBidirectional(txtHR.textProperty());
-        model.sbpProperty().bindBidirectional(txtSBP.textProperty());
-        model.killipClassProperty().bindBidirectional(cmbKillip.valueProperty());
-        model.creatinineProperty().bindBidirectional(txtCreatinine.textProperty());
-        model.otherPointsProperty().bindBidirectional(cmbOtherPoints.valueProperty());
-        model.resultProperty().bindBidirectional(txtResult.textProperty());
+        model.resultProperty().addListener((obs, oldV, newV) -> txtResult.setText(newV));
     }
 
-    private void unbind() {
-        model.ageProperty().unbindBidirectional(txtAge.textProperty());
-        model.hrProperty().unbindBidirectional(txtHR.textProperty());
-        model.sbpProperty().unbindBidirectional(txtSBP.textProperty());
-        model.killipClassProperty().unbindBidirectional(cmbKillip.valueProperty());
-        model.creatinineProperty().unbindBidirectional(txtCreatinine.textProperty());
-        model.otherPointsProperty().unbindBidirectional(cmbOtherPoints.valueProperty());
-        model.resultProperty().unbindBidirectional(txtResult.textProperty());
-    }
-
-    private void calculateResult() {
+    private void calculate() {
+        model.ageProperty().set(txtAge.getText());
+        model.hrProperty().set(txtHR.getText());
+        model.sbpProperty().set(txtSBP.getText());
+        model.creatinineProperty().set(txtCreatinine.getText());
+        model.killipProperty().set(cmbKillip.getValue());
+        model.otherProperty().set(cmbOther.getValue());
         model.calc();
-    }
-
-    @Override
-    public void close() {
-        unbind();
     }
 }

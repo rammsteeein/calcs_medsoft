@@ -12,16 +12,6 @@ public class DLCNModel {
     private final BooleanProperty cornealArcusUnder45 = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
 
-    private DLCNModel(Builder builder) {
-        this.familyEarlyASCVDorHighLDL.set(builder.familyEarlyASCVDorHighLDL);
-        this.familyTendonXanthomasOrChildHighLDL.set(builder.familyTendonXanthomasOrChildHighLDL);
-        this.personalEarlyCHD.set(builder.personalEarlyCHD);
-        this.personalEarlyCerebrovascularDisease.set(builder.personalEarlyCerebrovascularDisease);
-        this.tendonXanthomas.set(builder.tendonXanthomas);
-        this.cornealArcusUnder45.set(builder.cornealArcusUnder45);
-        this.result.set(builder.result);
-    }
-
     public boolean isFamilyEarlyASCVDorHighLDL() { return familyEarlyASCVDorHighLDL.get(); }
     public void setFamilyEarlyASCVDorHighLDL(boolean val) { familyEarlyASCVDorHighLDL.set(val); }
     public BooleanProperty familyEarlyASCVDorHighLDLProperty() { return familyEarlyASCVDorHighLDL; }
@@ -60,27 +50,5 @@ public class DLCNModel {
                 isCornealArcusUnder45()
         );
         setResult(res.toString());
-    }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private boolean familyEarlyASCVDorHighLDL = false;
-        private boolean familyTendonXanthomasOrChildHighLDL = false;
-        private boolean personalEarlyCHD = false;
-        private boolean personalEarlyCerebrovascularDisease = false;
-        private boolean tendonXanthomas = false;
-        private boolean cornealArcusUnder45 = false;
-        private String result = "";
-
-        public Builder withFamilyEarlyASCVDorHighLDL(boolean val) { this.familyEarlyASCVDorHighLDL = val; return this; }
-        public Builder withFamilyTendonXanthomasOrChildHighLDL(boolean val) { this.familyTendonXanthomasOrChildHighLDL = val; return this; }
-        public Builder withPersonalEarlyCHD(boolean val) { this.personalEarlyCHD = val; return this; }
-        public Builder withPersonalEarlyCerebrovascularDisease(boolean val) { this.personalEarlyCerebrovascularDisease = val; return this; }
-        public Builder withTendonXanthomas(boolean val) { this.tendonXanthomas = val; return this; }
-        public Builder withCornealArcusUnder45(boolean val) { this.cornealArcusUnder45 = val; return this; }
-        public Builder withResult(String val) { this.result = val; return this; }
-
-        public DLCNModel build() { return new DLCNModel(this); }
     }
 }

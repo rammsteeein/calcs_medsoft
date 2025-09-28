@@ -1,8 +1,9 @@
 package com.example.demo1.controls.Larsen;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -46,12 +47,29 @@ public class LarsenControl extends StackPane implements AutoCloseable {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
-        this.getChildren().add(new VBox(10.0, new Node[]{
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Оценка кардиотоксичности перед противоопухолевой терапией (по Larsen CM, 2017)"),
                 cmbDrug, cbCardiomegalia, cbIBS, cbAG, cbSD,
                 cbAnthraHistory, cbRadiation, cbAge, cbFemale,
                 btnCalc, txtResult
-        }));
+        );
+
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Методика Larsen CM (2017) применяется для оценки риска развития кардиотоксичности " +
+                                "у пациентов перед началом противоопухолевой терапии.\n\n" +
+                                "В расчет включаются:\n" +
+                                "- Вид применяемого препарата (антрациклины, таргетная терапия и др.)\n" +
+                                "- Наличие сердечно-сосудистых заболеваний (кардиомегалия/ХСН, ИБС, АГ, СД)\n" +
+                                "- История предыдущего лечения (антрациклины, лучевая терапия)\n" +
+                                "- Факторы риска (возраст <15 или >65 лет, женский пол)\n\n" +
+                                "Применение:\n" +
+                                "- Индивидуальная оценка риска осложнений перед выбором схемы лечения\n" +
+                                "- Определение необходимости кардиологического наблюдения\n" +
+                                "- Сравнение рисков при использовании различных противоопухолевых препаратов"
+                )
+        ));
     }
 
     private void bind() {

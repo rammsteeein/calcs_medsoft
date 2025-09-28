@@ -8,18 +8,9 @@ public class HSIModel {
     private final DoubleProperty alt = new SimpleDoubleProperty();
     private final DoubleProperty ast = new SimpleDoubleProperty();
     private final DoubleProperty bmi = new SimpleDoubleProperty();
-    private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>();
+    private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>(Gender.MALE);
     private final BooleanProperty hasDiabetes = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
-
-    private HSIModel(Builder builder) {
-        this.alt.set(builder.alt);
-        this.ast.set(builder.ast);
-        this.bmi.set(builder.bmi);
-        this.gender.set(builder.gender);
-        this.hasDiabetes.set(builder.hasDiabetes);
-        this.result.set(builder.result);
-    }
 
     public double getAlt() { return alt.get(); }
     public void setAlt(double val) { alt.set(val); }
@@ -48,25 +39,5 @@ public class HSIModel {
     public void calc() {
         HSIResult res = HSICalculator.calc(getAlt(), getAst(), getBmi(), getGender(), isHasDiabetes());
         setResult(res.toString());
-    }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private double alt;
-        private double ast;
-        private double bmi;
-        private Gender gender;
-        private boolean hasDiabetes;
-        private String result = "";
-
-        public Builder withAlt(double val) { this.alt = val; return this; }
-        public Builder withAst(double val) { this.ast = val; return this; }
-        public Builder withBmi(double val) { this.bmi = val; return this; }
-        public Builder withGender(Gender val) { this.gender = val; return this; }
-        public Builder withHasDiabetes(boolean val) { this.hasDiabetes = val; return this; }
-        public Builder withResult(String val) { this.result = val; return this; }
-
-        public HSIModel build() { return new HSIModel(this); }
     }
 }

@@ -81,7 +81,6 @@ public class NoSASControl extends StackPane {
         chkSnoring.selectedProperty().bindBidirectional(model.hasSnoringProperty());
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
 
-        // Результат обновляется автоматически при пересчете
         txtResult.textProperty().bind(model.resultProperty());
     }
 }

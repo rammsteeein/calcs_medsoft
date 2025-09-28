@@ -35,7 +35,7 @@ public class LarsenCalculator {
         }
 
         int drugScore = mapDrug(drug);
-        int patientScore = patientFactors.size(); // каждый фактор = 1 балл
+        int patientScore = patientFactors.size();
         int totalScore = drugScore + patientScore;
 
         String interpretation;

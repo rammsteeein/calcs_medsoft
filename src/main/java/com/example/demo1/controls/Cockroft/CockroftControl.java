@@ -70,7 +70,6 @@ public class CockroftControl extends StackPane implements Closeable {
         nmrAge.textProperty().bindBidirectional(model.ageProperty());
         nmrWeight.textProperty().bindBidirectional(model.weightProperty());
 
-        // биндим текстовое поле к строковому представлению результата
         model.resultProperty().addListener((obs, oldVal, newVal) -> {
             txtResult.setText(newVal != null ? newVal.toString() : "");
         });

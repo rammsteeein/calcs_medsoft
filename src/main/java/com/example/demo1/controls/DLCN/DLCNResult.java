@@ -1,10 +1,27 @@
 package com.example.demo1.controls.DLCN;
 
+/**
+ * Результат расчёта по шкале DLCN.
+ */
 public class DLCNResult {
-    private final String result;
+    private final int score;
+    private final String diagnosis;
 
-    public DLCNResult(String result) { this.result = result; }
+    public DLCNResult(int score, String diagnosis) {
+        this.score = score;
+        this.diagnosis = diagnosis;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
 
     @Override
-    public String toString() { return result; }
+    public String toString() {
+        return String.format("Сумма баллов: %d%n%s", score, diagnosis);
+    }
 }

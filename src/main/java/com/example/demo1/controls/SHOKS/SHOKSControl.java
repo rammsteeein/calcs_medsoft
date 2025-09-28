@@ -1,23 +1,14 @@
 package com.example.demo1.controls.SHOKS;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class SHOKSControl extends StackPane {
+public class SHOKSControl extends BorderPane {
 
     private final SHOKSModel model;
 
-    private TextField txtOdyshka;
-    private TextField txtVes;
-    private TextField txtPereboi;
-    private TextField txtPolozhenie;
-    private TextField txtSheinyeVeny;
-    private TextField txtHripy;
-    private TextField txtGalop;
-    private TextField txtPechen;
-    private TextField txtOteki;
-    private TextField txtSAD;
     private TextArea txtResult;
     private Button btnCalc;
 
@@ -28,72 +19,59 @@ public class SHOKSControl extends StackPane {
     }
 
     private void initialize() {
-        VBox vbox = new VBox(5);
-        vbox.setStyle("-fx-padding: 10;");
+        VBox fields = new VBox(10,
+                CalculatorHeader.createHeader("Шкала SHOKS"),
+                createLabeledCombo("Одышка (0–2)", 2, model::setOdyshka),
+                createLabeledCombo("Изменение веса (0–1)", 1, model::setVes),
+                createLabeledCombo("Перебои (0–1)", 1, model::setPereboi),
+                createLabeledCombo("Положение (0–3)", 3, model::setPolozhenie),
+                createLabeledCombo("Шейные вены (0–2)", 2, model::setSheinyeVeny),
+                createLabeledCombo("Хрипы (0–3)", 3, model::setHripy),
+                createLabeledCombo("Галоп (0–1)", 1, model::setGalop),
+                createLabeledCombo("Печень (0–2)", 2, model::setPechen),
+                createLabeledCombo("Отеки (0–3)", 3, model::setOteki),
+                createLabeledCombo("САД (0–2)", 2, model::setSAD)
+        );
 
-        txtOdyshka = new TextField(); txtOdyshka.setPromptText("Одышка (0-2)");
-        txtVes = new TextField(); txtVes.setPromptText("Изменение веса (0-1)");
-        txtPereboi = new TextField(); txtPereboi.setPromptText("Перебои (0-1)");
-        txtPolozhenie = new TextField(); txtPolozhenie.setPromptText("Положение (0-3)");
-        txtSheinyeVeny = new TextField(); txtSheinyeVeny.setPromptText("Шейные вены (0-2)");
-        txtHripy = new TextField(); txtHripy.setPromptText("Хрипы (0-3)");
-        txtGalop = new TextField(); txtGalop.setPromptText("Галоп (0-1)");
-        txtPechen = new TextField(); txtPechen.setPromptText("Печень (0-2)");
-        txtOteki = new TextField(); txtOteki.setPromptText("Отеки (0-3)");
-        txtSAD = new TextField(); txtSAD.setPromptText("САД (0-2)");
-
+        btnCalc = new Button("Рассчитать");
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPrefRowCount(3);
 
-        btnCalc = new Button("Рассчитать");
+        fields.getChildren().addAll(btnCalc, txtResult);
 
-        vbox.getChildren().addAll(
-                CalculatorHeader.createHeader("Шкала SHOKS"),
-                txtOdyshka, txtVes, txtPereboi, txtPolozhenie, txtSheinyeVeny,
-                txtHripy, txtGalop, txtPechen, txtOteki, txtSAD,
-                btnCalc, txtResult
-        );
-
-        ScrollPane scrollPane = new ScrollPane(vbox);
+        ScrollPane scrollPane = new ScrollPane(fields);
         scrollPane.setFitToWidth(true);
-        getChildren().add(scrollPane);
+
+        setCenter(scrollPane);
+        setRight(CalculatorDescription.createDescription(
+                "Шкала оценки клинического состояния предназначена для оценки тяжести клинических проявлений ХСН." +
+                        " В шкалу включены наиболее распространенные симптомы и признаки СН," +
+                        " выявляемые при расспросе и физикальном обследовании без применения инструментальных методов." +
+                        " Каждый из этих признаков имеет балльную оценку. Сумма баллов соответствует функциональному классу СН." +
+                        " Использование данной шкалы в динамике позволяет оценивать эффективность проводимого лечения."
+        ));
     }
 
     private void bind() {
-        txtOdyshka.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setOdyshka(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtVes.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setVes(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtPereboi.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setPereboi(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtPolozhenie.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setPolozhenie(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtSheinyeVeny.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setSheinyeVeny(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtHripy.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setHripy(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtGalop.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setGalop(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtPechen.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setPechen(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtOteki.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setOteki(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-        txtSAD.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setSAD(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-        });
-
         txtResult.textProperty().bind(model.resultProperty());
-
         btnCalc.setOnAction(e -> model.calc());
+    }
+
+
+    private HBox createLabeledCombo(String label, int maxValue, java.util.function.IntConsumer setter) {
+        Label lbl = new Label(label);
+        ComboBox<Integer> combo = new ComboBox<>();
+        for (int i = 0; i <= maxValue; i++) {
+            combo.getItems().add(i);
+        }
+        combo.valueProperty().addListener((obs, old, val) -> {
+            if (val != null) setter.accept(val);
+        });
+        combo.setPrefWidth(80);
+
+        HBox box = new HBox(10, lbl, combo);
+        box.setFillHeight(true);
+        return box;
     }
 }

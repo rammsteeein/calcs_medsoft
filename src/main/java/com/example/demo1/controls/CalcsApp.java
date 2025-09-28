@@ -53,14 +53,15 @@ import com.example.demo1.controls.inbar.*;
 import com.example.demo1.controls.rGENEVA.rGENEVAControl;
 import com.example.demo1.controls.rGENEVA.rGENEVAModel;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class CalcsApp extends Application {
@@ -78,8 +79,8 @@ public class CalcsApp extends Application {
         calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(new INBARModel()));
         calculatorMap.put("FIB-4", () -> new FIB4Control(new FIB4Model()));
         calculatorMap.put("CDS", () -> new CDSControl(new CDSModel()));
-        calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel())); //
-        calculatorMap.put("Khorana", () -> new KhoranaControl(new KhoranaModel()));
+        calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel()));
+        calculatorMap.put("Шкала Хорана", () -> new KhoranaControl(new KhoranaModel()));
         calculatorMap.put("REACH", () -> new REACHControl(new REACHModel()));
         calculatorMap.put("SAMSCI", () -> new SAMSCIControl(new SAMSCIModel()));
         calculatorMap.put("NoSAS", () -> new NoSASControl(new NoSASModel()));
@@ -88,22 +89,43 @@ public class CalcsApp extends Application {
         calculatorMap.put("PESI", () -> new PESIControl(new PESIModel()));
         calculatorMap.put("PERC", () -> new PERCControl(new PERCModel()));
         calculatorMap.put("IMPROVE VTE", () -> new IMPROVETVEControl(new IMPROVETVEModel()));
-        calculatorMap.put("DLCN", () -> new DLCNControl(DLCNModel.builder().build()));
+        calculatorMap.put("DLCN", () -> new DLCNControl(new DLCNModel()));
         calculatorMap.put("Mifflin-St Jeor", () -> new MifflinStJeorControl(new MifflinStJeorModel()));
-        calculatorMap.put("HSI", () -> new HSIControl(HSIModel.builder().build()));
-        calculatorMap.put("GRACE", () -> new GRACEControl(GRACEModel.builder().build()));
-        calculatorMap.put("Шкала ШОКС", () -> new SHOKSControl(SHOKSModel.builder().build()));
-        calculatorMap.put("Алгоритм оценки острого повреждения почек", () -> new AKIControl(AKIModel.builder().build()));
-        calculatorMap.put("Mehran-2", () -> new Mehran2Control(Mehran2Model.builder().build()));
-        calculatorMap.put("RCRI", () -> new RCRIControl(RCRIModel.builder().build()));
-        calculatorMap.put("GuptaMICA", () -> new GuptaMICAControl(GuptaMICAModel.builder().build()));
-        calculatorMap.put("DASI", () -> new DASIControl(DASIModel.builder().build()));
-        calculatorMap.put("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний", () -> new IDAChronicAnemiaControl(IDAChronicAnemiaModel.builder().build()));
+        calculatorMap.put("HSI", () -> new HSIControl(new HSIModel()));
+        calculatorMap.put("GRACE", () -> new GRACEControl(new GRACEModel()));
+        calculatorMap.put("Шкала ШОКС", () -> new SHOKSControl(new SHOKSModel()));
+        calculatorMap.put("Алгоритм оценки острого повреждения почек", () -> new AKIControl(new AKIModel()));
+        calculatorMap.put("Mehran-2", () -> new Mehran2Control(new Mehran2Model()));
+        calculatorMap.put("RCRI", () -> new RCRIControl(new RCRIModel()));
+        calculatorMap.put("GuptaMICA", () -> new GuptaMICAControl(new GuptaMICAModel()));
+        calculatorMap.put("DASI", () -> new DASIControl(new DASIModel()));
+        calculatorMap.put("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний",
+                () -> new IDAChronicAnemiaControl(new IDAChronicAnemiaModel()));
 
+        List<String> keys = new ArrayList<>(calculatorMap.keySet());
+        Collections.sort(keys);
 
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(calculatorMap.keySet());
+        ObservableList<String> items = FXCollections.observableArrayList(keys);
+
+        ComboBox<String> comboBox = new ComboBox<>(items);
+        comboBox.setEditable(true);
         comboBox.setPromptText("Выбрать калькулятор ССЗ");
+
+        comboBox.getEditor().textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) {
+                comboBox.setItems(items);
+                return;
+            }
+            String filter = newVal.toLowerCase();
+            List<String> filtered = new ArrayList<>();
+            for (String key : keys) {
+                if (key.toLowerCase().contains(filter)) {
+                    filtered.add(key);
+                }
+            }
+            comboBox.setItems(FXCollections.observableArrayList(filtered));
+            comboBox.show();
+        });
 
         Button openButton = new Button("Открыть");
         openButton.setOnAction(e -> {
@@ -116,7 +138,7 @@ public class CalcsApp extends Application {
         VBox root = new VBox(15, comboBox, openButton);
         root.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
-        Scene scene = new Scene(root, 300, 300);
+        Scene scene = new Scene(root, 350, 300);
         primaryStage.setTitle("Выбор калькулятора");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -126,18 +148,30 @@ public class CalcsApp extends Application {
         Stage stage = new Stage();
 
         Scene scene;
-        if ("PESI".equals(title)) {
-
-            scene = new Scene(control, 700, 500);
-        } else {
-
-            scene = new Scene(control, 550, 350);
+        switch (title) {
+            case "Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний":
+            case "GRACE":
+            case "REACH":
+            case "Larsen CM, 2017":
+                scene = new Scene(control, 800, 500);
+                break;
+            case "FLI":
+                scene = new Scene(control, 550, 500);
+                break;
+            case "PESI":
+            case "Wells":
+                scene = new Scene(control, 700, 430);
+                break;
+            default:
+                scene = new Scene(control, 550, 350);
+                break;
         }
 
         stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
     }
+
     public static void main(String[] args) {
         launch(args);
     }

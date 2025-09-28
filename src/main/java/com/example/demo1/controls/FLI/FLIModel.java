@@ -11,10 +11,8 @@ public class FLIModel {
     private final StringProperty result = new SimpleStringProperty("");
 
     public FLIModel() {
-        // пустой конструктор по умолчанию
     }
 
-    // --- Properties ---
     public StringProperty triglyceridesProperty() { return triglycerides; }
     public StringProperty bmiProperty() { return bmi; }
     public StringProperty ggtProperty() { return ggt; }
@@ -23,7 +21,6 @@ public class FLIModel {
 
     public void setResult(String result) { this.result.set(result); }
 
-    // --- Calculation ---
     public void calc() {
         try {
             double triglyceridesValue = Double.parseDouble(triglycerides.get());

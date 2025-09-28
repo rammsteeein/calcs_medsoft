@@ -1,11 +1,12 @@
 package com.example.demo1.controls.RCRI;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class RCRIControl extends StackPane {
+public class RCRIControl extends BorderPane {
 
     private final RCRIModel model;
 
@@ -31,13 +32,39 @@ public class RCRIControl extends StackPane {
         chkInsulinTreatment = new CheckBox("Предоперационное лечение инсулином");
         chkHighCreatinine = new CheckBox("Предоперационный креатинин >176,8 мкмоль/л");
 
-        txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
+        txtResult = new TextArea();
+        txtResult.setEditable(false);
+        txtResult.setPrefRowCount(4);
 
-        this.getChildren().add(new VBox(10,
+        VBox form = new VBox(10,
                 CalculatorHeader.createHeader("Индекс RCRI"),
                 chkHighRiskSurgery, chkIschemicHeartDisease, chkHeartFailure,
                 chkCerebrovascularDisease, chkInsulinTreatment, chkHighCreatinine,
-                txtResult));
+                txtResult
+        );
+
+        setCenter(form);
+
+        setRight(CalculatorDescription.createDescription(
+                """
+                Шкала RCRI (Revised Cardiac Risk Index) используется для оценки
+                кардиологического риска перед несердечной операцией.
+
+                Критерии начисления баллов:
+                - Хирургия повышенного риска
+                - Анамнез ишемической болезни сердца
+                - Застойная сердечная недостаточность
+                - Анамнез цереброваскулярных заболеваний
+                - Предоперационное лечение инсулином
+                - Предоперационный уровень креатинина >176,8 мкмоль/л
+
+                Интерпретация:
+                0 баллов — риск 3,9%
+                1 балл — риск 6,0%
+                2 балла — риск 10,1%
+                ≥3 баллов — риск 15%
+                """
+        ));
     }
 
     private void bind() {
@@ -48,15 +75,14 @@ public class RCRIControl extends StackPane {
         chkInsulinTreatment.selectedProperty().bindBidirectional(model.insulinTreatmentProperty());
         chkHighCreatinine.selectedProperty().bindBidirectional(model.highCreatinineProperty());
 
-        model.calc();
-        txtResult.textProperty().bind(model.resultProperty());
+        chkHighRiskSurgery.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkIschemicHeartDisease.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkHeartFailure.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkCerebrovascularDisease.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkInsulinTreatment.selectedProperty().addListener((obs, o, n) -> model.calc());
+        chkHighCreatinine.selectedProperty().addListener((obs, o, n) -> model.calc());
 
-        // Вызываем пересчет при изменении галочек
-        chkHighRiskSurgery.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkIschemicHeartDisease.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkHeartFailure.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkCerebrovascularDisease.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkInsulinTreatment.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        chkHighCreatinine.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
+        txtResult.textProperty().bind(model.resultProperty());
+        model.calc();
     }
 }

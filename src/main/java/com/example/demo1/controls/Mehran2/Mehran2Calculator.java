@@ -48,9 +48,8 @@ public class Mehran2Calculator {
         if (age > 75) score += 4;
         if (anemia) score += 3;
         if (diabetes) score += 3;
-        score += (int) (contrastVolume / 100); // 1 балл на 100 мл
+        score += (int) (contrastVolume / 100);
 
-        // СКФ
         if (gfr >= 60) score += 0;
         else if (gfr >= 40) score += 2;
         else if (gfr >= 20) score += 4;
@@ -62,8 +61,6 @@ public class Mehran2Calculator {
         else if (score <= 15) interpretation = "Высокий риск КИН (26.1%)";
         else interpretation = "Очень высокий риск КИН (57.3%)";
 
-        String resultStr = String.format("Mehran-2 score: %d\nИнтерпретация: %s", score, interpretation);
-
-        return new Mehran2Result(resultStr);
+        return new Mehran2Result(interpretation, score);
     }
 }

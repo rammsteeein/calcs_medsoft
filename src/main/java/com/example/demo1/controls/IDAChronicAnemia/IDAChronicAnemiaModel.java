@@ -39,27 +39,4 @@ public class IDAChronicAnemiaModel {
         );
         setResult(res.toString());
     }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private double serumIron, TIBC, transferrinSat, ferritin;
-        private String result = "";
-
-        public Builder withSerumIron(double val) { serumIron = val; return this; }
-        public Builder withTIBC(double val) { TIBC = val; return this; }
-        public Builder withTransferrinSat(double val) { transferrinSat = val; return this; }
-        public Builder withFerritin(double val) { ferritin = val; return this; }
-        public Builder withResult(String val) { result = val; return this; }
-
-        public IDAChronicAnemiaModel build() {
-            IDAChronicAnemiaModel m = new IDAChronicAnemiaModel();
-            m.setSerumIron(serumIron);
-            m.setTIBC(TIBC);
-            m.setTransferrinSat(transferrinSat);
-            m.setFerritin(ferritin);
-            m.setResult(result);
-            return m;
-        }
-    }
 }

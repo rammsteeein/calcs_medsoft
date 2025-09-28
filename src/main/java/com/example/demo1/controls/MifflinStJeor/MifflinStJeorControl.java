@@ -35,14 +35,12 @@ public class MifflinStJeorControl extends BorderPane {
 
         txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
-        // Левая часть — поля ввода
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Формула Миффлина-Сан Жеора"),
                 cmbGender, txtWeight, txtHeight, txtAge, txtResult
         );
         leftBox.setAlignment(Pos.TOP_LEFT);
 
-        // Правая часть — описание
         Label lblDescription = CalculatorDescription.createDescription(
                 "Формула Миффлина-Сан Жеора используется для расчёта базального уровня метаболизма (BMR).\n\n" +
                         "BMR показывает, сколько энергии тратит организм в состоянии покоя. " +
@@ -52,7 +50,6 @@ public class MifflinStJeorControl extends BorderPane {
         VBox rightBox = new VBox(lblDescription);
         rightBox.setAlignment(Pos.CENTER);
 
-        // Раскладываем
         this.setLeft(leftBox);
         this.setCenter(rightBox);
         leftBox.setPrefWidth(250);

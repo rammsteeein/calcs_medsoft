@@ -16,7 +16,6 @@ public class PursuitModel {
         this.result.set("");
     }
 
-    // --- Getters / Setters ---
     public String getAge() { return age.get(); }
     public void setAge(String age) { this.age.set(age); }
     public StringProperty ageProperty() { return age; }
@@ -37,7 +36,6 @@ public class PursuitModel {
     public void setResult(String result) { this.result.set(result); }
     public StringProperty resultProperty() { return result; }
 
-    // --- Calculation ---
     public void calc() {
         try {
             int ageValue = Integer.parseInt(getAge());

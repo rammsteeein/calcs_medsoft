@@ -11,7 +11,7 @@ public class FLIResult {
         if (fli >= 0) {
             this.formatted = String.format("FLI: %.2f\nИнтерпретация: %s", fli, interpretation);
         } else {
-            this.formatted = interpretation; // ошибка
+            this.formatted = interpretation;
         }
     }
 

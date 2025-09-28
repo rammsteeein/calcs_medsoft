@@ -42,30 +42,21 @@ public class RCRICalculator {
             boolean highCreatinine
     ) {
         int score = 0;
-        if (highRiskSurgery) score += 1;
-        if (ischemicHeartDisease) score += 1;
-        if (heartFailure) score += 1;
-        if (cerebrovascularDisease) score += 1;
-        if (insulinTreatment) score += 1;
-        if (highCreatinine) score += 1;
+        if (highRiskSurgery) score++;
+        if (ischemicHeartDisease) score++;
+        if (heartFailure) score++;
+        if (cerebrovascularDisease) score++;
+        if (insulinTreatment) score++;
+        if (highCreatinine) score++;
 
-        String risk;
+        String interpretation;
         switch (score) {
-            case 0:
-                risk = "Риск большого кардиального события: 3,9% (2,8-5,4%)";
-                break;
-            case 1:
-                risk = "Риск большого кардиального события: 6,0% (4,9-7,4%)";
-                break;
-            case 2:
-                risk = "Риск большого кардиального события: 10,1% (8,1-12,6%)";
-                break;
-            default:
-                risk = "Риск большого кардиального события: 15% (11,1-20,0%)";
-                break;
+            case 0 -> interpretation = "Риск большого кардиального события: 3,9% (2,8-5,4%)";
+            case 1 -> interpretation = "Риск большого кардиального события: 6,0% (4,9-7,4%)";
+            case 2 -> interpretation = "Риск большого кардиального события: 10,1% (8,1-12,6%)";
+            default -> interpretation = "Риск большого кардиального события: 15% (11,1-20,0%)";
         }
 
-        String resultStr = String.format("RCRI score: %d\n%s", score, risk);
-        return new RCRIResult(resultStr);
+        return new RCRIResult(score, interpretation);
     }
 }

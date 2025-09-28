@@ -1,8 +1,10 @@
 package com.example.demo1.controls.DLCN;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -31,9 +33,12 @@ public class DLCNControl extends StackPane {
         chkPersonalEarlyCerebrovascularDisease = new CheckBox("Раннее поражение мозговых/периферических артерий");
         chkTendonXanthomas = new CheckBox("Ксантомы сухожилия");
         chkCornealArcusUnder45 = new CheckBox("Липидная дуга роговицы <45 лет");
-        txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10,
+        txtResult = new TextArea();
+        txtResult.setEditable(false);
+        txtResult.setPromptText("Результат");
+
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Критерии DLCN для диагностики гетерозиготной семейной гиперхолестеринемии"),
                 chkFamilyEarlyASCVDorHighLDL,
                 chkFamilyTendonXanthomasOrChildHighLDL,
@@ -41,7 +46,16 @@ public class DLCNControl extends StackPane {
                 chkPersonalEarlyCerebrovascularDisease,
                 chkTendonXanthomas,
                 chkCornealArcusUnder45,
-                txtResult));
+                txtResult
+        );
+
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала DLCN (Dutch Lipid Clinic Network) используется для диагностики " +
+                                "гетерозиготной семейной гиперхолестеринемии (СГХС).\n\n"
+                )
+        ));
     }
 
     private void bind() {

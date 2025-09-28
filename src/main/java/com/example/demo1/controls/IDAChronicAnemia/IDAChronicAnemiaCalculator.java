@@ -28,37 +28,44 @@ public class IDAChronicAnemiaCalculator {
 
 
     public static IDAChronicAnemiaResult calc(
-            double serumIron,       // мкмоль/л
-            double TIBC,            // общая железосвязывающая способность, мкмоль/л
-            double transferrinSat,  // % насыщения трансферрина (НТЖ)
-            double ferritin         // нг/мл
+            double serumIron,
+            double TIBC,
+            double transferrinSat,
+            double ferritin
     ) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Дифференциальная диагностика:\n");
+        StringBuilder interpretation = new StringBuilder();
+        String conclusion;
 
-        if (serumIron < 10.7) sb.append("Сывороточное железо ↓\n");
-        else if (serumIron > 32.2) sb.append("Сывороточное железо ↑\n");
-        else sb.append("Сывороточное железо N\n");
+        interpretation.append("Интерпретация показателей:\n");
 
-        if (TIBC > 90) sb.append("ОЖСС ↑\n");
-        else if (TIBC < 46) sb.append("ОЖСС ↓\n");
-        else sb.append("ОЖСС N\n");
+        // Сывороточное железо
+        if (serumIron < 10.7) interpretation.append("Сывороточное железо ↓\n");
+        else if (serumIron > 32.2) interpretation.append("Сывороточное железо ↑\n");
+        else interpretation.append("Сывороточное железо N\n");
 
-        if (transferrinSat < 17.8) sb.append("НТЖ ↓\n");
-        else if (transferrinSat > 43.3) sb.append("НТЖ ↑\n");
-        else sb.append("НТЖ N\n");
+        // ОЖСС
+        if (TIBC > 90) interpretation.append("ОЖСС ↑\n");
+        else if (TIBC < 46) interpretation.append("ОЖСС ↓\n");
+        else interpretation.append("ОЖСС N\n");
 
-        if (ferritin < 11.0) sb.append("Ферритин ↓\n");
-        else if (ferritin > 306.8) sb.append("Ферритин ↑\n");
-        else sb.append("Ферритин N\n");
+        // НТЖ
+        if (transferrinSat < 17.8) interpretation.append("НТЖ ↓\n");
+        else if (transferrinSat > 43.3) interpretation.append("НТЖ ↑\n");
+        else interpretation.append("НТЖ N\n");
 
+        // Ферритин
+        if (ferritin < 11.0) interpretation.append("Ферритин ↓\n");
+        else if (ferritin > 306.8) interpretation.append("Ферритин ↑\n");
+        else interpretation.append("Ферритин N\n");
+
+        // Заключение
         if (serumIron < 10.7 && TIBC > 90 && transferrinSat < 17.8 && ferritin < 11.0)
-            sb.append("\nВероятна ЖДА");
-        else if (serumIron < 10.7 && TIBC <= 90 && transferrinSat >= 17.8 && ferritin >= 11.0)
-            sb.append("\nВероятна анемия хронических заболеваний (АХЗ)");
+            conclusion = "Вероятна железодефицитная анемия (ЖДА)";
+        else if (serumIron < 10.7 && TIBC <= 90 && ferritin >= 11.0)
+            conclusion = "Вероятна анемия хронических заболеваний (АХЗ)";
         else
-            sb.append("\nНаличие смешанной или неопределённой анемии");
+            conclusion = "Возможна смешанная или неопределённая анемия";
 
-        return new IDAChronicAnemiaResult(sb.toString());
+        return new IDAChronicAnemiaResult(interpretation.toString(), conclusion);
     }
 }

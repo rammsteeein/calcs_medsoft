@@ -1,8 +1,8 @@
 package com.example.demo1.controls.NoSAS;
 
 public class NoSASResult {
-    private final int score;          // сумма баллов
-    private final String riskLevel;   // интерпретация
+    private final int score;
+    private final String riskLevel;
 
     public NoSASResult(int score, String riskLevel) {
         this.score = score;

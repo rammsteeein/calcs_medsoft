@@ -1,8 +1,10 @@
 package com.example.demo1.controls.HSI;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -25,10 +27,10 @@ public class HSIControl extends StackPane {
 
     private void initialize() {
         txtALT = new TextField();
-        txtALT.setPromptText("Введите АЛТ");
+        txtALT.setPromptText("Введите АЛТ (Ед/л)");
 
         txtAST = new TextField();
-        txtAST.setPromptText("Введите АСТ");
+        txtAST.setPromptText("Введите АСТ (Ед/л)");
 
         txtBMI = new TextField();
         txtBMI.setPromptText("Введите ИМТ");
@@ -36,7 +38,7 @@ public class HSIControl extends StackPane {
         cmbGender = new ComboBox<>();
         cmbGender.getItems().addAll(Gender.values());
         cmbGender.setPromptText("Пол");
-        cmbGender.setValue(Gender.MALE); // дефолтный пол
+        cmbGender.setValue(Gender.MALE);
 
         chkDiabetes = new CheckBox("Сахарный диабет");
 
@@ -44,9 +46,8 @@ public class HSIControl extends StackPane {
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
 
-
-        VBox vbox = new VBox(10,
-                CalculatorHeader.createHeader(" Индекс стеатоза печени HSI"),
+        VBox leftBox = new VBox(10,
+                CalculatorHeader.createHeader("Индекс стеатоза печени (HSI)"),
                 new VBox(new Label("АЛТ (Ед/л)"), txtALT),
                 new VBox(new Label("АСТ (Ед/л)"), txtAST),
                 new VBox(new Label("ИМТ"), txtBMI),
@@ -55,38 +56,43 @@ public class HSIControl extends StackPane {
                 txtResult
         );
 
-        this.getChildren().add(vbox);
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "HSI (Hepatic Steatosis Index) — это простой показатель для оценки " +
+                                "вероятности неалкогольной жировой болезни печени (NAFLD) без проведения биопсии.\n\n" +
+                                "Формула:\n" +
+                                "HSI = 8 × (АЛТ / АСТ) + ИМТ\n" +
+                                "    + 2, если пациент женщина\n" +
+                                "    + 2, если у пациента сахарный диабет\n\n" +
+                                "Интерпретация:\n" +
+                                "- Используется для первичного скрининга."
+                )
+        ));
     }
 
-
     private void bind() {
-        // ALT
         txtALT.textProperty().addListener((obs, oldVal, newVal) -> {
             try { model.setAlt(Double.parseDouble(newVal)); } catch (Exception ignored) {}
             model.calc();
         });
 
-        // AST
         txtAST.textProperty().addListener((obs, oldVal, newVal) -> {
             try { model.setAst(Double.parseDouble(newVal)); } catch (Exception ignored) {}
             model.calc();
         });
 
-        // BMI
         txtBMI.textProperty().addListener((obs, oldVal, newVal) -> {
             try { model.setBmi(Double.parseDouble(newVal)); } catch (Exception ignored) {}
             model.calc();
         });
 
-        // Gender
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
         cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> model.calc());
 
-        // Diabetes
         chkDiabetes.selectedProperty().bindBidirectional(model.hasDiabetesProperty());
         chkDiabetes.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
 
-        // Result
         txtResult.textProperty().bind(model.resultProperty());
     }
 }
