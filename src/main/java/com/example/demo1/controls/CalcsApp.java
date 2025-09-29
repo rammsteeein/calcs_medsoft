@@ -97,7 +97,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("Алгоритм оценки острого повреждения почек", () -> new AKIControl(new AKIModel()));
         calculatorMap.put("Mehran-2", () -> new Mehran2Control(new Mehran2Model()));
         calculatorMap.put("RCRI", () -> new RCRIControl(new RCRIModel()));
-        calculatorMap.put("GuptaMICA", () -> new GuptaMICAControl(new GuptaMICAModel()));
+        calculatorMap.put("GuptaMICA", () -> new GuptaMICAControl(new GuptaMICAModel())); //
         calculatorMap.put("DASI", () -> new DASIControl(new DASIModel()));
         calculatorMap.put("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний",
                 () -> new IDAChronicAnemiaControl(new IDAChronicAnemiaModel()));
@@ -112,19 +112,29 @@ public class CalcsApp extends Application {
         comboBox.setPromptText("Выбрать калькулятор ССЗ");
 
         comboBox.getEditor().textProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal == null) {
+            if (newVal == null || newVal.isBlank()) {
                 comboBox.setItems(items);
-                return;
-            }
-            String filter = newVal.toLowerCase();
-            List<String> filtered = new ArrayList<>();
-            for (String key : keys) {
-                if (key.toLowerCase().contains(filter)) {
-                    filtered.add(key);
+                comboBox.hide();
+            } else {
+                String filter = newVal.toLowerCase();
+                List<String> filtered = new ArrayList<>();
+                for (String key : keys) {
+                    if (key.toLowerCase().contains(filter)) {
+                        filtered.add(key);
+                    }
                 }
+                comboBox.setItems(FXCollections.observableArrayList(filtered));
+                comboBox.show();
             }
-            comboBox.setItems(FXCollections.observableArrayList(filtered));
-            comboBox.show();
+        });
+
+        comboBox.setOnAction(e -> {
+            String selected = comboBox.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                comboBox.getEditor().setText(selected);
+                comboBox.setItems(items);
+                comboBox.hide();
+            }
         });
 
         Button openButton = new Button("Открыть");
@@ -149,22 +159,19 @@ public class CalcsApp extends Application {
 
         Scene scene;
         switch (title) {
-            case "Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний":
-            case "GRACE":
-            case "REACH":
-            case "Larsen CM, 2017":
-                scene = new Scene(control, 800, 500);
-                break;
-            case "FLI":
-                scene = new Scene(control, 550, 500);
-                break;
-            case "PESI":
-            case "Wells":
-                scene = new Scene(control, 700, 430);
-                break;
-            default:
-                scene = new Scene(control, 550, 350);
-                break;
+            case "GRACE", "REACH", "Larsen CM, 2017", "GuptaMICA" ->
+                    scene = new Scene(control, 800, 500);
+
+            case "FLI", "Mehran-2" ->
+                    scene = new Scene(control, 550, 500);
+
+            case "PESI", "Wells", "CDS", "FIB-4", "rGENEVA" ->
+                    scene = new Scene(control, 700, 430);
+            case "Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний" ->
+                    scene = new Scene(control, 700, 400);
+
+            default ->
+                    scene = new Scene(control, 550, 370);
         }
 
         stage.setTitle(title);

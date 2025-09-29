@@ -71,7 +71,11 @@ public class SAMSCIControl extends StackPane {
                 20,
                 leftBox,
                 CalculatorDescription.createDescription(
-                        "Шкала SAMS-CI (Statin-Associated Muscle Symptoms – Clinical Index) позволяет оценить вероятность "
+                        "Шкала SAMSCI (SAMS-CI) — это Клинический индекс статин-ассоциированных мышечных симптомов" +
+                                " (Statins-Associated Muscle Symptoms – Clinical Index), используемый для оценки" +
+                                " вероятности связи мышечных симптомов с приемом статинов. Индекс анализирует три" +
+                                " ключевых фактора: время появления симптомов, их ответ на отмену статинов и повторное" +
+                                " назначение препаратов. "
                 )
         ));
     }

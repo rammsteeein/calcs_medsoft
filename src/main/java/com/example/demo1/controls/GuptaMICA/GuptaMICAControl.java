@@ -1,7 +1,9 @@
 package com.example.demo1.controls.GuptaMICA;
 
+import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -23,7 +25,8 @@ public class GuptaMICAControl extends StackPane {
     }
 
     private void initialize() {
-        txtAge = new TextField(); txtAge.setPromptText("Возраст (годы)");
+        txtAge = new TextField();
+        txtAge.setPromptText("Возраст (годы)");
 
         cmbFunctionalStatus = new ComboBox<>();
         cmbFunctionalStatus.getItems().addAll(GuptaMICAModel.functionalStatusMap.keySet());
@@ -41,16 +44,40 @@ public class GuptaMICAControl extends StackPane {
         cmbSurgeryType.getItems().addAll(GuptaMICAModel.surgeryTypeMap.keySet());
         cmbSurgeryType.setPromptText("Тип операции");
 
-        txtResult = new TextArea(); txtResult.setEditable(false); txtResult.setPromptText("Результат");
+        txtResult = new TextArea();
+        txtResult.setEditable(false);
+        txtResult.setPromptText("Результат");
 
-        this.getChildren().add(new VBox(10,
+        VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Расчет риска MICA (Myocardial Infarction or Cardiac Arrest) по шкале Gupta"),
-                txtAge, cmbFunctionalStatus, cmbAsaStatus, cmbCreatinine, cmbSurgeryType, txtResult));
+                new VBox(new Label("Возраст (годы)"), txtAge),
+                new VBox(new Label("Функциональное состояние"), cmbFunctionalStatus),
+                new VBox(new Label("ASA статус"), cmbAsaStatus),
+                new VBox(new Label("Креатинин"), cmbCreatinine),
+                new VBox(new Label("Тип операции"), cmbSurgeryType),
+                txtResult
+        );
+
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Gupta MICA (Myocardial Infarction or Cardiac Arrest) — это модель оценки риска " +
+                                "инфаркта миокарда или остановки сердца у пациентов, перенесших хирургическое вмешательство.\n\n" +
+                                "Используемые параметры:\n" +
+                                "- Возраст пациента\n" +
+                                "- Функциональное состояние (метаболические эквиваленты)\n" +
+                                "- ASA статус (оценка тяжести сопутствующих заболеваний)\n" +
+                                "- Уровень креатинина\n" +
+                                "- Тип хирургического вмешательства\n\n" +
+                                "Модель применяется для предоперационной оценки риска и помогает " +
+                                "врачу и пациенту принимать решение о тактике ведения."
+                )
+        ));
     }
 
     private void bind() {
         txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setAgeYears(Double.parseDouble(newVal)); } catch (Exception e) {}
+            try { model.setAgeYears(Double.parseDouble(newVal)); } catch (Exception ignored) {}
             model.calc();
         });
 
