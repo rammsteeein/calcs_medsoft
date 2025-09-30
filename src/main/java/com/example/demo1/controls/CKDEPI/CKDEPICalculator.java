@@ -30,7 +30,7 @@ public class CKDEPICalculator {
         if (unit == Unit.MKMOL) {
             kreatinin /= 88.4;
         } else if (unit != Unit.MGDL) {
-            return new CKDEPIResult(Double.NaN, "Некорректная единица измерения");
+            return new CKDEPIResult(Double.NaN, "Некорректная единица измерения", "Ошибка");
         }
 
         double kappa = (gender == Gender.MALE) ? 0.9 : 0.7;
@@ -46,7 +46,27 @@ public class CKDEPICalculator {
                 * Math.pow(0.9938, age)
                 * genderMultiplier;
 
-        String formatted = String.format("%.2f мл/мин", eGFR);
-        return new CKDEPIResult(eGFR, formatted);
+        String formatted = String.format("%.2f мл/мин/1,73 м²", eGFR);
+        String interpretation = interpretGFR(eGFR);
+
+        return new CKDEPIResult(eGFR, formatted, interpretation);
+    }
+
+    private static String interpretGFR(double eGFR) {
+        if (Double.isNaN(eGFR)) {
+            return "Ошибка расчёта";
+        } else if (eGFR > 90) {
+            return "Нормальная или высокая СКФ (C1)";
+        } else if (eGFR >= 60) {
+            return "Незначительно сниженная СКФ (C2)";
+        } else if (eGFR >= 45) {
+            return "Умеренно сниженная СКФ (C3a)";
+        } else if (eGFR >= 30) {
+            return "Существенно сниженная СКФ (C3b)";
+        } else if (eGFR >= 15) {
+            return "Резко сниженная СКФ (C4)";
+        } else {
+            return "Терминальная почечная недостаточность (C5)";
+        }
     }
 }

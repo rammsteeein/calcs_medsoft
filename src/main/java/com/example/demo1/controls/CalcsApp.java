@@ -159,25 +159,40 @@ public class CalcsApp extends Application {
 
         Scene scene;
         switch (title) {
-            case "GRACE", "REACH", "Larsen CM, 2017", "GuptaMICA" ->
-                    scene = new Scene(control, 800, 500);
+            case "GRACE":
+            case "REACH":
+            case "Larsen CM, 2017":
+            case "GuptaMICA":
+                scene = new Scene(control, 800, 500);
+                break;
 
-            case "FLI", "Mehran-2" ->
-                    scene = new Scene(control, 550, 500);
+            case "FLI":
+            case "Mehran-2":
+                scene = new Scene(control, 550, 500);
+                break;
 
-            case "PESI", "Wells", "CDS", "FIB-4", "rGENEVA" ->
-                    scene = new Scene(control, 700, 430);
-            case "Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний" ->
-                    scene = new Scene(control, 700, 400);
+            case "PESI":
+            case "Wells":
+            case "CDS":
+            case "FIB-4":
+            case "rGENEVA":
+                scene = new Scene(control, 700, 430);
+                break;
 
-            default ->
-                    scene = new Scene(control, 550, 370);
+            case "Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний":
+                scene = new Scene(control, 700, 400);
+                break;
+
+            default:
+                scene = new Scene(control, 550, 370);
+                break;
         }
 
-        stage.setTitle(title);
         stage.setScene(scene);
+        stage.setTitle(title);
         stage.show();
     }
+
 
     public static void main(String[] args) {
         launch(args);

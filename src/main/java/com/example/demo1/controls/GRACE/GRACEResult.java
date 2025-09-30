@@ -23,7 +23,7 @@ public class GRACEResult {
         for (GRACECalculator.Factor f : factors) {
             sb.append(f.getName()).append(": ").append(f.getPoints()).append(" баллов\n");
         }
-        sb.append("Суммарно: ").append(totalPoints).append("\n");
+        sb.append("Суммарно: ").append(totalPoints).append(" баллов").append("\n");
         sb.append("Риск: ").append(interpretation);
         return sb.toString();
     }

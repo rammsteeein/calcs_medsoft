@@ -18,17 +18,27 @@ public class AKIResult {
 
     @Override
     public String toString() {
-        String stageStr = switch (stage) {
-            case 1 -> "Степень 1";
-            case 2 -> "Степень 2";
-            case 3 -> "Степень 3";
-            default -> "Не выявлено";
-        };
+        String stageStr;
+        switch (stage) {
+            case 1:
+                stageStr = "Степень 1";
+                break;
+            case 2:
+                stageStr = "Степень 2";
+                break;
+            case 3:
+                stageStr = "Степень 3";
+                break;
+            default:
+                stageStr = "Не выявлено";
+                break;
+        }
 
-        return String.format("""
-                AKI: %s
-                Креатинин: %.2f → %.2f мг/дл
-                Диурез: %.2f мл/кг/ч за %.1f ч
-                """, stageStr, baselineCreatinine, currentCreatinine, urineRate, hours);
+        return String.format(
+                "AKI: %s\n" +
+                        "Креатинин: %.2f → %.2f мг/дл\n" +
+                        "Диурез: %.2f мл/кг/ч за %.1f ч\n",
+                stageStr, baselineCreatinine, currentCreatinine, urineRate, hours
+        );
     }
 }

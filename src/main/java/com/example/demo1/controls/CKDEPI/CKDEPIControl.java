@@ -4,6 +4,7 @@ import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -38,8 +39,9 @@ public class CKDEPIControl extends StackPane implements Closeable {
         nmrKreatinin = new TextField();
         nmrKreatinin.setPromptText("Креатинин");
 
-        cmbCreatininUnit = new ComboBox<>();
-        cmbCreatininUnit.getItems().addAll(Unit.values());
+        cmbCreatininUnit = new ComboBox<>(
+                FXCollections.observableArrayList(Unit.forCkdEpi())
+        );
         cmbCreatininUnit.setPromptText("Ед. измерения");
 
         nmrAge = new TextField();
@@ -55,18 +57,20 @@ public class CKDEPIControl extends StackPane implements Closeable {
         getChildren().add(
                 new HBox(20,
                         new VBox(10,
-                CalculatorHeader.createHeader("CKФ по формуле CKD-EPI 2021"),
-                cmbGender,
-                nmrKreatinin,
-                cmbCreatininUnit,
-                nmrAge,
-                btnCalc,
-                txtResult),
+                                CalculatorHeader.createHeader("CKФ по формуле CKD-EPI 2021"),
+                                cmbGender,
+                                nmrKreatinin,
+                                cmbCreatininUnit,
+                                nmrAge,
+                                btnCalc,
+                                txtResult),
                         CalculatorDescription.createDescription(
-                                "Формула Кокрофта-Голта позволяет оценить клиренс креатинина — показатель фильтрационной функции почек.\n" +
-                                        "CrCl = ((140 - возраст) * вес) * (0.85 если женщина) / (72 * Scr)"
+                                "Формула CKD-EPI используется для оценки скорости клубочковой фильтрации (СКФ), " +
+                                        "что является важным показателем функции почек. Формула учитывает уровень " +
+                                        "креатинина в крови, возраст и пол пациента для более точного определения " +
+                                        "фильтрационной способности почек, чем при использовании только уровня креатинина. "
                         )
-        ));
+                ));
     }
 
     private void bind() {

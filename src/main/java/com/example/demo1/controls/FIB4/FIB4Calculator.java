@@ -20,14 +20,22 @@ public class FIB4Calculator {
      * - Значения FIB-4 интерпретируются по клиническим порогам для оценки риска значимого фиброза.
      */
 
-        public static FIB4Result calc(int age, double ast, double alt, double platelets) {
-            if (alt <= 0 || platelets <= 0) {
-                return new FIB4Result("Ошибка: некорректные данные");
-            }
-
-            double fib4 = (age * ast) / (platelets * Math.sqrt(alt));
-            String result = String.format("FIB-4 = %.3f", fib4);
-
-            return new FIB4Result(result);
+    public static FIB4Result calc(int age, double ast, double alt, double platelets) {
+        if (alt <= 0 || platelets <= 0) {
+            return new FIB4Result(Double.NaN, "Ошибка: некорректные данные");
         }
+
+        double fib4 = (age * ast) / (platelets * Math.sqrt(alt));
+        String interpretation;
+
+        if (fib4 < 1.45) {
+            interpretation = "Низкий риск значительного фиброза печени";
+        } else if (fib4 > 3.25) {
+            interpretation = "Высокая вероятность выраженного фиброза и цирроза печени";
+        } else {
+            interpretation = "Серая зона — результат неопределенный, требуется дополнительное обследование";
+        }
+
+        return new FIB4Result(fib4, interpretation);
     }
+}

@@ -13,6 +13,10 @@ public class CalculatorHeader {
         Label lblTitle = new Label(title);
         lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 12));
         lblTitle.setAlignment(Pos.CENTER);
+        lblTitle.setStyle("-fx-text-fill: #e75133;" +
+                " -fx-border-color: #e75133;" +
+                " -fx-border-radius: 5px;" +
+                " -fx-padding: 8 16 8 16;");
 
         VBox headerBox = new VBox(lblTitle);
         headerBox.setAlignment(Pos.CENTER);

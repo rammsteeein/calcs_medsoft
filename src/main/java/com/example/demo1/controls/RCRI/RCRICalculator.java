@@ -51,10 +51,10 @@ public class RCRICalculator {
 
         String interpretation;
         switch (score) {
-            case 0 -> interpretation = "Риск большого кардиального события: 3,9% (2,8-5,4%)";
-            case 1 -> interpretation = "Риск большого кардиального события: 6,0% (4,9-7,4%)";
-            case 2 -> interpretation = "Риск большого кардиального события: 10,1% (8,1-12,6%)";
-            default -> interpretation = "Риск большого кардиального события: 15% (11,1-20,0%)";
+            case 0: interpretation = "Риск большого кардиального события: 3,9% (2,8-5,4%)";
+            case 1: interpretation = "Риск большого кардиального события: 6,0% (4,9-7,4%)";
+            case 2: interpretation = "Риск большого кардиального события: 10,1% (8,1-12,6%)";
+            default: interpretation = "Риск большого кардиального события: 15% (11,1-20,0%)";
         }
 
         return new RCRIResult(score, interpretation);

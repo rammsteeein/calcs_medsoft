@@ -3,7 +3,7 @@ package com.example.demo1.controls.SAMSCI;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+        import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -82,40 +82,75 @@ public class SAMSCIControl extends StackPane {
 
     private void bind() {
         cmbMuscleLocation.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-            switch (newVal.intValue()) {
-                case 0 -> model.setMuscleLocation(3);
-                case 1, 2 -> model.setMuscleLocation(2);
-                case 3 -> model.setMuscleLocation(1);
-                default -> model.setMuscleLocation(0);
+            int index = newVal.intValue();
+            switch (index) {
+                case 0:
+                    model.setMuscleLocation(3);
+                    break;
+                case 1:
+                case 2:
+                    model.setMuscleLocation(2);
+                    break;
+                case 3:
+                    model.setMuscleLocation(1);
+                    break;
+                default:
+                    model.setMuscleLocation(0);
+                    break;
             }
             model.calc();
         });
 
         cmbSymptomTiming.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-            switch (newVal.intValue()) {
-                case 0 -> model.setSymptomTiming(3);
-                case 1 -> model.setSymptomTiming(2);
-                case 2 -> model.setSymptomTiming(1);
-                default -> model.setSymptomTiming(0);
+            int index = newVal.intValue();
+            switch (index) {
+                case 0:
+                    model.setSymptomTiming(3);
+                    break;
+                case 1:
+                    model.setSymptomTiming(2);
+                    break;
+                case 2:
+                    model.setSymptomTiming(1);
+                    break;
+                default:
+                    model.setSymptomTiming(0);
+                    break;
             }
             model.calc();
         });
 
         cmbStatinDiscontinuation.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-            switch (newVal.intValue()) {
-                case 0 -> model.setStatinDiscontinuation(2);
-                case 1 -> model.setStatinDiscontinuation(1);
-                case 2 -> model.setStatinDiscontinuation(0);
-                default -> model.setStatinDiscontinuation(0);
+            int index = newVal.intValue();
+            switch (index) {
+                case 0:
+                    model.setStatinDiscontinuation(2);
+                    break;
+                case 1:
+                    model.setStatinDiscontinuation(1);
+                    break;
+                case 2:
+                    model.setStatinDiscontinuation(0);
+                    break;
+                default:
+                    model.setStatinDiscontinuation(0);
+                    break;
             }
             model.calc();
         });
 
         cmbStatinRechallenge.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
-            switch (newVal.intValue()) {
-                case 0 -> model.setStatinRechallenge(3);
-                case 1 -> model.setStatinRechallenge(1);
-                default -> model.setStatinRechallenge(0);
+            int index = newVal.intValue();
+            switch (index) {
+                case 0:
+                    model.setStatinRechallenge(3);
+                    break;
+                case 1:
+                    model.setStatinRechallenge(1);
+                    break;
+                default:
+                    model.setStatinRechallenge(0);
+                    break;
             }
             model.calc();
         });
