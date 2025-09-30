@@ -1,0 +1,19 @@
+.root, .pane, .vbox, .hbox {
+    -fx-background-color: white;
+}
+
+.combo-box {
+    -fx-background-color: #e75133;
+}
+
+.combo-box .text-field {
+    -fx-text-fill: white;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #e75133;
+}
+
+.combo-box .arrow {
+    -fx-background-color: white;
+}

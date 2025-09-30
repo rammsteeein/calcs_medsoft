@@ -61,6 +61,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -146,7 +147,7 @@ public class CalcsApp extends Application {
         });
 
         VBox root = new VBox(15, comboBox, openButton);
-        root.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        root.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: white;");
 
         Scene scene = new Scene(root, 350, 300);
         primaryStage.setTitle("Выбор калькулятора");
@@ -157,37 +158,34 @@ public class CalcsApp extends Application {
     private void openCalculator(String title, javafx.scene.Parent control) {
         Stage stage = new Stage();
 
-        Scene scene;
+        if (control instanceof javafx.scene.layout.Pane) {
+            ((javafx.scene.layout.Pane) control).setStyle("-fx-background-color: white;");
+        }
+
+        double width, height;
         switch (title) {
             case "GRACE":
             case "REACH":
             case "Larsen CM, 2017":
             case "GuptaMICA":
-                scene = new Scene(control, 800, 500);
-                break;
-
+                width = 800; height = 500; break;
             case "FLI":
             case "Mehran-2":
-                scene = new Scene(control, 550, 500);
-                break;
-
+                width = 550; height = 500; break;
             case "PESI":
             case "Wells":
             case "CDS":
             case "FIB-4":
             case "rGENEVA":
-                scene = new Scene(control, 700, 430);
-                break;
-
+                width = 700; height = 430; break;
             case "Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний":
-                scene = new Scene(control, 700, 400);
-                break;
-
+                width = 700; height = 400; break;
             default:
-                scene = new Scene(control, 550, 370);
-                break;
+                width = 550; height = 370; break;
         }
 
+        Scene scene = new Scene(control, width, height, javafx.scene.paint.Color.WHITE);
+//        scene.getStylesheets().add("com/example/demo1/styles/style.css");
         stage.setScene(scene);
         stage.setTitle(title);
         stage.show();
