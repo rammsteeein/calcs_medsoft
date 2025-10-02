@@ -30,6 +30,8 @@ public class Mehran2Calculator {
      * для прогнозирования вероятности развития КИН и необходимости диализа.
      */
 
+    private static final double[] RISKS = {7.5, 14.0, 26.1, 57.3};
+
     public static Mehran2Result calc(
             boolean hypotension,
             boolean balloonPump,
@@ -56,11 +58,12 @@ public class Mehran2Calculator {
         else score += 6;
 
         String interpretation;
-        if (score <= 5) interpretation = "Низкий риск КИН (7.5%)";
-        else if (score <= 10) interpretation = "Умеренный риск КИН (14.0%)";
-        else if (score <= 15) interpretation = "Высокий риск КИН (26.1%)";
-        else interpretation = "Очень высокий риск КИН (57.3%)";
+        double risk;
+        if (score <= 5) { interpretation = "Низкий риск КИН"; risk = RISKS[0]; }
+        else if (score <= 10) { interpretation = "Умеренный риск КИН"; risk = RISKS[1]; }
+        else if (score <= 15) { interpretation = "Высокий риск КИН"; risk = RISKS[2]; }
+        else { interpretation = "Очень высокий риск КИН"; risk = RISKS[3]; }
 
-        return new Mehran2Result(interpretation, score);
+        return new Mehran2Result(interpretation, score, risk);
     }
 }

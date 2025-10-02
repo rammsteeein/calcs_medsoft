@@ -128,6 +128,9 @@ public class IMPROVETVEControl extends StackPane {
             } catch (Exception ignored) {}
             updateMarker();
         });
+
+        updateMarker();
+
     }
 
     private void updateMarker() {

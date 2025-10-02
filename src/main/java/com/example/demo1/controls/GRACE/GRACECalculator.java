@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GRACECalculator {
+    /**
+     * Шкала GRACE (Global Registry of Acute Coronary Events).
+     * Используется для оценки прогноза у пациентов с острым коронарным синдромом (ОКС).
+     * Позволяет предсказать внутригоспитальную и 6-месячную смертность на основании
+     * клинических и лабораторных показателей (возраст, ЧСС, АД, креатинин, Killip,
+     * изменения на ЭКГ, остановка сердца при поступлении, ферменты миокарда).
+     */
 
     public static class Factor {
         private final String name;

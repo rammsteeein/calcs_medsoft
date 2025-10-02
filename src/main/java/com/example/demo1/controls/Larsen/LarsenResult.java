@@ -11,17 +11,9 @@ public class LarsenResult {
         this.calculation = calculation;
     }
 
-    public int getTotalScore() {
-        return totalScore;
-    }
-
-    public String getInterpretation() {
-        return interpretation;
-    }
-
-    public String getCalculation() {
-        return calculation;
-    }
+    public int getTotalScore() { return totalScore; }
+    public String getInterpretation() { return interpretation; }
+    public String getCalculation() { return calculation; }
 
     @Override
     public String toString() {

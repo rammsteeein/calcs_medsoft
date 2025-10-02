@@ -60,22 +60,22 @@ public class SHOKSCalculator {
      * - Используется для клинической оценки состояния пациента с хронической сердечной недостаточностью.
      */
 
-    public static SHOKSResult calc(
-            int odyshka, int ves, int pereboi, int polozhenie,
-            int sheinyeVeny, int hripy, int galop, int pechen,
-            int oteki, int SAD) {
 
-        int score;
+        public static SHOKSResult calc(
+                int odyshka, int ves, int pereboi, int polozhenie,
+                int sheinyeVeny, int hripy, int galop, int pechen,
+                int oteki, int SAD) {
 
-        score = odyshka + ves + pereboi + polozhenie + sheinyeVeny +
-                hripy + galop + pechen + oteki + SAD;
+            int score = odyshka + ves + pereboi + polozhenie + sheinyeVeny +
+                    hripy + galop + pechen + oteki + SAD;
 
-        String interpretation;
-        if (score <= 3) interpretation = "I ФК";
-        else if (score <= 6) interpretation = "II ФК";
-        else if (score <= 9) interpretation = "III ФК";
-        else interpretation = "IV ФК";
+            String interpretation;
+            if (score == 0) interpretation = "Нет признаков СН";
+            else if (score <= 3) interpretation = "I ФК";
+            else if (score <= 6) interpretation = "II ФК";
+            else if (score <= 9) interpretation = "III ФК";
+            else interpretation = "IV ФК";
 
-        return new SHOKSResult(interpretation, score);
+            return new SHOKSResult(score, interpretation);
+        }
     }
-}

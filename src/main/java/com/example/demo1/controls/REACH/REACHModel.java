@@ -1,5 +1,6 @@
 package com.example.demo1.controls.REACH;
 
+import com.example.demo1.common.services.ResultStyler;
 import javafx.beans.property.*;
 
 public class REACHModel {
@@ -14,6 +15,11 @@ public class REACHModel {
     private final IntegerProperty antiplatelet = new SimpleIntegerProperty(0);
     private final BooleanProperty oralAnticoagulant = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
+
+    private transient ResultStylerCallback onResultStyled;
+
+    public interface ResultStylerCallback { void style(REACHResult result); }
+    public void setOnResultStyled(ResultStylerCallback callback) { this.onResultStyled = callback; }
 
     public StringProperty ageProperty() { return age; }
     public BooleanProperty peripheralAtherosclerosisProperty() { return peripheralAtherosclerosis; }
@@ -41,6 +47,8 @@ public class REACHModel {
                     oralAnticoagulant.get()
             );
             result.set(res.toString());
+
+            if (onResultStyled != null) onResultStyled.style(res);
         } catch (Exception e) {
             result.set("Ошибка: " + e.getMessage());
         }

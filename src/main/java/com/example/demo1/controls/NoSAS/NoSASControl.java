@@ -3,6 +3,7 @@ package com.example.demo1.controls.NoSAS;
 import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -82,5 +83,20 @@ public class NoSASControl extends StackPane {
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
 
         txtResult.textProperty().bind(model.resultProperty());
+
+        model.resultProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.isEmpty()) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
+                return;
+            }
+
+            if (newVal.contains("Высокий риск")) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
+            } else if (newVal.contains("Низкий риск")) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
+            } else {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
+            }
+        });
     }
 }

@@ -8,9 +8,9 @@ public class LarsenModel {
     private final StringProperty drug = new SimpleStringProperty();
     private final ObservableList<String> patientFactors = FXCollections.observableArrayList();
 
-    private final IntegerProperty totalScore = new SimpleIntegerProperty();
-    private final StringProperty interpretation = new SimpleStringProperty();
-    private final StringProperty calculation = new SimpleStringProperty();
+    private final IntegerProperty totalScore = new SimpleIntegerProperty(0);
+    private final StringProperty interpretation = new SimpleStringProperty("Отсутствие риска");
+    private final StringProperty calculation = new SimpleStringProperty("Результат появится здесь");
 
     public void calc() {
         LarsenResult result = LarsenCalculator.calc(drug.get(), patientFactors);

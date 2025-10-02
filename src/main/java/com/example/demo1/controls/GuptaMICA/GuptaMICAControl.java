@@ -2,6 +2,7 @@ package com.example.demo1.controls.GuptaMICA;
 
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -87,5 +88,23 @@ public class GuptaMICAControl extends StackPane {
         cmbSurgeryType.valueProperty().addListener((obs, oldVal, newVal) -> { model.setSurgeryType(newVal); model.calc(); });
 
         txtResult.textProperty().bind(model.resultProperty());
+
+        // перекраска по проценту риска
+        model.riskPercentProperty().addListener((obs, oldV, newV) -> {
+            double risk = newV.doubleValue();
+            if (Double.isNaN(risk)) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
+            } else if (risk < 0.05) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
+            } else if (risk < 0.14) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
+            } else if (risk < 1.47) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
+            } else if (risk < 2.60) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
+            } else {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
+            }
+        });
     }
 }

@@ -3,6 +3,7 @@ package com.example.demo1.controls.PESI;
 import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -95,6 +96,17 @@ public class PESIControl extends StackPane {
         txtRespiratoryRate.textProperty().addListener((obs, oldVal, newVal) -> { try { model.respiratoryRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
         txtTemperature.textProperty().addListener((obs, oldVal, newVal) -> { try { model.temperatureProperty().set(Double.parseDouble(newVal)); } catch (Exception ignored) {} model.calc(); });
         txtOxygenSaturation.textProperty().addListener((obs, oldVal, newVal) -> { try { model.oxygenSaturationProperty().set(Double.parseDouble(newVal)); } catch (Exception ignored) {} model.calc(); });
+        model.setOnResultStyled(res -> {
+            if (res.getRiskClass().contains("Очень низкий") || res.getRiskClass().contains("Низкий")) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
+            } else if (res.getRiskClass().contains("Умеренный")) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
+            } else if (res.getRiskClass().contains("Высокий") || res.getRiskClass().contains("Очень высокий")) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
+            } else {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
+            }
+        });
 
         txtResult.textProperty().bind(model.resultProperty());
     }

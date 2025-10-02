@@ -59,9 +59,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.net.URL;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -71,6 +71,7 @@ public class CalcsApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        // Регистрируем калькуляторы
         calculatorMap.put("Pursuit", () -> new PursuitControl(new PursuitModel()));
         calculatorMap.put("FLI", () -> new FLIControl(new FLIModel()));
         calculatorMap.put("Cockroft", () -> new CockroftControl(new CockroftModel()));
@@ -98,7 +99,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("Алгоритм оценки острого повреждения почек", () -> new AKIControl(new AKIModel()));
         calculatorMap.put("Mehran-2", () -> new Mehran2Control(new Mehran2Model()));
         calculatorMap.put("RCRI", () -> new RCRIControl(new RCRIModel()));
-        calculatorMap.put("GuptaMICA", () -> new GuptaMICAControl(new GuptaMICAModel())); //
+        calculatorMap.put("GuptaMICA", () -> new GuptaMICAControl(new GuptaMICAModel()));
         calculatorMap.put("DASI", () -> new DASIControl(new DASIModel()));
         calculatorMap.put("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний",
                 () -> new IDAChronicAnemiaControl(new IDAChronicAnemiaModel()));
@@ -142,7 +143,7 @@ public class CalcsApp extends Application {
         openButton.setOnAction(e -> {
             String selected = comboBox.getValue();
             if (selected != null && calculatorMap.containsKey(selected)) {
-                openCalculator(selected, calculatorMap.get(selected).get());
+                openCalculator(selected, calculatorMap.get(selected).get(), primaryStage);
             }
         });
 
@@ -155,7 +156,7 @@ public class CalcsApp extends Application {
         primaryStage.show();
     }
 
-    private void openCalculator(String title, javafx.scene.Parent control) {
+    private void openCalculator(String title, javafx.scene.Parent control, Stage owner) {
         Stage stage = new Stage();
 
         if (control instanceof javafx.scene.layout.Pane) {
@@ -168,11 +169,11 @@ public class CalcsApp extends Application {
             case "REACH":
             case "Larsen CM, 2017":
             case "GuptaMICA":
+            case "PESI":
                 width = 800; height = 500; break;
             case "FLI":
             case "Mehran-2":
                 width = 550; height = 500; break;
-            case "PESI":
             case "Wells":
             case "CDS":
             case "FIB-4":
@@ -185,12 +186,19 @@ public class CalcsApp extends Application {
         }
 
         Scene scene = new Scene(control, width, height, javafx.scene.paint.Color.WHITE);
-//        scene.getStylesheets().add("com/example/demo1/styles/style.css");
+        try {
+            scene.getStylesheets().add("com/example/demo1/styles/style.css");
+        } catch (Exception ignored) {}
+
         stage.setScene(scene);
         stage.setTitle(title);
+
+        // Важно: окно знает своего владельца
+        stage.initOwner(owner);
+        stage.initModality(Modality.NONE);
+
         stage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);

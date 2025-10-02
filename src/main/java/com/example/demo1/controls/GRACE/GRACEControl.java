@@ -2,6 +2,7 @@ package com.example.demo1.controls.GRACE;
 
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -87,7 +88,21 @@ public class GRACEControl extends StackPane {
     }
 
     private void bind() {
-        model.resultProperty().addListener((obs, oldV, newV) -> txtResult.setText(newV));
+        model.resultProperty().addListener((obs, oldV, newV) -> {
+            txtResult.setText(newV);
+
+            if (newV == null) return;
+
+            if (newV.contains("Низкий риск")) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
+            } else if (newV.contains("Умеренный риск")) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
+            } else if (newV.contains("Высокий риск")) {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
+            } else {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
+            }
+        });
     }
 
     private void calculate() {

@@ -30,8 +30,11 @@ public class LarsenCalculator {
      */
 
     public static LarsenResult calc(String drug, List<String> patientFactors) {
-        if (drug == null || patientFactors == null) {
-            return new LarsenResult(0, "Ошибка", "Ошибка: выберите препарат и факторы пациента");
+        if (drug == null) {
+            return new LarsenResult(0, "Ошибка", "Ошибка: выберите препарат");
+        }
+        if (patientFactors == null) {
+            return new LarsenResult(0, "Ошибка", "Ошибка: выберите факторы пациента");
         }
 
         int drugScore = mapDrug(drug);

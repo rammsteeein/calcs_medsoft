@@ -10,8 +10,11 @@ public class DLCNModel {
     private final BooleanProperty personalEarlyCerebrovascularDisease = new SimpleBooleanProperty();
     private final BooleanProperty tendonXanthomas = new SimpleBooleanProperty();
     private final BooleanProperty cornealArcusUnder45 = new SimpleBooleanProperty();
-    private final StringProperty result = new SimpleStringProperty();
 
+    private final StringProperty result = new SimpleStringProperty();
+    private final IntegerProperty score = new SimpleIntegerProperty(); // числовой результат
+
+    // --- getters / setters / properties
     public boolean isFamilyEarlyASCVDorHighLDL() { return familyEarlyASCVDorHighLDL.get(); }
     public void setFamilyEarlyASCVDorHighLDL(boolean val) { familyEarlyASCVDorHighLDL.set(val); }
     public BooleanProperty familyEarlyASCVDorHighLDLProperty() { return familyEarlyASCVDorHighLDL; }
@@ -40,6 +43,11 @@ public class DLCNModel {
     public void setResult(String val) { result.set(val); }
     public StringProperty resultProperty() { return result; }
 
+    public int getScore() { return score.get(); }
+    public void setScore(int val) { score.set(val); }
+    public IntegerProperty scoreProperty() { return score; }
+
+    // --- расчет
     public void calc() {
         DLCNResult res = DLCNCalculator.calc(
                 isFamilyEarlyASCVDorHighLDL(),
@@ -49,6 +57,9 @@ public class DLCNModel {
                 isTendonXanthomas(),
                 isCornealArcusUnder45()
         );
-        setResult(res.toString());
+
+        setResult(res.getDiagnosis());
+        setScore(res.getScore());
+
     }
 }

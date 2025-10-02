@@ -46,5 +46,20 @@ public class PESIModel {
                 oxygenSaturation.get()
         );
         result.set(res.toString());
+
+        // Красим результат по классу риска
+        if (onResultStyled != null) {
+            onResultStyled.style(res);
+        }
+    }
+
+    private transient ResultStylerCallback onResultStyled;
+
+    public void setOnResultStyled(ResultStylerCallback callback) {
+        this.onResultStyled = callback;
+    }
+
+    public interface ResultStylerCallback {
+        void style(PESIResult result);
     }
 }

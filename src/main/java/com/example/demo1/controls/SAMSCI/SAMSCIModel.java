@@ -8,27 +8,29 @@ public class SAMSCIModel {
     private final IntegerProperty symptomTiming = new SimpleIntegerProperty();
     private final IntegerProperty statinDiscontinuation = new SimpleIntegerProperty();
     private final IntegerProperty statinRechallenge = new SimpleIntegerProperty();
-    private final StringProperty result = new SimpleStringProperty();
+
+    private final IntegerProperty score = new SimpleIntegerProperty();
+    private final StringProperty interpretation = new SimpleStringProperty();
 
     public int getMuscleLocation() { return muscleLocation.get(); }
     public void setMuscleLocation(int val) { muscleLocation.set(val); }
-    public IntegerProperty muscleLocationProperty() { return muscleLocation; }
 
     public int getSymptomTiming() { return symptomTiming.get(); }
     public void setSymptomTiming(int val) { symptomTiming.set(val); }
-    public IntegerProperty symptomTimingProperty() { return symptomTiming; }
 
     public int getStatinDiscontinuation() { return statinDiscontinuation.get(); }
     public void setStatinDiscontinuation(int val) { statinDiscontinuation.set(val); }
-    public IntegerProperty statinDiscontinuationProperty() { return statinDiscontinuation; }
 
     public int getStatinRechallenge() { return statinRechallenge.get(); }
     public void setStatinRechallenge(int val) { statinRechallenge.set(val); }
-    public IntegerProperty statinRechallengeProperty() { return statinRechallenge; }
 
-    public String getResult() { return result.get(); }
-    public void setResult(String val) { result.set(val); }
-    public StringProperty resultProperty() { return result; }
+    public int getScore() { return score.get(); }
+    public void setScore(int val) { score.set(val); }
+    public IntegerProperty scoreProperty() { return score; }
+
+    public String getInterpretation() { return interpretation.get(); }
+    public void setInterpretation(String val) { interpretation.set(val); }
+    public StringProperty interpretationProperty() { return interpretation; }
 
     public void calc() {
         SAMSCIResult res = SAMSCICalculator.calc(
@@ -37,6 +39,7 @@ public class SAMSCIModel {
                 getStatinDiscontinuation(),
                 getStatinRechallenge()
         );
-        setResult(res.toString());
+        setScore(res.getScore());
+        setInterpretation(res.getInterpretation());
     }
 }

@@ -37,28 +37,28 @@ public class CDSCalculator {
      * - Результат может использоваться для принятия решения о необходимости восполнения жидкости.
      */
 
-        public static CDSResult calc(String appearance, String eyes, String mucous, String tears) {
-            if (appearance == null || eyes == null || mucous == null || tears == null) {
-                return new CDSResult("Ошибка: заполните все поля");
-            }
+    public static CDSResult calc(String appearance, String eyes, String mucous, String tears) {
+        if (appearance == null || eyes == null || mucous == null || tears == null) {
+            return new CDSResult(-1, "Ошибка: заполните все поля");
+        }
 
-            int total = mapAppearance(appearance)
-                    + mapEyes(eyes)
-                    + mapMucous(mucous)
-                    + mapTears(tears);
+        int total = mapAppearance(appearance)
+                + mapEyes(eyes)
+                + mapMucous(mucous)
+                + mapTears(tears);
 
-            String interpretation;
-            if (total == 0) {
-                interpretation = "Дегидратация отсутствует";
-            } else if (total <= 4) {
-                interpretation = "Лёгкая дегидратация";
-            } else {
-                interpretation = "Средняя или тяжёлая дегидратация";
-            }
+        String interpretation;
+        if (total == 0) {
+            interpretation = "Дегидратация отсутствует";
+        } else if (total <= 4) {
+            interpretation = "Лёгкая дегидратация";
+        } else {
+            interpretation = "Средняя или тяжёлая дегидратация";
+        }
 
             String result = String.format("Баллы: %d\nИнтерпретация: %s", total, interpretation);
-            return new CDSResult(result);
-        }
+        return new CDSResult(total, interpretation);
+    }
 
         private static int mapAppearance(String value) {
             switch (value) {

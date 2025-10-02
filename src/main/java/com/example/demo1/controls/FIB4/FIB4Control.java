@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import com.example.demo1.common.services.ResultStyler;
 
 import java.io.Closeable;
 
@@ -81,6 +82,9 @@ public class FIB4Control extends StackPane implements Closeable {
 
     private void calculate() {
         model.calc();
+
+        double val = model.resultValueProperty().get(); 
+        ResultStyler.applyStyleForValue(txtResult, val, 1.45, 3.25);
     }
 
     @Override

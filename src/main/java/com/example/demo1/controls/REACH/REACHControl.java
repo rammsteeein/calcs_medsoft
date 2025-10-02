@@ -2,43 +2,41 @@ package com.example.demo1.controls.REACH;
 
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.io.Closeable;
-
-public class REACHControl extends StackPane implements Closeable {
+public class REACHControl extends StackPane {
 
     private final REACHModel model;
 
     private TextField txtAge;
-    private CheckBox chkPeripheral;
-    private CheckBox chkHF;
-    private CheckBox chkDiabetes;
-    private CheckBox chkCholesterol;
-    private CheckBox chkHypertension;
-    private ComboBox<String> cmbSmoking;
-    private ComboBox<String> cmbAntiplatelet;
-    private CheckBox chkOAC;
+    private CheckBox chkPeripheral, chkHF, chkDiabetes, chkCholesterol, chkHypertension, chkOAC;
+    private ComboBox<String> cmbSmoking, cmbAntiplatelet;
     private TextArea txtResult;
 
     public REACHControl(REACHModel model) {
         this.model = model;
         initialize();
         bind();
+
+        model.setOnResultStyled(res -> {
+            if (res.getScore() <= 6) ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
+            else if (res.getScore() <= 10) ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
+            else ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
+        });
     }
 
     private void initialize() {
-        txtAge = new TextField();
-        txtAge.setPromptText("Возраст");
-
+        txtAge = new TextField(); txtAge.setPromptText("Возраст");
         chkPeripheral = new CheckBox("Периферический атеросклероз");
         chkHF = new CheckBox("Сердечная недостаточность");
         chkDiabetes = new CheckBox("Диабет");
         chkCholesterol = new CheckBox("Гиперхолестеринемия");
         chkHypertension = new CheckBox("Артериальная гипертония");
+        chkOAC = new CheckBox("Прием оральных антикоагулянтов");
 
         cmbSmoking = new ComboBox<>();
         cmbSmoking.getItems().addAll("Никогда", "Раньше", "Продолжает");
@@ -48,36 +46,23 @@ public class REACHControl extends StackPane implements Closeable {
         cmbAntiplatelet.getItems().addAll("Нет", "Аспирин", "Другие", "Комбинация");
         cmbAntiplatelet.getSelectionModel().select(0);
 
-        chkOAC = new CheckBox("Прием оральных антикоагулянтов");
-
         txtResult = new TextArea();
-        txtResult.setEditable(false);
-        txtResult.setPromptText("Результат расчёта");
+        txtResult.setEditable(false); txtResult.setPromptText("Результат расчёта");
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Шкала REACH"),
-                txtAge, chkPeripheral, chkHF, chkDiabetes,
-                chkCholesterol, chkHypertension, cmbSmoking, cmbAntiplatelet, chkOAC, txtResult
+                txtAge, chkPeripheral, chkHF, chkDiabetes, chkCholesterol,
+                chkHypertension, cmbSmoking, cmbAntiplatelet, chkOAC, txtResult
         );
 
-        this.getChildren().add(new HBox(20,
-                leftBox,
+        VBox rightBox = new VBox(
                 CalculatorDescription.createDescription(
-                        "Шкала REACH (REduction of Atherothrombosis for Continued Health) создана для расчета риска" +
-                                " серьезных кровотечений у пациентов с атеросклерозом," +
-                                " не имеющих фибрилляции предсердий, острого коронарного синдрома," +
-                                " не проходивших эндоваскулярного лечения (стентирования)." +
-                                "\n" +
-                                "\n" +
-                                "Расчет по шкале выполнялся по данным наблюдения за 56 616 амбулаторными больными с" +
-                                " признаками атеротромбоза (ИБС, цереброваскулярные заболевания, периферический атеросклероз)." +
-                                " В регистре REACH учитывался прием антитромботических препаратов, что позволило" +
-                                " определить дополнительные риски кровотечений, связанные с этим.\n" +
-                                "\n" +
-                                "Шкала может помочь клиницистам предвидеть риск серьезных кровотечений и подойти" +
-                                " к решению вопроса подбора антитромботической терапии у амбулаторных больных."
+                        "Шкала REACH для оценки риска кровотечений у пациентов с атеросклерозом.\n" +
+                                "Позволяет прогнозировать риск и корректировать терапию."
                 )
-        ));
+        );
+
+        this.getChildren().add(new HBox(20, leftBox, rightBox));
     }
 
     private void bind() {
@@ -91,7 +76,6 @@ public class REACHControl extends StackPane implements Closeable {
 
         cmbSmoking.getSelectionModel().selectedIndexProperty()
                 .addListener((obs, o, n) -> { model.smokingStatusProperty().set(n.intValue()); model.calc(); });
-
         cmbAntiplatelet.getSelectionModel().selectedIndexProperty()
                 .addListener((obs, o, n) -> { model.antiplateletProperty().set(n.intValue()); model.calc(); });
 
@@ -104,9 +88,5 @@ public class REACHControl extends StackPane implements Closeable {
         chkOAC.selectedProperty().addListener((obs, o, n) -> model.calc());
 
         txtResult.textProperty().bind(model.resultProperty());
-    }
-
-    @Override
-    public void close() {
     }
 }

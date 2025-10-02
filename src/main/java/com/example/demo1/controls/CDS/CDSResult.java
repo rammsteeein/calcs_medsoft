@@ -1,14 +1,24 @@
 package com.example.demo1.controls.CDS;
 
 public class CDSResult {
-    private final String resultText;
+    private final int value;
+    private final String interpretation;
 
-    public CDSResult(String resultText) {
-        this.resultText = resultText;
+    public CDSResult(int value, String interpretation) {
+        this.value = value;
+        this.interpretation = interpretation;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getInterpretation() {
+        return interpretation;
     }
 
     @Override
     public String toString() {
-        return resultText;
+        return String.format("Баллы: %d%nИнтерпретация: %s", value, interpretation);
     }
 }

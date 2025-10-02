@@ -12,6 +12,7 @@ public class GuptaMICAModel {
     private final ObjectProperty<String> creatinine = new SimpleObjectProperty<>();
     private final ObjectProperty<String> surgeryType = new SimpleObjectProperty<>();
     private final StringProperty result = new SimpleStringProperty();
+    private final DoubleProperty riskPercent = new SimpleDoubleProperty(Double.NaN);
 
     public static final Map<String, Double> functionalStatusMap = Map.of(
             "Полностью независимый", 0.0,
@@ -55,6 +56,7 @@ public class GuptaMICAModel {
             Map.entry("Операции на венах", -1.09),
             Map.entry("Урологические операции", -0.26)
     );
+
     public double getAgeYears() { return ageYears.get(); }
     public void setAgeYears(double val) { ageYears.set(val); }
     public DoubleProperty ageYearsProperty() { return ageYears; }
@@ -79,6 +81,10 @@ public class GuptaMICAModel {
     public void setResult(String val) { result.set(val); }
     public StringProperty resultProperty() { return result; }
 
+    public double getRiskPercent() { return riskPercent.get(); }
+    public void setRiskPercent(double val) { riskPercent.set(val); }
+    public DoubleProperty riskPercentProperty() { return riskPercent; }
+
     public void calc() {
         GuptaMICAResult r = GuptaMICACalculator.calc(
                 getAgeYears(),
@@ -87,35 +93,7 @@ public class GuptaMICAModel {
                 getCreatinine(),
                 getSurgeryType()
         );
-        setResult(r.toString());
-    }
-
-    public static Builder builder() { return new Builder(); }
-
-    public static class Builder {
-        private double ageYears;
-        private String functionalStatus;
-        private String asaStatus;
-        private String creatinine;
-        private String surgeryType;
-        private String result = "";
-
-        public Builder withAgeYears(double val) { this.ageYears = val; return this; }
-        public Builder withFunctionalStatus(String val) { this.functionalStatus = val; return this; }
-        public Builder withAsaStatus(String val) { this.asaStatus = val; return this; }
-        public Builder withCreatinine(String val) { this.creatinine = val; return this; }
-        public Builder withSurgeryType(String val) { this.surgeryType = val; return this; }
-        public Builder withResult(String val) { this.result = val; return this; }
-
-        public GuptaMICAModel build() {
-            GuptaMICAModel m = new GuptaMICAModel();
-            m.setAgeYears(ageYears);
-            m.setFunctionalStatus(functionalStatus);
-            m.setAsaStatus(asaStatus);
-            m.setCreatinine(creatinine);
-            m.setSurgeryType(surgeryType);
-            m.setResult(result);
-            return m;
-        }
+        setResult(r.getResult());
+        setRiskPercent(r.getRiskPercent());
     }
 }

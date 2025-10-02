@@ -3,12 +3,14 @@ package com.example.demo1.controls.Pursuit;
 import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class PursuitControl extends BorderPane {
+
     private final PursuitModel model;
 
     private TextField txtAge;
@@ -21,11 +23,17 @@ public class PursuitControl extends BorderPane {
         this.model = model;
         initialize();
         bind();
+
+        // Настройка перекраски
+        model.setOnResultStyled(res -> {
+            if (res.getScore() <= 12) ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
+            else if (res.getScore() <= 14) ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
+            else ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
+        });
     }
 
     private void initialize() {
-        txtAge = new TextField();
-        txtAge.setPromptText("Возраст");
+        txtAge = new TextField(); txtAge.setPromptText("Возраст");
 
         cmbGender = new ComboBox<>();
         cmbGender.getItems().addAll(Gender.values());
@@ -35,7 +43,7 @@ public class PursuitControl extends BorderPane {
         chkHeartFailure = new CheckBox("Сердечная недостаточность");
 
         btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> calculateResult());
+        btnCalc.setOnAction(e -> model.calc());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -67,14 +75,6 @@ public class PursuitControl extends BorderPane {
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
         chkAngina.selectedProperty().bindBidirectional(model.hasAnginaProperty());
         chkHeartFailure.selectedProperty().bindBidirectional(model.hasHeartFailureProperty());
-        txtResult.textProperty().bindBidirectional(model.resultProperty());
-    }
-
-    private void calculateResult() {
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка ввода: " + ex.getMessage());
-        }
+        txtResult.textProperty().bind(model.resultProperty());
     }
 }

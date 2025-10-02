@@ -20,7 +20,5 @@ public class PursuitResult {
     public String getInterpretation() { return interpretation; }
 
     @Override
-    public String toString() {
-        return interpretation;
-    }
+    public String toString() { return interpretation; }
 }

@@ -2,18 +2,29 @@ package com.example.demo1.controls.Larsen;
 
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 public class LarsenControl extends StackPane implements AutoCloseable {
-    private LarsenModel model;
+    private final LarsenModel model;
 
     private ComboBox<String> cmbDrug;
     private CheckBox cbCardiomegalia, cbIBS, cbAG, cbSD, cbAnthraHistory, cbRadiation, cbAge, cbFemale;
-    private Button btnCalc;
-    private TextArea txtResult;
+
+    private Label lblResult;
+
+    private ImageView gradientImage;
+    private Rectangle marker;
+    private HBox ticksBox;
+
+    private final double MAX_SCORE = 10.0;
 
     public LarsenControl(LarsenModel model) {
         this.model = model;
@@ -36,51 +47,75 @@ public class LarsenControl extends StackPane implements AutoCloseable {
         cbAG = new CheckBox("АГ");
         cbSD = new CheckBox("СД");
         cbAnthraHistory = new CheckBox("Лечение антрациклинами в анамнезе");
-        cbRadiation = new CheckBox("Предшествующая или сочетанная лучевая терапия на грудную клетку");
+        cbRadiation = new CheckBox("Лучевая терапия грудной клетки");
         cbAge = new CheckBox("Возраст <15 или >65 лет");
         cbFemale = new CheckBox("Женский пол");
 
-        btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> calculateResult());
+        lblResult = new Label("Риск: 0 (Отсутствие риска)");
 
-        txtResult = new TextArea();
-        txtResult.setEditable(false);
-        txtResult.setPromptText("Результат расчёта");
+        gradientImage = new ImageView();
+        gradientImage.setFitWidth(300);
+        gradientImage.setFitHeight(20);
+        gradientImage.setImage(
+                new Image(getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm())
+        );
+
+        marker = new Rectangle(4, 20);
+        marker.setFill(Color.BLACK);
+
+        StackPane gradientPane = new StackPane();
+        gradientPane.getChildren().addAll(gradientImage, marker);
+
+        ticksBox = new HBox();
+        String[] tickLabels = {"0", "2", "4", "6", "8", "10"};
+        for (String t : tickLabels) {
+            Label lbl = new Label(t);
+            lbl.setPrefWidth(300.0 / (tickLabels.length - 1));
+            lbl.setStyle("-fx-text-fill: black; -fx-alignment: center;");
+            ticksBox.getChildren().add(lbl);
+        }
 
         VBox leftBox = new VBox(10,
-                CalculatorHeader.createHeader("Оценка кардиотоксичности перед противоопухолевой терапией (по Larsen CM, 2017)"),
+                CalculatorHeader.createHeader("Оценка кардиотоксичности (Larsen CM, 2017)"),
                 cmbDrug, cbCardiomegalia, cbIBS, cbAG, cbSD,
                 cbAnthraHistory, cbRadiation, cbAge, cbFemale,
-                btnCalc, txtResult
+                gradientPane, ticksBox, lblResult
         );
 
         getChildren().add(new HBox(20,
                 leftBox,
                 CalculatorDescription.createDescription(
-                        "Методика Larsen CM (2017) применяется для оценки риска развития кардиотоксичности " +
-                                "у пациентов перед началом противоопухолевой терапии.\n\n" +
-                                "В расчет включаются:\n" +
-                                "- Вид применяемого препарата (антрациклины, таргетная терапия и др.)\n" +
-                                "- Наличие сердечно-сосудистых заболеваний (кардиомегалия/ХСН, ИБС, АГ, СД)\n" +
-                                "- История предыдущего лечения (антрациклины, лучевая терапия)\n" +
-                                "- Факторы риска (возраст <15 или >65 лет, женский пол)\n\n" +
-                                "Применение:\n" +
-                                "- Индивидуальная оценка риска осложнений перед выбором схемы лечения\n" +
-                                "- Определение необходимости кардиологического наблюдения\n" +
-                                "- Сравнение рисков при использовании различных противоопухолевых препаратов"
+                        "Методика Larsen CM (2017) применяется для оценки риска кардиотоксичности " +
+                                "перед началом противоопухолевой терапии.\n\n" +
+                                "Сумма баллов = препарат + факторы пациента.\n" +
+                                "Интерпретация:\n" +
+                                "0: Отсутствие риска\n" +
+                                "1–2: Низкий риск\n" +
+                                "3–5: Промежуточный риск\n" +
+                                "≥6: Высокий риск"
                 )
         ));
     }
 
     private void bind() {
+        ChangeListener<Object> listener = (obs, oldVal, newVal) -> calculateAndUpdate();
+
         cmbDrug.valueProperty().bindBidirectional(model.drugProperty());
+        cmbDrug.valueProperty().addListener(listener);
+
+        cbCardiomegalia.selectedProperty().addListener(listener);
+        cbIBS.selectedProperty().addListener(listener);
+        cbAG.selectedProperty().addListener(listener);
+        cbSD.selectedProperty().addListener(listener);
+        cbAnthraHistory.selectedProperty().addListener(listener);
+        cbRadiation.selectedProperty().addListener(listener);
+        cbAge.selectedProperty().addListener(listener);
+        cbFemale.selectedProperty().addListener(listener);
+
+        calculateAndUpdate();
     }
 
-    private void unbind() {
-        cmbDrug.valueProperty().unbindBidirectional(model.drugProperty());
-    }
-
-    private void calculateResult() {
+    private void calculateAndUpdate() {
         model.getPatientFactors().clear();
         if (cbCardiomegalia.isSelected()) model.getPatientFactors().add(cbCardiomegalia.getText());
         if (cbIBS.isSelected()) model.getPatientFactors().add(cbIBS.getText());
@@ -91,16 +126,23 @@ public class LarsenControl extends StackPane implements AutoCloseable {
         if (cbAge.isSelected()) model.getPatientFactors().add(cbAge.getText());
         if (cbFemale.isSelected()) model.getPatientFactors().add(cbFemale.getText());
 
-        try {
-            model.calc();
-            txtResult.setText(model.calculationProperty().get());
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка: " + ex.getMessage());
-        }
+        model.calc();
+        updateMarker(model.totalScoreProperty().get(), model.interpretationProperty().get());
+    }
+
+    private void updateMarker(int score, String interpretation) {
+        double lineWidth = gradientImage.getFitWidth();
+        double targetX = (score / MAX_SCORE) * lineWidth - lineWidth / 2;
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(300), marker);
+        tt.setToX(targetX);
+        tt.play();
+
+        lblResult.setText("Риск: " + score + " (" + interpretation + ")");
     }
 
     @Override
     public void close() {
-        unbind();
+        cmbDrug.valueProperty().unbindBidirectional(model.drugProperty());
     }
 }

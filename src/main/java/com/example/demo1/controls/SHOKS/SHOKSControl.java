@@ -1,16 +1,31 @@
 package com.example.demo1.controls.SHOKS;
 
-import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import com.example.demo1.common.services.CalculatorDescription;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
-public class SHOKSControl extends BorderPane {
+public class SHOKSControl extends StackPane {
 
     private final SHOKSModel model;
 
-    private TextArea txtResult;
-    private Button btnCalc;
+    private Label lblSliderValue;
+    private ImageView gradientImage;
+    private Rectangle marker;
+    private HBox ticksBox;
+
+    private final double MAX_SCORE = 12.0; // визуальный максимум (для позиции 0..IV используем деления)
 
     public SHOKSControl(SHOKSModel model) {
         this.model = model;
@@ -19,59 +34,123 @@ public class SHOKSControl extends BorderPane {
     }
 
     private void initialize() {
-        VBox fields = new VBox(10,
-                CalculatorHeader.createHeader("Шкала SHOKS"),
-                createLabeledCombo("Одышка (0–2)", 2, model::setOdyshka),
-                createLabeledCombo("Изменение веса (0–1)", 1, model::setVes),
-                createLabeledCombo("Перебои (0–1)", 1, model::setPereboi),
-                createLabeledCombo("Положение (0–3)", 3, model::setPolozhenie),
-                createLabeledCombo("Шейные вены (0–2)", 2, model::setSheinyeVeny),
-                createLabeledCombo("Хрипы (0–3)", 3, model::setHripy),
-                createLabeledCombo("Галоп (0–1)", 1, model::setGalop),
-                createLabeledCombo("Печень (0–2)", 2, model::setPechen),
-                createLabeledCombo("Отеки (0–3)", 3, model::setOteki),
-                createLabeledCombo("САД (0–2)", 2, model::setSAD)
+        // Слева — набор ComboBox'ов
+        VBox leftBox = new VBox(10,
+                CalculatorHeader.createHeader("SHOKS"),
+                createLabeledCombo("Одышка (0–2)", 2, model.odyshkaProperty()),
+                createLabeledCombo("Изменение веса (0–1)", 1, model.vesProperty()),
+                createLabeledCombo("Перебои (0–1)", 1, model.pereboiProperty()),
+                createLabeledCombo("Положение (0–3)", 3, model.polozhenieProperty()),
+                createLabeledCombo("Шейные вены (0–2)", 2, model.sheinyeVenyProperty()),
+                createLabeledCombo("Хрипы (0–3)", 3, model.hripyProperty()),
+                createLabeledCombo("Галоп (0–1)", 1, model.galopProperty()),
+                createLabeledCombo("Печень (0–2)", 2, model.pechenProperty()),
+                createLabeledCombo("Отеки (0–3)", 3, model.otekiProperty()),
+                createLabeledCombo("САД (0–2)", 2, model.SADProperty())
         );
 
-        btnCalc = new Button("Рассчитать");
-        txtResult = new TextArea();
-        txtResult.setEditable(false);
-        txtResult.setPrefRowCount(3);
+        lblSliderValue = new Label("ФК: —");
 
-        fields.getChildren().addAll(btnCalc, txtResult);
+        // Градиентная полоса
+        gradientImage = new ImageView();
+        gradientImage.setFitWidth(300);
+        gradientImage.setFitHeight(20);
+        try {
+            gradientImage.setImage(
+                    new Image(getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm())
+            );
+        } catch (Exception e) {
+            // если картинка не найдена — игнорируем, полоса останется пустой
+        }
 
-        ScrollPane scrollPane = new ScrollPane(fields);
-        scrollPane.setFitToWidth(true);
+        marker = new Rectangle(4, 20);
+        marker.setFill(Color.BLACK);
 
-        setCenter(scrollPane);
-        setRight(CalculatorDescription.createDescription(
-                "Шкала оценки клинического состояния предназначена для оценки тяжести клинических проявлений ХСН." +
-                        " В шкалу включены наиболее распространенные симптомы и признаки СН," +
-                        " выявляемые при расспросе и физикальном обследовании без применения инструментальных методов." +
-                        " Каждый из этих признаков имеет балльную оценку. Сумма баллов соответствует функциональному классу СН." +
-                        " Использование данной шкалы в динамике позволяет оценивать эффективность проводимого лечения."
+        StackPane gradientPane = new StackPane(gradientImage, marker);
+
+        // Подписи под градиентом
+        ticksBox = new HBox();
+        ticksBox.setSpacing(0);
+        String[] tickLabels = {"0", "I ФК", "II ФК", "III ФК", "IV ФК"};
+        for (String label : tickLabels) {
+            Label lbl = new Label(label);
+            lbl.setPrefWidth(300.0 / (tickLabels.length - 1));
+            lbl.setStyle("-fx-text-fill: black; -fx-alignment: center;");
+            ticksBox.getChildren().add(lbl);
+        }
+
+        leftBox.getChildren().addAll(gradientPane, ticksBox, lblSliderValue);
+
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Шкала SHOKS используется для оценки функционального класса ХСН.\n\n" +
+                                "Баллы по критериям:\n" +
+                                "- Одышка: 0–2\n" +
+                                "- Изменение веса: 0–1\n" +
+                                "- Перебои: 0–1\n" +
+                                "- Положение: 0–3\n" +
+                                "- Шейные вены: 0–2\n" +
+                                "- Хрипы: 0–3\n" +
+                                "- Галоп: 0–1\n" +
+                                "- Печень: 0–2\n" +
+                                "- Отеки: 0–3\n" +
+                                "- САД: 0–2\n\n" +
+                                "Итоговая сумма (0–12) соответствует I–IV функциональному классу."
+                )
         ));
     }
 
     private void bind() {
-        txtResult.textProperty().bind(model.resultProperty());
-        btnCalc.setOnAction(e -> model.calc());
+        // слушатели на все свойства модели
+        ChangeListener<Object> listener = (obs, o, n) -> updateMarker();
+
+        model.odyshkaProperty().addListener(listener);
+        model.vesProperty().addListener(listener);
+        model.pereboiProperty().addListener(listener);
+        model.polozhenieProperty().addListener(listener);
+        model.sheinyeVenyProperty().addListener(listener);
+        model.hripyProperty().addListener(listener);
+        model.galopProperty().addListener(listener);
+        model.pechenProperty().addListener(listener);
+        model.otekiProperty().addListener(listener);
+        model.SADProperty().addListener(listener);
+        Platform.runLater(this::updateMarker);
     }
 
+    private void updateMarker() {
+        model.calc();
+        int score = model.getTotalScore();
 
-    private HBox createLabeledCombo(String label, int maxValue, java.util.function.IntConsumer setter) {
+        int classIndex;
+        String fcText;
+        if (score == 0) { classIndex = 0; fcText = "нет признаков СН"; }
+        else if (score <= 3) { classIndex = 1; fcText = "I"; }
+        else if (score <= 6) { classIndex = 2; fcText = "II"; }
+        else if (score <= 9) { classIndex = 3; fcText = "III"; }
+        else { classIndex = 4; fcText = "IV"; }
+        Label targetLabel = (Label) ticksBox.getChildren().get(classIndex);
+
+        double labelCenterX = targetLabel.getLayoutX() + targetLabel.getWidth() / 2;
+
+        double targetX = labelCenterX - gradientImage.getFitWidth() / 2;
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(300), marker);
+        tt.setToX(targetX);
+        tt.play();
+
+        lblSliderValue.setText(String.format("ФК: %s (%d баллов)", fcText, score));
+    }
+
+    private HBox createLabeledCombo(String label, int maxValue, javafx.beans.property.IntegerProperty property) {
         Label lbl = new Label(label);
         ComboBox<Integer> combo = new ComboBox<>();
-        for (int i = 0; i <= maxValue; i++) {
-            combo.getItems().add(i);
-        }
-        combo.valueProperty().addListener((obs, old, val) -> {
-            if (val != null) setter.accept(val);
-        });
-        combo.setPrefWidth(80);
+        for (int i = 0; i <= maxValue; i++) combo.getItems().add(i);
 
-        HBox box = new HBox(10, lbl, combo);
-        box.setFillHeight(true);
-        return box;
+        combo.valueProperty().bindBidirectional(property.asObject());
+        if (property.get() == 0) combo.setValue(0);
+
+        combo.setPrefWidth(80);
+        return new HBox(10, lbl, combo);
     }
 }

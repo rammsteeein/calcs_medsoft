@@ -2,6 +2,7 @@ package com.example.demo1.controls.CDS;
 
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -57,7 +58,7 @@ public class CDSControl extends StackPane implements AutoCloseable {
         cmbTears.setPromptText("Слёзы");
 
         btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> calculateResult());
+        btnCalc.setOnAction(e -> calculate());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -102,8 +103,11 @@ public class CDSControl extends StackPane implements AutoCloseable {
         txtResult.textProperty().unbindBidirectional(model.resultProperty());
     }
 
-    private void calculateResult() {
+    private void calculate() {
         model.calc();
+
+        double val = model.resultValueProperty().get();
+        ResultStyler.applyStyleForValue(txtResult, val, 0.5, 4.5);
     }
 
     @Override

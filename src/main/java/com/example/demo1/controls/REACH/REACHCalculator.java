@@ -87,17 +87,19 @@ public class REACHCalculator {
         score += antiplatelet;
         if (oralAnticoagulant) score += 2;
 
-        String riskCategory = "";
-        double riskPercent = 0.0;
+        String riskCategory;
+        double riskPercent;
 
-        if (score >= 0 && score <= 6) { riskCategory = "низкий"; riskPercent = 0.46; }
-        else if (score >= 7 && score <= 8) { riskCategory = "умеренный"; riskPercent = 0.95; }
-        else if (score >= 9 && score <= 10) { riskCategory = "высокий"; riskPercent = 1.25; }
-        else if (score >= 11) { riskCategory = "очень высокий"; riskPercent = 2.76; }
+        if (score <= 6) { riskCategory = "низкий"; riskPercent = 0.46; }
+        else if (score <= 8) { riskCategory = "умеренный"; riskPercent = 0.95; }
+        else if (score <= 10) { riskCategory = "высокий"; riskPercent = 1.25; }
+        else { riskCategory = "очень высокий"; riskPercent = 2.76; }
 
-        String resultStr = String.format("Сумма баллов: %d\nСтепень риска: %s\nВероятность кровотечения: %.2f%%",
-                score, riskCategory, riskPercent);
+        String interpretation = String.format(
+                "Сумма баллов: %d\nСтепень риска: %s\nВероятность кровотечения: %.2f%%",
+                score, riskCategory, riskPercent
+        );
 
-        return new REACHResult(resultStr);
+        return new REACHResult(score, riskCategory, riskPercent, interpretation);
     }
 }
