@@ -2,6 +2,7 @@ package com.example.demo1.controls.FLI;
 
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -86,8 +87,26 @@ public class FLIControl extends StackPane implements Closeable {
     private void calculateResult() {
         try {
             model.calc();
+
+            String text = model.resultProperty().get();
+
+            double fliValue = -1;
+            try {
+                if (text.startsWith("FLI:")) {
+                    String[] parts = text.split("\\n")[0].split(":");
+                    fliValue = Double.parseDouble(parts[1].trim());
+                }
+            } catch (Exception ignored) {}
+
+            if (fliValue >= 0) {
+                ResultStyler.applyStyleForValue(txtResult, fliValue, 30, 60);
+            } else {
+                ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
+            }
+
         } catch (Exception ex) {
             txtResult.setText("Ошибка ввода: " + ex.getMessage());
+            ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
         }
     }
 

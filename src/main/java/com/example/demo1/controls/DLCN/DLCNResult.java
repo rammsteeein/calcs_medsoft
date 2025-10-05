@@ -1,8 +1,5 @@
 package com.example.demo1.controls.DLCN;
 
-/**
- * Результат расчёта по шкале DLCN.
- */
 public class DLCNResult {
     private final int score;
     private final String diagnosis;

@@ -4,13 +4,12 @@ import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -31,7 +30,7 @@ public class DLCNControl extends StackPane {
     private HBox ticksBox;
     private Label lblSliderValue;
 
-    // максимум баллов по DLCN шкале
+    private final double SCALE_WIDTH = 300;
     private final double MAX_SCORE = 8.0;
 
     public DLCNControl(DLCNModel model) {
@@ -48,33 +47,40 @@ public class DLCNControl extends StackPane {
         chkTendonXanthomas = new CheckBox("Ксантомы сухожилия");
         chkCornealArcusUnder45 = new CheckBox("Липидная дуга роговицы <45 лет");
 
-        // Градиент
-        gradientImage = new ImageView();
-        gradientImage.setFitWidth(300);
+        gradientImage = new ImageView(new Image(
+                getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm()
+        ));
+        gradientImage.setFitWidth(SCALE_WIDTH);
         gradientImage.setFitHeight(20);
-        gradientImage.setImage(
-                new Image(getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm())
-        );
 
-        // Маркер
-        marker = new Rectangle(4, 20);
-        marker.setFill(Color.BLACK);
+        marker = new Rectangle(6, 22, Color.BLACK);
+        marker.setArcWidth(3);
+        marker.setArcHeight(3);
 
         StackPane gradientPane = new StackPane();
+        gradientPane.setAlignment(Pos.CENTER_LEFT);
         gradientPane.getChildren().addAll(gradientImage, marker);
+        gradientPane.setPrefWidth(SCALE_WIDTH);
 
-        // Подписи для интерпретации баллов
         ticksBox = new HBox();
+        ticksBox.setPrefWidth(SCALE_WIDTH);
+        ticksBox.setAlignment(Pos.CENTER_LEFT);
         ticksBox.setSpacing(0);
+
+        double[] tickPositions = {0.01, 3.0 / 8.0, 6.0 / 8.0, 1.0};
         String[] tickLabels = {"0", "3", "6", "8+"};
-        for (String label : tickLabels) {
-            Label lbl = new Label(label);
-            lbl.setPrefWidth(300.0 / (tickLabels.length - 1));
-            lbl.setStyle("-fx-text-fill: black; -fx-alignment: center;");
-            ticksBox.getChildren().add(lbl);
+
+        Pane tickPane = new Pane();
+        tickPane.setPrefWidth(SCALE_WIDTH);
+        for (int i = 0; i < tickLabels.length; i++) {
+            Label lbl = new Label(tickLabels[i]);
+            lbl.setStyle("-fx-text-fill: black; -fx-font-size: 11;");
+            lbl.setLayoutX(tickPositions[i] * (SCALE_WIDTH - 6) - 4); // центрируем по тексту
+            lbl.setLayoutY(0);
+            tickPane.getChildren().add(lbl);
         }
 
-        lblSliderValue = new Label("Результат: 0");
+        lblSliderValue = new Label("Результат: FH маловероятна (0)");
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Критерии DLCN для диагностики СГХС"),
@@ -85,15 +91,15 @@ public class DLCNControl extends StackPane {
                 chkTendonXanthomas,
                 chkCornealArcusUnder45,
                 gradientPane,
-                ticksBox,
+                tickPane,
                 lblSliderValue
         );
+        leftBox.setAlignment(Pos.TOP_LEFT);
 
         getChildren().add(new HBox(20,
                 leftBox,
                 CalculatorDescription.createDescription(
-                        "Шкала DLCN (Dutch Lipid Clinic Network) используется для диагностики " +
-                                "гетерозиготной семейной гиперхолестеринемии (СГХС).\n\n" +
+                        "Шкала DLCN используется для диагностики гетерозиготной семейной гиперхолестеринемии (СГХС).\n\n" +
                                 "Интерпретация:\n" +
                                 "0–2: маловероятно\n" +
                                 "3–5: возможная СГХС\n" +
@@ -120,22 +126,24 @@ public class DLCNControl extends StackPane {
         chkTendonXanthomas.selectedProperty().addListener(recalcListener);
         chkCornealArcusUnder45.selectedProperty().addListener(recalcListener);
 
-        // Обновление слайдера при изменении результата
-        model.resultProperty().addListener((obs, oldVal, newVal) -> updateMarker(newVal));
+        model.resultProperty().addListener((obs, oldVal, newVal) -> updateMarker());
+        model.scoreProperty().addListener((obs, oldVal, newVal) -> updateMarker());
 
-        updateMarker("0");
+        updateMarker();
     }
 
-    private void updateMarker(String result) {
+    private void updateMarker() {
         int score = model.getScore();
-
         double lineWidth = gradientImage.getFitWidth();
-        double targetX = (score / MAX_SCORE) * lineWidth - lineWidth / 2;
+        double maxTravel = lineWidth - marker.getWidth();
+
+        double fraction = Math.min(score / MAX_SCORE, 1.0);
+        double targetX = fraction * maxTravel;
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), marker);
         tt.setToX(targetX);
         tt.play();
 
-        lblSliderValue.setText("Результат: " + result + " (баллы: " + score + ")");
+        lblSliderValue.setText(String.format("Результат: %s (баллы: %d)", model.getResult(), score));
     }
 }

@@ -1,17 +1,16 @@
 package com.example.demo1.controls.IMPROVEVTE;
 
-import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -26,10 +25,10 @@ public class IMPROVETVEControl extends StackPane {
     private Label lblSliderValue;
 
     private ImageView gradientImage;
-    private Rectangle marker; // маркер риска
-    private HBox ticksBox; // надписи с баллами
+    private Rectangle marker;
 
-    private final double MAX_RISK = 7.2; // максимальный риск по шкале IMPROVE VTE
+    private final double SCALE_WIDTH = 300;
+    private final double MAX_SCORE = 10.0; // 5–10 баллов
 
     public IMPROVETVEControl(IMPROVETVEModel model) {
         this.model = model;
@@ -38,10 +37,9 @@ public class IMPROVETVEControl extends StackPane {
     }
 
     private void initialize() {
-        // Чекбоксы и поле возраста
         chkPriorVTE = new CheckBox("ВТЭО в анамнезе");
-        chkKnownThrombophilia = new CheckBox("Известная тромбофилия");
-        chkLowerLimbParalysis = new CheckBox("Парез или паралич нижних конечностей");
+        chkKnownThrombophilia = new CheckBox("Тромбофилия");
+        chkLowerLimbParalysis = new CheckBox("Парез/паралич ног");
         chkActiveCancer = new CheckBox("Активный рак");
         chkImmobilization7Days = new CheckBox("Иммобилизация ≥7 дней");
         chkICUstay = new CheckBox("Пребывание в ICU");
@@ -50,31 +48,37 @@ public class IMPROVETVEControl extends StackPane {
 
         lblSliderValue = new Label("Риск: 0%");
 
-        // Gradient PNG
-        gradientImage = new ImageView();
-        gradientImage.setFitWidth(300);
+        // Градиент
+        gradientImage = new ImageView(new Image(
+                getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm()
+        ));
+        gradientImage.setFitWidth(SCALE_WIDTH);
         gradientImage.setFitHeight(20);
-        gradientImage.setImage(
-                new Image(getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm())
-        );
 
-        // Маркер риска
-        marker = new Rectangle(4, 20);
-        marker.setFill(Color.BLACK);
+        // Маркер
+        marker = new Rectangle(6, 22, Color.BLACK);
+        marker.setArcWidth(3);
+        marker.setArcHeight(3);
 
-        // Объединяем градиент и маркер в StackPane
         StackPane gradientPane = new StackPane();
+        gradientPane.setAlignment(Pos.CENTER_LEFT);
         gradientPane.getChildren().addAll(gradientImage, marker);
+        gradientPane.setPrefWidth(SCALE_WIDTH);
 
-        // Надписи с баллами
-        ticksBox = new HBox();
-        ticksBox.setSpacing(0);
-        String[] tickLabels = {"0", "1", "2", "3", "4", "5–10"};
-        for (String label : tickLabels) {
-            Label lbl = new Label(label);
-            lbl.setPrefWidth(300.0 / (tickLabels.length - 1));
-            lbl.setStyle("-fx-text-fill: black; -fx-alignment: center;");
-            ticksBox.getChildren().add(lbl);
+        double[] tickValues = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        String[] tickLabels = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+
+        Pane tickPane = new Pane();
+        tickPane.setPrefWidth(SCALE_WIDTH);
+
+        for (int i = 0; i < tickValues.length; i++) {
+            double normalized = tickValues[i] / MAX_SCORE;
+            double x = normalized * (SCALE_WIDTH - marker.getWidth());
+            Label lbl = new Label(tickLabels[i]);
+            lbl.setStyle("-fx-text-fill: black; -fx-font-size: 11;");
+            lbl.setLayoutX(x);
+            lbl.setLayoutY(0);
+            tickPane.getChildren().add(lbl);
         }
 
         VBox leftBox = new VBox(10,
@@ -83,30 +87,23 @@ public class IMPROVETVEControl extends StackPane {
                 chkActiveCancer, chkImmobilization7Days, chkICUstay,
                 txtAge,
                 gradientPane,
-                ticksBox,
+                tickPane,
                 lblSliderValue
         );
+        leftBox.setAlignment(Pos.TOP_LEFT);
 
         getChildren().add(new HBox(20,
                 leftBox,
                 CalculatorDescription.createDescription(
-                        "IMPROVE VTE — оценка 3-месячного риска венозной тромбоэмболии у госпитализированных пациентов.\n\n" +
-                                "Факторы риска и баллы:\n" +
-                                "- ВТЭО в анамнезе: 3\n" +
-                                "- Тромбофилия: 2\n" +
-                                "- Парез/паралич ног: 2\n" +
-                                "- Активный рак: 2\n" +
-                                "- Иммобилизация ≥7 дней: 1\n" +
-                                "- Пребывание в ICU: 1\n" +
-                                "- Возраст >60 лет: 1\n\n" +
-                                "Оценка риска:\n" +
-                                "0: 0,4%, 1: 0,6%, 2: 1%, 3: 1,7%, 4: 2,9%, ≥5: 7,2%"
+                        "IMPROVE VTE — оценка 3-месячного риска венозной тромбоэмболии.\n\n" +
+                                "Баллы: ВТЭО:3, Тромбофилия:2, Парез/паралич:2, Рак:2, Иммобилизация:1, ICU:1, Возраст>60:1\n" +
+                                "Риск: 0:0,4%, 1:0,6%, 2:1%, 3:1,7%, 4:2,9%, ≥5:7,2%"
                 )
         ));
     }
 
     private void bind() {
-        ChangeListener<Object> listener = (obs, oldVal, newVal) -> updateMarker();
+        ChangeListener<Object> recalcListener = (obs, oldVal, newVal) -> model.calc();
 
         chkPriorVTE.selectedProperty().bindBidirectional(model.priorVTEProperty());
         chkKnownThrombophilia.selectedProperty().bindBidirectional(model.knownThrombophiliaProperty());
@@ -115,53 +112,34 @@ public class IMPROVETVEControl extends StackPane {
         chkImmobilization7Days.selectedProperty().bindBidirectional(model.immobilization7DaysProperty());
         chkICUstay.selectedProperty().bindBidirectional(model.ICUstayProperty());
 
-        chkPriorVTE.selectedProperty().addListener(listener);
-        chkKnownThrombophilia.selectedProperty().addListener(listener);
-        chkLowerLimbParalysis.selectedProperty().addListener(listener);
-        chkActiveCancer.selectedProperty().addListener(listener);
-        chkImmobilization7Days.selectedProperty().addListener(listener);
-        chkICUstay.selectedProperty().addListener(listener);
+        chkPriorVTE.selectedProperty().addListener(recalcListener);
+        chkKnownThrombophilia.selectedProperty().addListener(recalcListener);
+        chkLowerLimbParalysis.selectedProperty().addListener(recalcListener);
+        chkActiveCancer.selectedProperty().addListener(recalcListener);
+        chkImmobilization7Days.selectedProperty().addListener(recalcListener);
+        chkICUstay.selectedProperty().addListener(recalcListener);
+
+        model.resultProperty().addListener((obs, oldVal, newVal) -> updateMarker());
+        model.scoreProperty().addListener((obs, oldVal, newVal) -> updateMarker());
 
         txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try {
-                model.ageProperty().set(Integer.parseInt(newVal));
-            } catch (Exception ignored) {}
+            try { model.ageProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
             updateMarker();
         });
 
         updateMarker();
-
     }
 
     private void updateMarker() {
-        IMPROVEResult res = IMPROVETVECalculator.calc(
-                model.priorVTEProperty().get(),
-                model.knownThrombophiliaProperty().get(),
-                model.lowerLimbParalysisProperty().get(),
-                model.activeCancerProperty().get(),
-                model.immobilization7DaysProperty().get(),
-                model.ICUstayProperty().get(),
-                model.ageProperty().get()
-        );
+        int score = model.getScore();
+        double lineWidth = SCALE_WIDTH - marker.getWidth();
+        double fraction = Math.min(score / MAX_SCORE, 1.0);
+        double targetX = fraction * lineWidth;
 
-        double value;
-        switch (res.getRisk()) {
-            case "0,4%": value = 0.4; break;
-            case "0,6%": value = 0.6; break;
-            case "1%": value = 1; break;
-            case "1,7%": value = 1.7; break;
-            case "2,9%": value = 2.9; break;
-            default: value = 7.2; break;
-        }
-
-        double lineWidth = gradientImage.getFitWidth();
-        double targetX = (value / MAX_RISK) * lineWidth - lineWidth / 2;
-
-        // Плавная анимация маркера
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), marker);
         tt.setToX(targetX);
         tt.play();
 
-        lblSliderValue.setText("Риск: " + res.getRisk());
+        lblSliderValue.setText(String.format("Риск: %s (баллы: %d)", model.getResult(), score));
     }
 }
