@@ -67,7 +67,7 @@ public class GuptaMICACalculator {
                 + creatVal
                 + surgVal;
 
-        double risk = Math.exp(x) / (1 + Math.exp(x)) * 100;
+        double risk = (Math.exp(x) / (1 + Math.exp(x))) * 100.0;
 
         String riskCategory;
         if (risk < 0.05) riskCategory = "Низкий риск (<0.05%)";
@@ -77,7 +77,7 @@ public class GuptaMICACalculator {
         else riskCategory = "Очень высокий риск (≥2.60%)";
 
         String resultText = String.format(
-                "x = %.2f\nMICA риск = %.4f%%\nСтепень риска: %s",
+                "x = %.2f%nMICA риск = %.2f%%%nКатегория: %s",
                 x, risk, riskCategory
         );
 

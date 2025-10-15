@@ -27,11 +27,16 @@ public class CockroftModel {
             int ageValue = Integer.parseInt(age.get());
             double weightValue = Double.parseDouble(weight.get());
 
+            if (unitValue == Unit.MKMOL) {
+                kreatininValue = kreatininValue / 88.4;
+            }
+
             double calcValue = CockroftCalculator.calc(genderValue, kreatininValue, weightValue, ageValue);
+
 
             result.set(new CockroftResult(
                     calcValue,
-                    unitValue,
+                    Unit.MGDL,
                     String.format("Клиренс креатинина: %.2f мл/мин", calcValue)
             ));
         } catch (Exception e) {

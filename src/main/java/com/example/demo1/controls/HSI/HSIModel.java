@@ -1,7 +1,9 @@
 package com.example.demo1.controls.HSI;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.beans.property.*;
+import javafx.scene.control.TextArea;
 
 public class HSIModel {
 
@@ -11,6 +13,10 @@ public class HSIModel {
     private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>(Gender.MALE);
     private final BooleanProperty hasDiabetes = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
+
+    private TextArea resultControl;
+
+    public void setResultControl(TextArea control) { this.resultControl = control; }
 
     public double getAlt() { return alt.get(); }
     public void setAlt(double val) { alt.set(val); }
@@ -39,5 +45,15 @@ public class HSIModel {
     public void calc() {
         HSIResult res = HSICalculator.calc(getAlt(), getAst(), getBmi(), getGender(), isHasDiabetes());
         setResult(res.toString());
+
+        if (resultControl != null) {
+            double score = res.getHsiValue();
+            ResultStyler.Zone zone;
+            if (score <= 2) zone = ResultStyler.Zone.LOW;
+            else if (score <= 4) zone = ResultStyler.Zone.GRAY;
+            else zone = ResultStyler.Zone.HIGH;
+
+            ResultStyler.applyStyle(resultControl, zone);
+        }
     }
 }

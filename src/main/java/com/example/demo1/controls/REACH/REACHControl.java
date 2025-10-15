@@ -30,7 +30,9 @@ public class REACHControl extends StackPane {
     }
 
     private void initialize() {
-        txtAge = new TextField(); txtAge.setPromptText("Возраст");
+        txtAge = new TextField();
+        txtAge.setPromptText("Возраст");
+
         chkPeripheral = new CheckBox("Периферический атеросклероз");
         chkHF = new CheckBox("Сердечная недостаточность");
         chkDiabetes = new CheckBox("Диабет");
@@ -47,12 +49,21 @@ public class REACHControl extends StackPane {
         cmbAntiplatelet.getSelectionModel().select(0);
 
         txtResult = new TextArea();
-        txtResult.setEditable(false); txtResult.setPromptText("Результат расчёта");
+        txtResult.setEditable(false);
+        txtResult.setPromptText("Результат расчёта");
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Шкала REACH"),
-                txtAge, chkPeripheral, chkHF, chkDiabetes, chkCholesterol,
-                chkHypertension, cmbSmoking, cmbAntiplatelet, chkOAC, txtResult
+                txtAge,
+                chkPeripheral,
+                chkHF,
+                chkDiabetes,
+                chkCholesterol,
+                chkHypertension,
+                new VBox(new Label("Курение"), cmbSmoking),
+                new VBox(new Label("Прием антиагрегантов"), cmbAntiplatelet),
+                chkOAC,
+                txtResult
         );
 
         VBox rightBox = new VBox(

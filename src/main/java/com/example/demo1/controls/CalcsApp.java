@@ -71,7 +71,6 @@ public class CalcsApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Регистрируем калькуляторы
         calculatorMap.put("Pursuit", () -> new PursuitControl(new PursuitModel()));
         calculatorMap.put("FLI", () -> new FLIControl(new FLIModel()));
         calculatorMap.put("Cockroft", () -> new CockroftControl(new CockroftModel()));
@@ -80,7 +79,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("ХС-ЛНП", () -> new LDLControl(new LDLModel()));
         calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(new INBARModel()));
         calculatorMap.put("FIB-4", () -> new FIB4Control(new FIB4Model()));
-        calculatorMap.put("CDS", () -> new CDSControl(new CDSModel()));
+        calculatorMap.put("CDS", () -> new CDSControl(new CDSModel())); //
         calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel()));
         calculatorMap.put("Шкала Хорана", () -> new KhoranaControl(new KhoranaModel()));
         calculatorMap.put("REACH", () -> new REACHControl(new REACHModel()));
@@ -193,7 +192,6 @@ public class CalcsApp extends Application {
         stage.setScene(scene);
         stage.setTitle(title);
 
-        // Важно: окно знает своего владельца
         stage.initOwner(owner);
         stage.initModality(Modality.NONE);
 

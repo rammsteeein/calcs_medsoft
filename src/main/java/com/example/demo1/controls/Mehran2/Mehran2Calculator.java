@@ -33,37 +33,47 @@ public class Mehran2Calculator {
     private static final double[] RISKS = {7.5, 14.0, 26.1, 57.3};
 
     public static Mehran2Result calc(
-            boolean hypotension,
-            boolean balloonPump,
-            boolean heartFailure,
-            int age,
+            String oksType,
+            String diabetesType,
+            boolean lvefLow,
             boolean anemia,
-            boolean diabetes,
-            double contrastVolume,
-            double gfr
+            int age,
+            int contrastVolume,
+            boolean bleeding
     ) {
         int score = 0;
 
-        if (hypotension) score += 5;
-        if (balloonPump) score += 5;
-        if (heartFailure) score += 5;
-        if (age > 75) score += 4;
-        if (anemia) score += 3;
-        if (diabetes) score += 3;
-        score += (int) (contrastVolume / 100);
+        switch (oksType) {
+            case "STEMI": score += 8; break;
+            case "NSTEMI": score += 4; break;
+            case "Нестабильная стенокардия": score += 2; break;
+        }
 
-        if (gfr >= 60) score += 0;
-        else if (gfr >= 40) score += 2;
-        else if (gfr >= 20) score += 4;
-        else score += 6;
+        if (diabetesType != null) {
+            switch (diabetesType) {
+                case "Инсулинозависимый": score += 2; break;
+                case "Неинсулинозависимый": score += 1; break;
+            }
+        }
+
+        if (lvefLow) score += 2;
+
+        if (anemia) score += 1;
+
+        if (age >= 75) score += 1;
+
+        if (contrastVolume >= 100 && contrastVolume <= 199) score += 1;
+        else if (contrastVolume >= 200 && contrastVolume <= 299) score += 3;
+        else if (contrastVolume >= 300) score += 4;
+
+        if (bleeding) score += 4;
 
         String interpretation;
-        double risk;
-        if (score <= 5) { interpretation = "Низкий риск КИН"; risk = RISKS[0]; }
-        else if (score <= 10) { interpretation = "Умеренный риск КИН"; risk = RISKS[1]; }
-        else if (score <= 15) { interpretation = "Высокий риск КИН"; risk = RISKS[2]; }
-        else { interpretation = "Очень высокий риск КИН"; risk = RISKS[3]; }
+        if (score <= 2) interpretation = "Низкий риск (<5%)";
+        else if (score <= 7) interpretation = "Умеренный риск (5–15%)";
+        else if (score <= 11) interpretation = "Высокий риск (15–30%)";
+        else interpretation = "Очень высокий риск (>30%)";
 
-        return new Mehran2Result(interpretation, score, risk);
+        return new Mehran2Result(interpretation, score, 0);
     }
 }

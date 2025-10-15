@@ -15,7 +15,6 @@ public final class ResultStyler {
 
     private static void applyColor(TextInputControl control, String color) {
         if (control == null) return;
-        // Применяем обо две CSS-свойства — на всякий случай для разных скинов
         control.setStyle(String.format("-fx-control-inner-background: %s; -fx-background-color: %s;", color, color));
     }
 

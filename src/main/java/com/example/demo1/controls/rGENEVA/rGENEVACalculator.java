@@ -51,7 +51,7 @@ public class rGENEVACalculator {
 
         if (surgeryOrFracture) score += 2;
         if (hemoptysis) score += 2;
-        if (activeCancer) score += 3;
+        if (activeCancer) score += 2;
         if (legPain) score += 3;
         if (painAndSwelling) score += 4;
         if (age > 65) score += 1;

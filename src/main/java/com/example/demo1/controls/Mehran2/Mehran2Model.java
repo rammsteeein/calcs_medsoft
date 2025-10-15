@@ -4,48 +4,42 @@ import javafx.beans.property.*;
 
 public class Mehran2Model {
 
-    private final BooleanProperty hypotension = new SimpleBooleanProperty();
-    private final BooleanProperty balloonPump = new SimpleBooleanProperty();
-    private final BooleanProperty heartFailure = new SimpleBooleanProperty();
+    private final ObjectProperty<String> oksType = new SimpleObjectProperty<>("STEMI");
+    private final ObjectProperty<String> diabetesType = new SimpleObjectProperty<>("Инсулинозависимый");
+    private final BooleanProperty lvefLow = new SimpleBooleanProperty(false);
+    private final BooleanProperty anemia = new SimpleBooleanProperty(false);
     private final IntegerProperty age = new SimpleIntegerProperty();
-    private final BooleanProperty anemia = new SimpleBooleanProperty();
-    private final BooleanProperty diabetes = new SimpleBooleanProperty();
-    private final DoubleProperty contrastVolume = new SimpleDoubleProperty();
-    private final DoubleProperty gfr = new SimpleDoubleProperty();
+    private final IntegerProperty contrastVolume = new SimpleIntegerProperty();
+    private final BooleanProperty bleeding = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
 
+    public String getOksType() { return oksType.get(); }
+    public void setOksType(String val) { oksType.set(val); }
+    public ObjectProperty<String> oksTypeProperty() { return oksType; }
 
-    public boolean isHypotension() { return hypotension.get(); }
-    public void setHypotension(boolean val) { hypotension.set(val); }
-    public BooleanProperty hypotensionProperty() { return hypotension; }
+    public String getDiabetesType() { return diabetesType.get(); }
+    public void setDiabetesType(String val) { diabetesType.set(val); }
+    public ObjectProperty<String> diabetesTypeProperty() { return diabetesType; }
 
-    public boolean isBalloonPump() { return balloonPump.get(); }
-    public void setBalloonPump(boolean val) { balloonPump.set(val); }
-    public BooleanProperty balloonPumpProperty() { return balloonPump; }
-
-    public boolean isHeartFailure() { return heartFailure.get(); }
-    public void setHeartFailure(boolean val) { heartFailure.set(val); }
-    public BooleanProperty heartFailureProperty() { return heartFailure; }
-
-    public int getAge() { return age.get(); }
-    public void setAge(int val) { age.set(val); }
-    public IntegerProperty ageProperty() { return age; }
+    public boolean isLvefLow() { return lvefLow.get(); }
+    public void setLvefLow(boolean val) { lvefLow.set(val); }
+    public BooleanProperty lvefLowProperty() { return lvefLow; }
 
     public boolean isAnemia() { return anemia.get(); }
     public void setAnemia(boolean val) { anemia.set(val); }
     public BooleanProperty anemiaProperty() { return anemia; }
 
-    public boolean isDiabetes() { return diabetes.get(); }
-    public void setDiabetes(boolean val) { diabetes.set(val); }
-    public BooleanProperty diabetesProperty() { return diabetes; }
+    public int getAge() { return age.get(); }
+    public void setAge(int val) { age.set(val); }
+    public IntegerProperty ageProperty() { return age; }
 
-    public double getContrastVolume() { return contrastVolume.get(); }
-    public void setContrastVolume(double val) { contrastVolume.set(val); }
-    public DoubleProperty contrastVolumeProperty() { return contrastVolume; }
+    public int getContrastVolume() { return contrastVolume.get(); }
+    public void setContrastVolume(int val) { contrastVolume.set(val); }
+    public IntegerProperty contrastVolumeProperty() { return contrastVolume; }
 
-    public double getGfr() { return gfr.get(); }
-    public void setGfr(double val) { gfr.set(val); }
-    public DoubleProperty gfrProperty() { return gfr; }
+    public boolean isBleeding() { return bleeding.get(); }
+    public void setBleeding(boolean val) { bleeding.set(val); }
+    public BooleanProperty bleedingProperty() { return bleeding; }
 
     public String getResult() { return result.get(); }
     public void setResult(String val) { result.set(val); }
@@ -53,15 +47,16 @@ public class Mehran2Model {
 
     public void calc() {
         Mehran2Result res = Mehran2Calculator.calc(
-                isHypotension(),
-                isBalloonPump(),
-                isHeartFailure(),
-                getAge(),
+                getOksType(),
+                getDiabetesType(),
+                isLvefLow(),
                 isAnemia(),
-                isDiabetes(),
+                getAge(),
                 getContrastVolume(),
-                getGfr()
+                isBleeding()
         );
+
         setResult(res.toString());
+
     }
 }

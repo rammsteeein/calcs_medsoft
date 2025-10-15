@@ -10,6 +10,7 @@ public class SAMSCIModel {
     private final IntegerProperty statinRechallenge = new SimpleIntegerProperty();
 
     private final IntegerProperty score = new SimpleIntegerProperty();
+    private final StringProperty scoreWithWord = new SimpleStringProperty();
     private final StringProperty interpretation = new SimpleStringProperty();
 
     public int getMuscleLocation() { return muscleLocation.get(); }
@@ -28,6 +29,9 @@ public class SAMSCIModel {
     public void setScore(int val) { score.set(val); }
     public IntegerProperty scoreProperty() { return score; }
 
+    public String getScoreWithWord() { return scoreWithWord.get(); }
+    public StringProperty scoreWithWordProperty() { return scoreWithWord; }
+
     public String getInterpretation() { return interpretation.get(); }
     public void setInterpretation(String val) { interpretation.set(val); }
     public StringProperty interpretationProperty() { return interpretation; }
@@ -41,5 +45,6 @@ public class SAMSCIModel {
         );
         setScore(res.getScore());
         setInterpretation(res.getInterpretation());
+        scoreWithWord.set(res.getScore() + " " + res.getBallWord(res.getScore()));
     }
 }

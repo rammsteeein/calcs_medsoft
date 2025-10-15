@@ -1,6 +1,7 @@
 package com.example.demo1.controls.Cockroft;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
@@ -19,6 +20,7 @@ public class CockroftControl extends StackPane implements Closeable {
     private TextField nmrWeight;
     private Button btnCalc;
     private TextArea txtResult;
+    private ComboBox<Unit> cmbUnit;
 
     private static final String GENDER_TEXT = "Пол:";
     private static final String BUTTON_TEXT = "Рассчитать";
@@ -35,7 +37,11 @@ public class CockroftControl extends StackPane implements Closeable {
         cmbGender.setPromptText(GENDER_TEXT);
 
         nmrKreatinin = new TextField();
-        nmrKreatinin.setPromptText("Креатинин (мг/дл)");
+        nmrKreatinin.setPromptText("Креатинин");
+
+        cmbUnit = new ComboBox<>();
+        cmbUnit.getItems().addAll(Unit.forCkdEpi());
+        cmbUnit.setPromptText("Единицы");
 
         nmrAge = new TextField();
         nmrAge.setPromptText("Возраст");
@@ -54,7 +60,9 @@ public class CockroftControl extends StackPane implements Closeable {
                 new HBox(20,
                         new VBox(10,
                                 CalculatorHeader.createHeader("Клиренс креатинина по формуле Cockroft"),
-                                cmbGender, nmrKreatinin, nmrAge, nmrWeight, btnCalc, txtResult
+                                cmbGender,
+                                new HBox(10, nmrKreatinin, cmbUnit),
+                                nmrAge, nmrWeight, btnCalc, txtResult
                         ),
                         CalculatorDescription.createDescription(
                                 "Формула Кокрофта-Голта позволяет оценить клиренс креатинина — показатель фильтрационной функции почек.\n" +
@@ -68,6 +76,7 @@ public class CockroftControl extends StackPane implements Closeable {
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
         nmrKreatinin.textProperty().bindBidirectional(model.kreatininProperty());
         nmrAge.textProperty().bindBidirectional(model.ageProperty());
+        cmbUnit.valueProperty().bindBidirectional(model.creatininUnitProperty());
         nmrWeight.textProperty().bindBidirectional(model.weightProperty());
 
         model.resultProperty().addListener((obs, oldVal, newVal) -> {
@@ -79,6 +88,7 @@ public class CockroftControl extends StackPane implements Closeable {
         cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
         nmrKreatinin.textProperty().unbindBidirectional(model.kreatininProperty());
         nmrAge.textProperty().unbindBidirectional(model.ageProperty());
+        cmbUnit.valueProperty().unbindBidirectional(model.creatininUnitProperty());
         nmrWeight.textProperty().unbindBidirectional(model.weightProperty());
     }
 

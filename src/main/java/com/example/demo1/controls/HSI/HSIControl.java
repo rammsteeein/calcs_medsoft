@@ -3,6 +3,7 @@ package com.example.demo1.controls.HSI;
 import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -45,6 +46,7 @@ public class HSIControl extends StackPane {
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
+        model.setResultControl(txtResult); // передаем поле в модель для подсветки
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Индекс стеатоза печени (HSI)"),
@@ -59,14 +61,16 @@ public class HSIControl extends StackPane {
         getChildren().add(new HBox(20,
                 leftBox,
                 CalculatorDescription.createDescription(
-                        "HSI (Hepatic Steatosis Index) — это простой показатель для оценки " +
-                                "вероятности неалкогольной жировой болезни печени (NAFLD) без проведения биопсии.\n\n" +
+                        "HSI (Hepatic Steatosis Index) — простой показатель для оценки " +
+                                "вероятности неалкогольной жировой болезни печени (NAFLD).\n\n" +
                                 "Формула:\n" +
                                 "HSI = 8 × (АЛТ / АСТ) + ИМТ\n" +
                                 "    + 2, если пациент женщина\n" +
                                 "    + 2, если у пациента сахарный диабет\n\n" +
                                 "Интерпретация:\n" +
-                                "- Используется для первичного скрининга."
+                                "- Низкий риск: 0–2 балла\n" +
+                                "- Средний риск: 3–4 балла\n" +
+                                "- Высокий риск: 5–6 баллов"
                 )
         ));
     }

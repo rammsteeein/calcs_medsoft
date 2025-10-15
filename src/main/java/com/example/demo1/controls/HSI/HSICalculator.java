@@ -1,6 +1,7 @@
 package com.example.demo1.controls.HSI;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.services.ResultStyler;
 
 public class HSICalculator {
 
@@ -31,7 +32,18 @@ public class HSICalculator {
         if (gender == Gender.FEMALE) hsi += 2;
         if (hasDiabetes) hsi += 2;
 
-        String resultStr = String.format("HSI: %.2f", hsi);
-        return new HSIResult(resultStr);
+        String category;
+        ResultStyler.Zone zone;
+        if (hsi <= 30) {
+            category = "HSI ниже 30 указывает на то, что НАЖБП можно исключить (с отрицательным коэффициентом вероятности до 0,186).";
+            zone = ResultStyler.Zone.LOW;
+        } else {
+            category = "показатель HSI, равный 36 или выше, указывает на наличие неалкогольной жировой болезни печени " +
+                    "(с коэффициентом вероятности положительного результата от 6,069)";
+            zone = ResultStyler.Zone.HIGH;
+        }
+
+        String resultStr = String.format("HSI: %.2f\nКатегория: %s", hsi, category);
+        return new HSIResult(resultStr, hsi, zone);
     }
 }

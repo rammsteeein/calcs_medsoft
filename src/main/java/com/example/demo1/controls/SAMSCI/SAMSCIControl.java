@@ -27,7 +27,7 @@ public class SAMSCIControl extends StackPane {
     }
 
     private void initialize() {
-        cmbMuscleLocation = new ComboBox<String>();
+        cmbMuscleLocation = new ComboBox<>();
         cmbMuscleLocation.getItems().addAll(
                 "Симметричная боль в мышцах бедер (3)",
                 "Симметричная боль в икроножных мышцах (2)",
@@ -36,13 +36,13 @@ public class SAMSCIControl extends StackPane {
         );
         cmbMuscleLocation.setPromptText("Локализация и характер боли");
 
-        cmbSymptomTiming = new ComboBox<String>();
+        cmbSymptomTiming = new ComboBox<>();
         cmbSymptomTiming.getItems().addAll(
                 "< 4 недель (3)", "4–12 недель (2)", "> 12 недель (1)"
         );
         cmbSymptomTiming.setPromptText("Время появления симптомов");
 
-        cmbStatinDiscontinuation = new ComboBox<String>();
+        cmbStatinDiscontinuation = new ComboBox<>();
         cmbStatinDiscontinuation.getItems().addAll(
                 "Уменьшение в течение 2 недель (2)",
                 "Уменьшение в течение 2–4 недель (1)",
@@ -50,7 +50,7 @@ public class SAMSCIControl extends StackPane {
         );
         cmbStatinDiscontinuation.setPromptText("Ответ на отмену статинов");
 
-        cmbStatinRechallenge = new ComboBox<String>();
+        cmbStatinRechallenge = new ComboBox<>();
         cmbStatinRechallenge.getItems().addAll(
                 "Симптомы снова < 4 недель (3)",
                 "Симптомы снова 4–12 недель (1)"
@@ -129,7 +129,7 @@ public class SAMSCIControl extends StackPane {
             model.calc();
         });
 
-        txtScore.textProperty().bind(model.scoreProperty().asString());
+        txtScore.textProperty().bind(model.scoreWithWordProperty());
         txtInterpretation.textProperty().bind(model.interpretationProperty());
 
         model.interpretationProperty().addListener((obs, oldVal, newVal) -> {
@@ -143,6 +143,5 @@ public class SAMSCIControl extends StackPane {
                 }
             }
         });
-
     }
 }

@@ -17,7 +17,7 @@ public class SAMSCIResult {
         return interpretation;
     }
 
-    private String getBallWord(int score) {
+    public String getBallWord(int score) {
         int lastDigit = score % 10;
         int lastTwoDigits = score % 100;
         if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return "баллов";
