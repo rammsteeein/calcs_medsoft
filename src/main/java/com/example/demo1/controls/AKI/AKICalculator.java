@@ -31,13 +31,24 @@ public class AKICalculator {
         int stageByCreat = 0;
         int stageByUrine = 0;
 
-        if (creatRatio >= 3 || currentCreatinine >= 4.0) stageByCreat = 3;
-        else if (creatRatio >= 2) stageByCreat = 2;
-        else if (creatRatio >= 1.5 || creatIncrease >= 0.3) stageByCreat = 1;
+        if (creatRatio >= 3 || currentCreatinine >= 4.0) {
+            stageByCreat = 3;
+        } else if (creatRatio >= 2) {
+            stageByCreat = 2;
+        } else if (creatRatio >= 1.5 || creatIncrease >= 0.3) {
+            stageByCreat = 1;
+        }
 
-        if (urineRate < 0.3 && hours >= 24) stageByUrine = 3;
-        else if (urineRate < 0.5 && hours >= 12) stageByUrine = 2;
-        else if (urineRate < 0.5 && hours >= 6) stageByUrine = 1;
+
+        if (urineRate < 0.3 && hours >= 24) {
+            stageByUrine = 3;
+        } else if (urineRate == 0 && hours >= 12) {
+            stageByUrine = 3;
+        } else if (urineRate < 0.5 && hours > 12) {
+            stageByUrine = 2;
+        } else if (urineRate < 0.5 && hours >= 6) {
+            stageByUrine = 1;
+        }
 
         int finalStage = Math.max(stageByCreat, stageByUrine);
 

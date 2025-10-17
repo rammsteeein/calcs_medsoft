@@ -76,10 +76,10 @@ public class CalcsApp extends Application {
         calculatorMap.put("Cockroft", () -> new CockroftControl(new CockroftModel()));
         calculatorMap.put("CKD-EPI", () -> new CKDEPIControl(new CKDEPIModel()));
         calculatorMap.put("Доза ПОАК", () -> new POAKControl(new POAKModel()));
-        calculatorMap.put("ХС-ЛНП", () -> new LDLControl(new LDLModel()));
+        calculatorMap.put("ХС-ЛНП", () -> new LDLControl(new LDLModel())); //
         calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(new INBARModel()));
         calculatorMap.put("FIB-4", () -> new FIB4Control(new FIB4Model()));
-        calculatorMap.put("CDS", () -> new CDSControl(new CDSModel())); //
+        calculatorMap.put("CDS", () -> new CDSControl(new CDSModel()));
         calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel()));
         calculatorMap.put("Шкала Хорана", () -> new KhoranaControl(new KhoranaModel()));
         calculatorMap.put("REACH", () -> new REACHControl(new REACHModel()));
@@ -169,6 +169,7 @@ public class CalcsApp extends Application {
             case "Larsen CM, 2017":
             case "GuptaMICA":
             case "PESI":
+            case "Шкала ШОКС":
                 width = 800; height = 500; break;
             case "FLI":
             case "Mehran-2":

@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -25,7 +26,7 @@ public class SHOKSControl extends StackPane {
     private Rectangle marker;
     private HBox ticksBox;
 
-    private final double MAX_SCORE = 12.0; // визуальный максимум (для позиции 0..IV используем деления)
+    private final double MAX_SCORE = 12.0;
 
     public SHOKSControl(SHOKSModel model) {
         this.model = model;
@@ -34,7 +35,6 @@ public class SHOKSControl extends StackPane {
     }
 
     private void initialize() {
-        // Слева — набор ComboBox'ов
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("SHOKS"),
                 createLabeledCombo("Одышка (0–2)", 2, model.odyshkaProperty()),
@@ -51,7 +51,6 @@ public class SHOKSControl extends StackPane {
 
         lblSliderValue = new Label("ФК: —");
 
-        // Градиентная полоса
         gradientImage = new ImageView();
         gradientImage.setFitWidth(300);
         gradientImage.setFitHeight(20);
@@ -60,7 +59,6 @@ public class SHOKSControl extends StackPane {
                     new Image(getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm())
             );
         } catch (Exception e) {
-            // если картинка не найдена — игнорируем, полоса останется пустой
         }
 
         marker = new Rectangle(4, 20);
@@ -68,7 +66,6 @@ public class SHOKSControl extends StackPane {
 
         StackPane gradientPane = new StackPane(gradientImage, marker);
 
-        // Подписи под градиентом
         ticksBox = new HBox();
         ticksBox.setSpacing(0);
         String[] tickLabels = {"0", "I ФК", "II ФК", "III ФК", "IV ФК"};
@@ -96,13 +93,13 @@ public class SHOKSControl extends StackPane {
                                 "- Печень: 0–2\n" +
                                 "- Отеки: 0–3\n" +
                                 "- САД: 0–2\n\n" +
-                                "Итоговая сумма (0–12) соответствует I–IV функциональному классу."
+                                "Итоговая сумма (0–12) соответствует I–IV функциональному классу.\n\n" +
+                                "*Интерпритацию баллов можно посмотреть, наведя курсор мыши на критерий"
                 )
         ));
     }
 
     private void bind() {
-        // слушатели на все свойства модели
         ChangeListener<Object> listener = (obs, o, n) -> updateMarker();
 
         model.odyshkaProperty().addListener(listener);
@@ -151,6 +148,41 @@ public class SHOKSControl extends StackPane {
         if (property.get() == 0) combo.setValue(0);
 
         combo.setPrefWidth(80);
+
+        Tooltip tooltip = new Tooltip(createTooltipText(label));
+        tooltip.setShowDelay(Duration.millis(200));
+        combo.setTooltip(tooltip);
+
         return new HBox(10, lbl, combo);
+    }
+
+    /**
+     * Возвращает текст подсказки для каждого критерия
+     */
+    private String createTooltipText(String label) {
+        switch (label.split(" ")[0]) {
+            case "Одышка":
+                return "0: нет\n1: при нагрузке\n2: в покое";
+            case "Изменение":
+                return "0: нет\n1: увеличился за последнюю неделю";
+            case "Перебои":
+                return "0: нет\n1: есть жалобы на перебои в работе сердца";
+            case "Положение":
+                return "0: горизонтально\n1: с приподнятым изголовьем\n2: просыпается от удушья\n3: вынужден сидеть";
+            case "Шейные":
+                return "0: нет\n1: набухание лежа\n2: набухание стоя";
+            case "Хрипы":
+                return "0: нет\n1: нижние отделы\n2: до лопаток\n3: над всей поверхностью легких";
+            case "Галоп":
+                return "0: нет\n1: есть (ритм галопа)";
+            case "Печень":
+                return "0: не увеличена\n1: увеличена до 5 см\n2: более 5 см";
+            case "Отеки":
+                return "0: нет\n1: пастозность\n2: отеки\n3: анасарка";
+            case "САД":
+                return "0: >120 мм рт. ст.\n1: 100–120 мм рт. ст.\n2: <100 мм рт. ст.";
+            default:
+                return "";
+        }
     }
 }
