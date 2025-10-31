@@ -1,12 +1,13 @@
 package com.example.demo1.controls.RCRI;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class RCRIControl extends BorderPane {
+public class RCRIControl extends BorderPane implements CalculatorControl {
 
     private final RCRIModel model;
 

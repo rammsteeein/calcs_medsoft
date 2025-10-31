@@ -1,6 +1,7 @@
 package com.example.demo1.controls.inbar;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
@@ -10,7 +11,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 
-public class INBARControl extends StackPane implements Closeable {
+public class INBARControl extends StackPane implements Closeable, CalculatorControl {
     private final INBARModel model;
 
     private TextField nmrAge;
@@ -38,8 +39,9 @@ public class INBARControl extends StackPane implements Closeable {
         cmbGender.getItems().addAll(Gender.values());
         cmbGender.setValue(Gender.MALE);
 
-        btnCalc = new Button(BUTTON_TEXT);
-        btnCalc.setOnAction(e -> calculateResult());
+        nmrAge.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        nmrWeight.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        cmbGender.valueProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -47,7 +49,7 @@ public class INBARControl extends StackPane implements Closeable {
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Расчет максимальной ЧСС по формуле Inbar"),
-                nmrAge, nmrWeight, cmbGender, btnCalc, txtResult
+                nmrAge, nmrWeight, cmbGender, txtResult
         );
 
         getChildren().add(new HBox(20,
@@ -62,6 +64,23 @@ public class INBARControl extends StackPane implements Closeable {
                                 "- Оценка кардиореспираторной выносливости"
                 )
         ));
+    }
+
+    private void tryAutoCalc() {
+        if (nmrAge.getText().isEmpty() || nmrWeight.getText().isEmpty() || cmbGender.getValue() == null) {
+            model.resultProperty().set("Введите все поля");
+            return;
+        }
+
+        try {
+            model.setAge(nmrAge.getText());
+            model.setWeight(nmrWeight.getText());
+            model.calc();
+        } catch (NumberFormatException e) {
+            model.resultProperty().set("Некорректный ввод чисел");
+        } catch (Exception e) {
+            model.resultProperty().set("Ошибка: " + e.getMessage());
+        }
     }
 
     private void bind() {

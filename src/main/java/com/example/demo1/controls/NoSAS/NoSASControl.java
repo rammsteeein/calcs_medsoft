@@ -1,6 +1,7 @@
 package com.example.demo1.controls.NoSAS;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -9,7 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class NoSASControl extends StackPane {
+public class NoSASControl extends StackPane implements CalculatorControl {
 
     private final NoSASModel model;
 
@@ -18,7 +19,6 @@ public class NoSASControl extends StackPane {
     private CheckBox chkSnoring;
     private TextField txtAge;
     private ComboBox<Gender> cmbGender;
-    private Button btnCalc;
     private TextArea txtResult;
 
     public NoSASControl(NoSASModel model) {
@@ -38,8 +38,11 @@ public class NoSASControl extends StackPane {
         cmbGender.setPromptText("Пол");
         cmbGender.setValue(model.getGender());
 
-        btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> model.calc());
+        txtNeck.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        txtBmi.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        txtAge.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        chkSnoring.selectedProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -47,7 +50,7 @@ public class NoSASControl extends StackPane {
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Шкала NoSAS"),
-                txtNeck, txtBmi, chkSnoring, txtAge, cmbGender, btnCalc, txtResult
+                txtNeck, txtBmi, chkSnoring, txtAge, cmbGender, txtResult
         );
 
         HBox container = new HBox(20,
@@ -68,6 +71,29 @@ public class NoSASControl extends StackPane {
 
         getChildren().add(container);
     }
+
+    private void tryAutoCalc() {
+        if (txtNeck.getText().isEmpty() ||
+                txtBmi.getText().isEmpty() ||
+                txtAge.getText().isEmpty() ||
+                cmbGender.getValue() == null) {
+            model.setResult("Введите все поля для расчёта");
+            return;
+        }
+
+        try {
+            model.setNeckCircumference(Double.parseDouble(txtNeck.getText()));
+            model.setBmi(Double.parseDouble(txtBmi.getText()));
+            model.setAge(Integer.parseInt(txtAge.getText()));
+            model.calc();
+        } catch (NumberFormatException e) {
+            model.setResult("Некорректный ввод чисел");
+        } catch (Exception e) {
+            model.setResult("Ошибка: " + e.getMessage());
+        }
+    }
+
+
 
     private void bind() {
         txtNeck.textProperty().addListener((obs, oldVal, newVal) -> {

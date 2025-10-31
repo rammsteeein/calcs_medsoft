@@ -1,11 +1,12 @@
 package com.example.demo1.controls.AKI;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class AKIControl extends BorderPane {
+public class AKIControl extends BorderPane implements CalculatorControl {
 
     private final AKIModel model;
 

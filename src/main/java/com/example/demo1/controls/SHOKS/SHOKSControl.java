@@ -1,5 +1,6 @@
 package com.example.demo1.controls.SHOKS;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
 import javafx.animation.TranslateTransition;
@@ -17,7 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class SHOKSControl extends StackPane {
+public class SHOKSControl extends StackPane implements CalculatorControl {
 
     private final SHOKSModel model;
 
@@ -184,5 +185,9 @@ public class SHOKSControl extends StackPane {
             default:
                 return "";
         }
+    }
+    @Override
+    public double getDefaultHeight() {
+        return 480;
     }
 }

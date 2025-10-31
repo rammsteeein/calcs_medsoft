@@ -1,5 +1,6 @@
 package com.example.demo1.controls.FIB4;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
@@ -10,11 +11,10 @@ import com.example.demo1.common.services.ResultStyler;
 
 import java.io.Closeable;
 
-public class FIB4Control extends StackPane implements Closeable {
+public class FIB4Control extends StackPane implements Closeable, CalculatorControl {
     private final FIB4Model model;
 
     private TextField txtAge, txtAst, txtAlt, txtPlatelets;
-    private Button btnCalc;
     private TextArea txtResult;
 
     public FIB4Control(FIB4Model model) {
@@ -36,8 +36,10 @@ public class FIB4Control extends StackPane implements Closeable {
         txtPlatelets = new TextField();
         txtPlatelets.setPromptText("Тромбоциты (10^9/л)");
 
-        btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> calculate());
+        txtAge.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        txtAst.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        txtAlt.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        txtPlatelets.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -45,7 +47,7 @@ public class FIB4Control extends StackPane implements Closeable {
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Индекс FIB-4"),
-                txtAge, txtAst, txtAlt, txtPlatelets, btnCalc, txtResult
+                txtAge, txtAst, txtAlt, txtPlatelets, txtResult
         );
 
         getChildren().add(new HBox(20,
@@ -62,6 +64,34 @@ public class FIB4Control extends StackPane implements Closeable {
                                 "- Высокие значения: подозрение на выраженный фиброз"
                 )
         ));
+    }
+
+    private void tryAutoCalc() {
+        if (model == null) {
+            return;
+        }
+        if (txtAge.getText().isEmpty() ||
+                txtAlt.getText().isEmpty() ||
+                txtAst.getText().isEmpty() ||
+                txtPlatelets.getText().isEmpty()) {
+            txtResult.setText("Введите все поля для расчёта");
+            return;
+        }
+
+        try {
+            Double.parseDouble(txtAlt.getText());
+            Integer.parseInt(txtAge.getText());
+            Double.parseDouble(txtPlatelets.getText());
+            Double.parseDouble(txtAst.getText());
+        } catch (NumberFormatException ex) {
+            txtResult.setText("Некорректный ввод чисел");
+            return;
+        }
+        try {
+            model.calc();
+        } catch (Exception ex) {
+            txtResult.setText("Ошибка: " + ex.getMessage());
+        }
     }
 
     private void bind() {
@@ -90,5 +120,15 @@ public class FIB4Control extends StackPane implements Closeable {
     @Override
     public void close() {
         unbind();
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 700;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 430;
     }
 }

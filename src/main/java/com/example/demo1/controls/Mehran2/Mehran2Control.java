@@ -1,11 +1,12 @@
 package com.example.demo1.controls.Mehran2;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class Mehran2Control extends BorderPane {
+public class Mehran2Control extends BorderPane implements CalculatorControl {
 
     private final Mehran2Model model;
 
@@ -101,5 +102,10 @@ public class Mehran2Control extends BorderPane {
         });
 
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 500;
     }
 }

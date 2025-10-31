@@ -1,5 +1,6 @@
 package com.example.demo1.controls.CDS;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -8,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class CDSControl extends StackPane implements AutoCloseable {
+public class CDSControl extends StackPane implements AutoCloseable, CalculatorControl {
     private final CDSModel model;
 
     private ComboBox<String> cmbAppearance;
@@ -57,8 +58,10 @@ public class CDSControl extends StackPane implements AutoCloseable {
         );
         cmbTears.setPromptText("Слёзы");
 
-        btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> calculate());
+        cmbAppearance.valueProperty().addListener((obs, oldVal, newVal) -> calculate());
+        cmbEyes.valueProperty().addListener((obs, oldVal, newVal) -> calculate());
+        cmbMucous.valueProperty().addListener((obs, oldVal, newVal) -> calculate());
+        cmbTears.valueProperty().addListener((obs, oldVal, newVal) -> calculate());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -66,8 +69,7 @@ public class CDSControl extends StackPane implements AutoCloseable {
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Шкала CDS (оценка дегидратации)"),
-                cmbAppearance, cmbEyes, cmbMucous, cmbTears,
-                btnCalc, txtResult
+                cmbAppearance, cmbEyes, cmbMucous, cmbTears, txtResult
         );
 
         this.getChildren().add(new HBox(20,
@@ -93,6 +95,9 @@ public class CDSControl extends StackPane implements AutoCloseable {
         cmbMucous.valueProperty().bindBidirectional(model.mucousProperty());
         cmbTears.valueProperty().bindBidirectional(model.tearsProperty());
         txtResult.textProperty().bindBidirectional(model.resultProperty());
+        model.resultProperty().addListener((obs, oldVal, newVal) -> {
+            txtResult.setText(newVal != null ? newVal : "");
+        });
     }
 
     private void unbind() {
@@ -114,4 +119,15 @@ public class CDSControl extends StackPane implements AutoCloseable {
     public void close() {
         unbind();
     }
+
+    @Override
+    public double getDefaultWidth() {
+        return 700;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 430;
+    }
 }
+

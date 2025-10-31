@@ -12,6 +12,7 @@ public class WellsModel {
     private final BooleanProperty clinicalDVT = new SimpleBooleanProperty();
     private final BooleanProperty alternativeLessLikely = new SimpleBooleanProperty();
     private final StringProperty result = new SimpleStringProperty();
+    private final DoubleProperty score = new SimpleDoubleProperty();
 
     public BooleanProperty prevPEorDVTProperty() { return prevPEorDVT; }
     public BooleanProperty tachycardiaProperty() { return tachycardia; }
@@ -21,6 +22,7 @@ public class WellsModel {
     public BooleanProperty clinicalDVTProperty() { return clinicalDVT; }
     public BooleanProperty alternativeLessLikelyProperty() { return alternativeLessLikely; }
     public StringProperty resultProperty() { return result; }
+    public DoubleProperty scoreProperty() { return score; }
 
     public void calc() {
         WellsResult res = WellsCalculator.calc(
@@ -32,6 +34,7 @@ public class WellsModel {
                 clinicalDVT.get(),
                 alternativeLessLikely.get()
         );
+        score.set(res.getScore());
         result.set(res.toString());
     }
 }

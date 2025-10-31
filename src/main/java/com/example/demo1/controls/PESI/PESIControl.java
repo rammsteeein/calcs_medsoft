@@ -1,6 +1,7 @@
 package com.example.demo1.controls.PESI;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.ResultStyler;
@@ -10,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class PESIControl extends StackPane {
+public class PESIControl extends StackPane implements CalculatorControl {
 
     private final PESIModel model;
 
@@ -109,5 +110,15 @@ public class PESIControl extends StackPane {
         });
 
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 800;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 500;
     }
 }

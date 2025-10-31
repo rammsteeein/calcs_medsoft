@@ -1,5 +1,6 @@
 package com.example.demo1.controls.POAK_doze;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
 import javafx.scene.control.Button;
@@ -11,7 +12,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 
-public class POAKControl extends StackPane implements Closeable {
+public class POAKControl extends StackPane implements Closeable, CalculatorControl {
     private final POAKModel model;
     private TextField nmrKreatinin;
     private Button btnCalc;

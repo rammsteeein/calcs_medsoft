@@ -1,5 +1,6 @@
 package com.example.demo1.controls.REACH;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -8,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class REACHControl extends StackPane {
+public class REACHControl extends StackPane implements CalculatorControl {
 
     private final REACHModel model;
 
@@ -99,5 +100,15 @@ public class REACHControl extends StackPane {
         chkOAC.selectedProperty().addListener((obs, o, n) -> model.calc());
 
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 800;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 500;
     }
 }

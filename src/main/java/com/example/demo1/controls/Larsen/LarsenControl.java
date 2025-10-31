@@ -1,5 +1,6 @@
 package com.example.demo1.controls.Larsen;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.animation.TranslateTransition;
@@ -12,7 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class LarsenControl extends StackPane implements AutoCloseable {
+public class LarsenControl extends StackPane implements AutoCloseable, CalculatorControl {
     private final LarsenModel model;
 
     private ComboBox<String> cmbDrug;
@@ -144,5 +145,15 @@ public class LarsenControl extends StackPane implements AutoCloseable {
     @Override
     public void close() {
         cmbDrug.valueProperty().unbindBidirectional(model.drugProperty());
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 800;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 500;
     }
 }

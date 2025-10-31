@@ -1,6 +1,7 @@
 package com.example.demo1.controls.Pursuit;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -9,14 +10,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class PursuitControl extends BorderPane {
+public class PursuitControl extends BorderPane implements CalculatorControl {
 
     private final PursuitModel model;
 
     private TextField txtAge;
     private ComboBox<Gender> cmbGender;
     private CheckBox chkAngina, chkHeartFailure;
-    private Button btnCalc;
     private TextArea txtResult;
 
     public PursuitControl(PursuitModel model) {
@@ -24,7 +24,6 @@ public class PursuitControl extends BorderPane {
         initialize();
         bind();
 
-        // Настройка перекраски
         model.setOnResultStyled(res -> {
             if (res.getScore() <= 12) ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
             else if (res.getScore() <= 14) ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
@@ -42,8 +41,10 @@ public class PursuitControl extends BorderPane {
         chkAngina = new CheckBox("Стенокардия III-IV ФК");
         chkHeartFailure = new CheckBox("Сердечная недостаточность");
 
-        btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> model.calc());
+        txtAge.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        cmbGender.valueProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        chkAngina.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        chkHeartFailure.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -51,7 +52,7 @@ public class PursuitControl extends BorderPane {
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Шкала Pursuit (оценка риска при ОКС без подъема ST)"),
-                txtAge, cmbGender, chkAngina, chkHeartFailure, btnCalc, txtResult
+                txtAge, cmbGender, chkAngina, chkHeartFailure, txtResult
         );
 
         VBox rightBox = new VBox(
@@ -70,11 +71,32 @@ public class PursuitControl extends BorderPane {
         this.setPrefSize(700, 600);
     }
 
+    private void tryAutoCalc() {
+        if (txtAge.getText().isEmpty() || cmbGender.getValue() == null) {
+            model.resultProperty().set("Введите все поля");
+            return;
+        }
+
+        try {
+            Integer.parseInt(txtAge.getText());
+            model.calc();
+        } catch (NumberFormatException e) {
+            model.resultProperty().set("Некорректный ввод чисел");
+        } catch (Exception e) {
+            model.resultProperty().set("Ошибка: " + e.getMessage());
+        }
+    }
+
     private void bind() {
         txtAge.textProperty().bindBidirectional(model.ageProperty());
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
         chkAngina.selectedProperty().bindBidirectional(model.hasAnginaProperty());
         chkHeartFailure.selectedProperty().bindBidirectional(model.hasHeartFailureProperty());
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 600;
     }
 }

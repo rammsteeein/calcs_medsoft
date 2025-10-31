@@ -1,5 +1,6 @@
 package com.example.demo1.controls.SAMSCI;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -8,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class SAMSCIControl extends StackPane {
+public class SAMSCIControl extends StackPane implements CalculatorControl {
 
     private final SAMSCIModel model;
 

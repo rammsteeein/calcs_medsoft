@@ -1,6 +1,7 @@
 package com.example.demo1.controls.HSI;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -9,7 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class HSIControl extends StackPane {
+public class HSIControl extends StackPane implements CalculatorControl {
 
     private final HSIModel model;
 

@@ -27,72 +27,89 @@ public class CDSCalculator {
      *    - Слезы отсутствуют: 3 балла
      *
      * Интерпретация суммарного балла:
-     * - 0 баллов: дегидратация отсутствует
-     * - 1–4 балла: лёгкая дегидратация
-     * - 5–8 баллов: средняя или тяжёлая дегидратация
-     *
-     * Примечания:
-     * - Каждый параметр оценивается отдельно, затем баллы суммируются.
-     * - Шкала позволяет быстро определить степень дегидратации у пациента, особенно у детей.
-     * - Результат может использоваться для принятия решения о необходимости восполнения жидкости.
+     * - 4 балла: дегидратация отсутствует
+     * - 5–8 баллов: лёгкая дегидратация
+     * - 9–12 баллов: средняя или тяжёлая дегидратация
      */
 
     public static CDSResult calc(String appearance, String eyes, String mucous, String tears) {
-        if (appearance == null || eyes == null || mucous == null || tears == null) {
-            return new CDSResult(-1, "Ошибка: заполните все поля");
+        int total = 0;
+        int count = 0;
+
+        if (appearance != null) {
+            total += mapAppearance(appearance);
+            count++;
+        }
+        if (eyes != null) {
+            total += mapEyes(eyes);
+            count++;
+        }
+        if (mucous != null) {
+            total += mapMucous(mucous);
+            count++;
+        }
+        if (tears != null) {
+            total += mapTears(tears);
+            count++;
         }
 
-        int total = mapAppearance(appearance)
-                + mapEyes(eyes)
-                + mapMucous(mucous)
-                + mapTears(tears);
+        if (count == 0) {
+            return new CDSResult(0, "Выберите хотя бы один параметр");
+        }
 
         String interpretation;
-        if (total == 0) {
-            interpretation = "Дегидратация отсутствует";
-        } else if (total <= 4) {
-            interpretation = "Лёгкая дегидратация";
+
+        if (count < 4) {
+            interpretation = String.format(
+                    "Промежуточный результат (%d из 4): %d балл(ов)",
+                    count, total
+            );
         } else {
-            interpretation = "Средняя или тяжёлая дегидратация";
+            if (total <= 4) {
+                interpretation = "Дегидратация отсутствует";
+            } else if (total <= 8) {
+                interpretation = "Лёгкая дегидратация";
+            } else {
+                interpretation = "Средняя или тяжёлая дегидратация";
+            }
         }
 
-            String result = String.format("Баллы: %d\nИнтерпретация: %s", total, interpretation);
         return new CDSResult(total, interpretation);
     }
 
     private static int mapAppearance(String value) {
         switch (value) {
-            case "Нормальный": return 0;
-            case "Жажда, беспокойство, раздражительность": return 1;
-            case "Вялость, сонливость": return 2;
+            case "Нормальный": return 1;
+            case "Жажда, беспокойство, раздражительность": return 2;
+            case "Вялость, сонливость": return 3;
             default: throw new IllegalArgumentException("Неизвестное значение: " + value);
         }
     }
 
     private static int mapEyes(String value) {
         switch (value) {
-            case "Тургор нормальный": return 0;
-            case "Слегка запавшие": return 1;
-            case "Запавшие": return 2;
+            case "Тургор нормальный": return 1;
+            case "Слегка запавшие": return 2;
+            case "Запавшие": return 3;
             default: throw new IllegalArgumentException("Неизвестное значение: " + value);
         }
     }
 
     private static int mapMucous(String value) {
         switch (value) {
-            case "Влажные": return 0;
-            case "Липкие, суховатые": return 1;
-            case "Сухие": return 2;
+            case "Влажные": return 1;
+            case "Липкие, суховатые": return 2;
+            case "Сухие": return 3;
             default: throw new IllegalArgumentException("Неизвестное значение: " + value);
         }
     }
 
     private static int mapTears(String value) {
         switch (value) {
-            case "Слезоотделение в норме": return 0;
-            case "Слезоотделение снижено": return 1;
-            case "Слёзы отсутствуют": return 2;
+            case "Слезоотделение в норме": return 1;
+            case "Слезоотделение снижено": return 2;
+            case "Слёзы отсутствуют": return 3;
             default: throw new IllegalArgumentException("Неизвестное значение: " + value);
         }
     }
-    }
+}

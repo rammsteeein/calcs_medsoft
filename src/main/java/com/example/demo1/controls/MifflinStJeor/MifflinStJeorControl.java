@@ -1,6 +1,7 @@
 package com.example.demo1.controls.MifflinStJeor;
 
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
 import javafx.geometry.Pos;
@@ -8,7 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class MifflinStJeorControl extends BorderPane {
+public class MifflinStJeorControl extends BorderPane implements CalculatorControl {
 
     private final MifflinStJeorModel model;
 
@@ -55,10 +56,12 @@ public class MifflinStJeorControl extends BorderPane {
         leftBox.setPrefWidth(250);
 
         this.setPrefSize(700, 600);
+
     }
 
     private void bind() {
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
+        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> model.calc());
 
         txtWeight.textProperty().addListener((obs, oldVal, newVal) -> {
             try { model.setWeight(Double.parseDouble(newVal)); } catch (Exception ignored) {}
@@ -77,4 +80,6 @@ public class MifflinStJeorControl extends BorderPane {
 
         txtResult.textProperty().bind(model.calculationProperty());
     }
+
 }
+

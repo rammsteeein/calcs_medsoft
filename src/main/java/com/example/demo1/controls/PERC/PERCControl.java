@@ -1,12 +1,13 @@
 package com.example.demo1.controls.PERC;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class PERCControl extends BorderPane {
+public class PERCControl extends BorderPane implements CalculatorControl {
 
     private final PERCModel model;
 

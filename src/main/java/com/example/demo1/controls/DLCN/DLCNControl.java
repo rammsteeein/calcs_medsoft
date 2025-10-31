@@ -1,5 +1,6 @@
 package com.example.demo1.controls.DLCN;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.animation.TranslateTransition;
@@ -14,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class DLCNControl extends StackPane {
+public class DLCNControl extends StackPane implements CalculatorControl {
 
     private final DLCNModel model;
 

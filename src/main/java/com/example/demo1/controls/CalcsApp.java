@@ -1,5 +1,6 @@
 package com.example.demo1.controls;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.controls.AKI.AKIControl;
 import com.example.demo1.controls.AKI.AKIModel;
 import com.example.demo1.controls.CDS.CDSControl;
@@ -11,6 +12,8 @@ import com.example.demo1.controls.DLCN.DLCNControl;
 import com.example.demo1.controls.DLCN.DLCNModel;
 import com.example.demo1.controls.FIB4.FIB4Control;
 import com.example.demo1.controls.FIB4.FIB4Model;
+import com.example.demo1.controls.Friedwald.FriedwaldControl;
+import com.example.demo1.controls.Friedwald.FriedwaldModel;
 import com.example.demo1.controls.GRACE.GRACEControl;
 import com.example.demo1.controls.GRACE.GRACEModel;
 import com.example.demo1.controls.GuptaMICA.GuptaMICAControl;
@@ -67,7 +70,7 @@ import java.util.function.Supplier;
 
 public class CalcsApp extends Application {
 
-    private final Map<String, Supplier<javafx.scene.Parent>> calculatorMap = new HashMap<>();
+    private final Map<String, Supplier<? extends javafx.scene.Parent>> calculatorMap = new HashMap<>();
 
     @Override
     public void start(Stage primaryStage) {
@@ -76,12 +79,13 @@ public class CalcsApp extends Application {
         calculatorMap.put("Cockroft", () -> new CockroftControl(new CockroftModel()));
         calculatorMap.put("CKD-EPI", () -> new CKDEPIControl(new CKDEPIModel()));
         calculatorMap.put("Доза ПОАК", () -> new POAKControl(new POAKModel()));
-        calculatorMap.put("ХС-ЛНП", () -> new LDLControl(new LDLModel())); //
+        calculatorMap.put("ХС-ЛНП", () -> new LDLControl(new LDLModel()));
         calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(new INBARModel()));
         calculatorMap.put("FIB-4", () -> new FIB4Control(new FIB4Model()));
         calculatorMap.put("CDS", () -> new CDSControl(new CDSModel()));
         calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel()));
         calculatorMap.put("Шкала Хорана", () -> new KhoranaControl(new KhoranaModel()));
+        calculatorMap.put("Шкала Friedwald", () -> new FriedwaldControl(new FriedwaldModel()));
         calculatorMap.put("REACH", () -> new REACHControl(new REACHModel()));
         calculatorMap.put("SAMSCI", () -> new SAMSCIControl(new SAMSCIModel()));
         calculatorMap.put("NoSAS", () -> new NoSASControl(new NoSASModel()));
@@ -162,27 +166,13 @@ public class CalcsApp extends Application {
             ((javafx.scene.layout.Pane) control).setStyle("-fx-background-color: white;");
         }
 
-        double width, height;
-        switch (title) {
-            case "GRACE":
-            case "REACH":
-            case "Larsen CM, 2017":
-            case "GuptaMICA":
-            case "PESI":
-            case "Шкала ШОКС":
-                width = 800; height = 500; break;
-            case "FLI":
-            case "Mehran-2":
-                width = 550; height = 500; break;
-            case "Wells":
-            case "CDS":
-            case "FIB-4":
-            case "rGENEVA":
-                width = 700; height = 430; break;
-            case "Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний":
-                width = 700; height = 400; break;
-            default:
-                width = 550; height = 370; break;
+        double width = 550;
+        double height = 370;
+
+        if (control instanceof com.example.demo1.common.interfaces.CalculatorControl) {
+            CalculatorControl c = (CalculatorControl) control;
+            width = c.getDefaultWidth();
+            height = c.getDefaultHeight();
         }
 
         Scene scene = new Scene(control, width, height, javafx.scene.paint.Color.WHITE);
@@ -192,12 +182,11 @@ public class CalcsApp extends Application {
 
         stage.setScene(scene);
         stage.setTitle(title);
-
         stage.initOwner(owner);
         stage.initModality(Modality.NONE);
-
         stage.show();
     }
+
 
     public static void main(String[] args) {
         launch(args);

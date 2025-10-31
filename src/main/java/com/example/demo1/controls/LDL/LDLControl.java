@@ -1,5 +1,6 @@
 package com.example.demo1.controls.LDL;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
@@ -9,7 +10,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 
-public class LDLControl extends StackPane implements Closeable {
+public class LDLControl extends StackPane implements Closeable, CalculatorControl {
     private final LDLModel model;
 
     private TextField nmrNonHDL;

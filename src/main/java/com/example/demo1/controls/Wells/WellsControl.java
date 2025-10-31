@@ -1,14 +1,16 @@
 package com.example.demo1.controls.Wells;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class WellsControl extends StackPane {
+public class WellsControl extends StackPane implements CalculatorControl {
 
     private final WellsModel model;
 
@@ -80,5 +82,18 @@ public class WellsControl extends StackPane {
         chkAlternativeLessLikely.selectedProperty().addListener(listener);
 
         txtResult.textProperty().bind(model.resultProperty());
+        model.scoreProperty().addListener((obs, oldVal, newVal) ->
+                ResultStyler.applyStyleForValue(txtResult, newVal.doubleValue(), 1.5, 7)
+        );
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 700;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 430;
     }
 }

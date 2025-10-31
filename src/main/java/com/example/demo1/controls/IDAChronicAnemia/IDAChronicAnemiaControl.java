@@ -1,5 +1,6 @@
 package com.example.demo1.controls.IDAChronicAnemia;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
@@ -7,7 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class IDAChronicAnemiaControl extends StackPane {
+public class IDAChronicAnemiaControl extends StackPane implements CalculatorControl {
 
     private final IDAChronicAnemiaModel model;
 
@@ -30,15 +31,17 @@ public class IDAChronicAnemiaControl extends StackPane {
         txtFerritin = new TextField(); txtFerritin.setPromptText("Ферритин (нг/мл)");
         txtResult = new TextArea(); txtResult.setEditable(false);
 
-        Button btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> model.calc());
+        txtSerumIron.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        txtTIBC.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        txtTransferrinSat.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        txtFerritin.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+
 
         getChildren().add(
                 new HBox(20,
                         new VBox(10,
                                 CalculatorHeader.createHeader("Дифференциальная диагностика ЖДА и АХЗ"),
-                                txtSerumIron, txtTIBC, txtTransferrinSat, txtFerritin,
-                                btnCalc, txtResult
+                                txtSerumIron, txtTIBC, txtTransferrinSat, txtFerritin, txtResult
                         ),
                         CalculatorDescription.createDescription(
                                 "Калькулятор используется для различения железодефицитной анемии (ЖДА) " +
@@ -52,6 +55,29 @@ public class IDAChronicAnemiaControl extends StackPane {
                         )
                 )
         );
+    }
+
+    private void tryAutoCalc() {
+        if (txtSerumIron.getText().isEmpty() ||
+                txtTIBC.getText().isEmpty() ||
+                txtTransferrinSat.getText().isEmpty() ||
+                txtFerritin.getText().isEmpty()) {
+            model.resultProperty().set("Введите все поля");
+            return;
+        }
+
+        try {
+            model.setSerumIron(Double.parseDouble(txtSerumIron.getText()));
+            model.setTIBC(Double.parseDouble(txtTIBC.getText()));
+            model.setTransferrinSat(Double.parseDouble(txtTransferrinSat.getText()));
+            model.setFerritin(Double.parseDouble(txtFerritin.getText()));
+
+            model.calc();
+        } catch (NumberFormatException e) {
+            model.resultProperty().set("Некорректный ввод чисел");
+        } catch (Exception e) {
+            model.resultProperty().set("Ошибка: " + e.getMessage());
+        }
     }
 
     private void bind() {
@@ -69,5 +95,15 @@ public class IDAChronicAnemiaControl extends StackPane {
         });
 
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 700;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 400;
     }
 }

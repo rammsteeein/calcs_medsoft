@@ -1,5 +1,6 @@
 package com.example.demo1.controls.DASI;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
@@ -7,7 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class DASIControl extends StackPane {
+public class DASIControl extends StackPane implements CalculatorControl {
 
     private final DASIModel model;
 

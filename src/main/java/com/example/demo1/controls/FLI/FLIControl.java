@@ -1,5 +1,6 @@
 package com.example.demo1.controls.FLI;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -10,7 +11,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 
-public class FLIControl extends StackPane implements Closeable {
+public class FLIControl extends StackPane implements Closeable, CalculatorControl {
     private final FLIModel model;
 
     private TextField nmrTriglycerides;
@@ -41,8 +42,10 @@ public class FLIControl extends StackPane implements Closeable {
         nmrWaistCircumference = new TextField();
         nmrWaistCircumference.setPromptText("Окружность талии (см)");
 
-        btnCalc = new Button(BUTTON_TEXT);
-        btnCalc.setOnAction(e -> calculateResult());
+        nmrTriglycerides.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        nmrBMI.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        nmrGGT.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        nmrWaistCircumference.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -50,8 +53,7 @@ public class FLIControl extends StackPane implements Closeable {
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Индекс стеатоза печени FLI"),
-                nmrTriglycerides, nmrBMI, nmrGGT, nmrWaistCircumference,
-                btnCalc, txtResult
+                nmrTriglycerides, nmrBMI, nmrGGT, nmrWaistCircumference, txtResult
         );
 
         getChildren().add(
@@ -68,12 +70,43 @@ public class FLIControl extends StackPane implements Closeable {
                 )
         );
     }
+
+    private void tryAutoCalc() {
+        if (model == null) {
+            return;
+        }
+        if (nmrTriglycerides.getText().isEmpty() ||
+                nmrBMI.getText().isEmpty() ||
+                nmrGGT.getText().isEmpty() ||
+                nmrWaistCircumference.getText().isEmpty()) {
+            txtResult.setText("Введите все поля для расчёта");
+            return;
+        }
+
+        try {
+            Double.parseDouble(nmrTriglycerides.getText());
+            Double.parseDouble(nmrBMI.getText());
+            Double.parseDouble(nmrGGT.getText());
+            Double.parseDouble(nmrWaistCircumference.getText());
+        } catch (NumberFormatException ex) {
+            txtResult.setText("Некорректный ввод чисел");
+            return;
+        }
+        try {
+            model.calc();
+        } catch (Exception ex) {
+            txtResult.setText("Ошибка: " + ex.getMessage());
+        }
+    }
+
     private void bind() {
         nmrTriglycerides.textProperty().bindBidirectional(model.triglyceridesProperty());
         nmrBMI.textProperty().bindBidirectional(model.bmiProperty());
         nmrGGT.textProperty().bindBidirectional(model.ggtProperty());
         nmrWaistCircumference.textProperty().bindBidirectional(model.waistCircumferenceProperty());
-        txtResult.textProperty().bindBidirectional(model.resultProperty());
+        model.resultProperty().addListener((obs, oldVal, newVal) -> {
+            txtResult.setText(newVal);
+        });
     }
 
     private void unbind() {
@@ -113,5 +146,10 @@ public class FLIControl extends StackPane implements Closeable {
     @Override
     public void close() {
         unbind();
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 500;
     }
 }

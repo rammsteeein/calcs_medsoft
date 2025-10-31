@@ -1,5 +1,6 @@
 package com.example.demo1.controls.rGENEVA;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
 import javafx.beans.value.ChangeListener;
@@ -8,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class rGENEVAControl extends StackPane {
+public class rGENEVAControl extends StackPane implements CalculatorControl {
 
     private final rGENEVAModel model;
 
@@ -89,5 +90,15 @@ public class rGENEVAControl extends StackPane {
         });
 
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 700;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 430;
     }
 }

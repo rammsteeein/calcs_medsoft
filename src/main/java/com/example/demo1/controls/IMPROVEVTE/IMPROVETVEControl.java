@@ -1,5 +1,6 @@
 package com.example.demo1.controls.IMPROVEVTE;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.animation.TranslateTransition;
@@ -15,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class IMPROVETVEControl extends StackPane {
+public class IMPROVETVEControl extends StackPane implements CalculatorControl {
 
     private final IMPROVETVEModel model;
 

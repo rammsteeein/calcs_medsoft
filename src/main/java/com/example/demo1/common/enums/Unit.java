@@ -18,6 +18,10 @@ public enum Unit {
         return Arrays.asList(MKMOL, MGDL);
     }
 
+    public static Unit defaultForCkdEpi() {
+        return MKMOL;
+    }
+
     @Override
     public String toString() {
         return name;

@@ -2,6 +2,7 @@ package com.example.demo1.controls.CKDEPI;
 
 import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.enums.Gender;
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.collections.FXCollections;
@@ -12,7 +13,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.Closeable;
 
-public class CKDEPIControl extends StackPane implements Closeable {
+public class CKDEPIControl extends StackPane implements Closeable, CalculatorControl {
     private final CKDEPIModel model;
 
     private ComboBox<Gender> cmbGender;
@@ -42,13 +43,16 @@ public class CKDEPIControl extends StackPane implements Closeable {
         cmbCreatininUnit = new ComboBox<>(
                 FXCollections.observableArrayList(Unit.forCkdEpi())
         );
+        cmbCreatininUnit.setValue(Unit.defaultForCkdEpi());
         cmbCreatininUnit.setPromptText("Ед. измерения");
 
         nmrAge = new TextField();
         nmrAge.setPromptText("Возраст");
 
-        btnCalc = new Button(BUTTON_TEXT);
-        btnCalc.setOnAction(e -> calculateResult());
+        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        cmbCreatininUnit.valueProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        nmrKreatinin.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        nmrAge.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -62,7 +66,6 @@ public class CKDEPIControl extends StackPane implements Closeable {
                                 nmrKreatinin,
                                 cmbCreatininUnit,
                                 nmrAge,
-                                btnCalc,
                                 txtResult),
                         CalculatorDescription.createDescription(
                                 "Формула CKD-EPI используется для оценки скорости клубочковой фильтрации (СКФ), " +
@@ -71,6 +74,32 @@ public class CKDEPIControl extends StackPane implements Closeable {
                                         "фильтрационной способности почек, чем при использовании только уровня креатинина. "
                         )
                 ));
+    }
+
+    private void tryAutoCalc() {
+        if (model == null) {
+            return;
+        }
+        if (cmbGender.getValue() == null ||
+                cmbCreatininUnit.getValue() == null ||
+                nmrKreatinin.getText() == null || nmrKreatinin.getText().isEmpty() ||
+                nmrAge.getText() == null || nmrAge.getText().isEmpty()) {
+            txtResult.setText("Введите все поля для расчёта");
+            return;
+        }
+
+        try {
+            Double.parseDouble(nmrKreatinin.getText());
+            Integer.parseInt(nmrAge.getText());
+        } catch (NumberFormatException ex) {
+            txtResult.setText("Некорректный ввод чисел");
+            return;
+        }
+        try {
+            model.calc();
+        } catch (Exception ex) {
+            txtResult.setText("Ошибка: " + ex.getMessage());
+        }
     }
 
     private void bind() {

@@ -1,5 +1,6 @@
 package com.example.demo1.controls.GuptaMICA;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -8,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class GuptaMICAControl extends StackPane {
+public class GuptaMICAControl extends StackPane implements CalculatorControl {
 
     private final GuptaMICAModel model;
 
@@ -89,7 +90,6 @@ public class GuptaMICAControl extends StackPane {
 
         txtResult.textProperty().bind(model.resultProperty());
 
-        // перекраска по проценту риска
         model.riskPercentProperty().addListener((obs, oldV, newV) -> {
             double risk = newV.doubleValue();
             if (Double.isNaN(risk)) {
@@ -106,5 +106,15 @@ public class GuptaMICAControl extends StackPane {
                 ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
             }
         });
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 800;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 500;
     }
 }

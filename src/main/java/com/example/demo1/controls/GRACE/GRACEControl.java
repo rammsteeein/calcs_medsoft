@@ -1,5 +1,6 @@
 package com.example.demo1.controls.GRACE;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
@@ -13,14 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GRACEControl extends StackPane {
+public class GRACEControl extends StackPane implements CalculatorControl {
 
     private final GRACEModel model;
 
     private TextField txtAge, txtHR, txtSBP, txtCreatinine;
     private ComboBox<String> cmbUnit;
     private ComboBox<String> cmbKillip;
-    private Button btnCalc;
     private TextArea txtResult;
     private List<CheckBox> otherChecks;
 
@@ -89,8 +89,15 @@ public class GRACEControl extends StackPane {
 
         VBox otherBox = createOtherFactorsBox();
 
-        btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> calculate());
+        txtAge.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        txtHR.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        txtSBP.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        txtCreatinine.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        cmbUnit.valueProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        cmbKillip.valueProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        for (CheckBox cb : otherChecks) {
+            cb.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        }
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -102,7 +109,6 @@ public class GRACEControl extends StackPane {
                 creatinineBox,
                 cmbKillip,
                 otherBox,
-                btnCalc,
                 txtResult
         );
 
@@ -120,6 +126,38 @@ public class GRACEControl extends StackPane {
                 )
         ));
     }
+
+    private void tryAutoCalc() {
+        try {
+            model.ageProperty().set(txtAge.getText());
+            model.hrProperty().set(txtHR.getText());
+            model.sbpProperty().set(txtSBP.getText());
+            model.creatinineProperty().set(txtCreatinine.getText());
+            model.unitProperty().set(cmbUnit.getValue());
+            model.killipProperty().set(cmbKillip.getValue());
+
+            if (txtAge.getText().isEmpty() ||
+                    txtHR.getText().isEmpty() ||
+                    txtSBP.getText().isEmpty() ||
+                    txtCreatinine.getText().isEmpty() ||
+                    cmbUnit.getValue() == null ||
+                    cmbKillip.getValue() == null) {
+                model.resultProperty().set("Введите все поля для расчёта");
+                return;
+            }
+
+            List<String> selected = new ArrayList<>();
+            for (CheckBox cb : otherChecks) {
+                if (cb.isSelected()) selected.add(cb.getText());
+            }
+            model.otherListProperty().setAll(selected);
+
+            model.calc();
+        } catch (Exception e) {
+            model.resultProperty().set("Ошибка: " + e.getMessage());
+        }
+    }
+
 
     private VBox createOtherFactorsBox() {
         otherChecks = new ArrayList<>();
@@ -141,7 +179,7 @@ public class GRACEControl extends StackPane {
 
     private void bind() {
         model.resultProperty().addListener((obs, oldV, newV) -> {
-            txtResult.setText(newV);
+            txtResult.setText(newV != null ? newV : "");
             if (newV == null) return;
 
             if (newV.contains("Низкий риск")) {
@@ -154,6 +192,16 @@ public class GRACEControl extends StackPane {
                 ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
             }
         });
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 800;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 500;
     }
 
     private void calculate() {

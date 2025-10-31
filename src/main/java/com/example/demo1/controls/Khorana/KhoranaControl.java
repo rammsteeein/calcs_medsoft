@@ -1,5 +1,6 @@
 package com.example.demo1.controls.Khorana;
 
+import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
@@ -7,7 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class KhoranaControl extends StackPane implements AutoCloseable {
+public class KhoranaControl extends StackPane implements AutoCloseable, CalculatorControl {
 
     private final KhoranaModel model;
 
@@ -35,8 +36,11 @@ public class KhoranaControl extends StackPane implements AutoCloseable {
         cbLeukocytes = new CheckBox("Лейкоциты > 11 × 10⁹/л");
         cbHighBMI = new CheckBox("ИМТ ≥ 35 кг/м²");
 
-        btnCalc = new Button("Рассчитать");
-        btnCalc.setOnAction(e -> calculateResult());
+        cmbTumor.valueProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        cbPlatelets.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        cbHemoglobin.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        cbLeukocytes.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        cbHighBMI.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -44,8 +48,7 @@ public class KhoranaControl extends StackPane implements AutoCloseable {
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Шкала Khorana"),
-                cmbTumor, cbPlatelets, cbHemoglobin, cbLeukocytes, cbHighBMI,
-                btnCalc, txtResult
+                cmbTumor, cbPlatelets, cbHemoglobin, cbLeukocytes, cbHighBMI, txtResult
         );
 
         getChildren().add(new HBox(20,
@@ -58,6 +61,37 @@ public class KhoranaControl extends StackPane implements AutoCloseable {
         ));
     }
 
+    private void tryAutoCalc() {
+        if (model == null) return;
+
+        if (cmbTumor.getValue().isEmpty() ||
+                cbPlatelets.getText().isEmpty() ||
+                cbHemoglobin.getText().isEmpty() ||
+                cbLeukocytes.getText().isEmpty() ||
+                cbHighBMI.getText().isEmpty()) {
+            txtResult.setText("Введите все поля для расчёта");
+            return;
+        }
+
+        try {
+            Double.parseDouble(cmbTumor.getValue());
+            Double.parseDouble(cbPlatelets.getText());
+            Double.parseDouble(cbHemoglobin.getText());
+            Double.parseDouble(cbLeukocytes.getText());
+            Double.parseDouble(cbHighBMI.getText());
+        } catch (NumberFormatException ex) {
+            txtResult.setText("Некорректный ввод чисел");
+            return;
+        }
+
+        try {
+            model.calc();
+        } catch (Exception ex) {
+            txtResult.setText("Ошибка: " + ex.getMessage());
+        }
+    }
+
+
     private void bind() {
         cmbTumor.valueProperty().bindBidirectional(model.tumorLocationProperty());
         txtResult.textProperty().bindBidirectional(model.resultProperty());
@@ -66,15 +100,6 @@ public class KhoranaControl extends StackPane implements AutoCloseable {
     private void unbind() {
         cmbTumor.valueProperty().unbindBidirectional(model.tumorLocationProperty());
         txtResult.textProperty().unbindBidirectional(model.resultProperty());
-    }
-
-    private void calculateResult() {
-        model.getPatientFactors().clear();
-        if (cbPlatelets.isSelected()) model.getPatientFactors().add(cbPlatelets.getText());
-        if (cbHemoglobin.isSelected()) model.getPatientFactors().add(cbHemoglobin.getText());
-        if (cbLeukocytes.isSelected()) model.getPatientFactors().add(cbLeukocytes.getText());
-        if (cbHighBMI.isSelected()) model.getPatientFactors().add(cbHighBMI.getText());
-        model.calc();
     }
 
     @Override

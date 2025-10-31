@@ -1,31 +1,42 @@
 package com.example.demo1.controls.Friedwald;
 
+/**
+ * Расчёт ХС ЛПНП по формуле Фридвальда
+ *
+ * Формула:
+ * LDL = Общий холестерин - (Триглицериды / 2.2) - ХС ЛПВП
+ *
+ * Где:
+ * - LDL — липопротеины низкой плотности ("плохой" холестерин)
+ * - Триглицериды — в ммоль/л
+ * - ХС ЛПВП — липопротеины высокой плотности ("хороший" холестерин)
+ * - Общий холестерин — суммарное значение всех липидных фракций
+ *
+ * Примечания:
+ * - Применяется при уровне триглицеридов < 4.5 ммоль/л
+ * - Значение ХС ЛПНП > 3.0 ммоль/л считается повышенным
+ */
 public class FriedwaldCalculator {
 
-    /**
-     * Расчет холестерина ЛПНП по формуле Фридевальда
-     *
-     * Формула:
-     * LDL = Общий холестерин - (Триглицериды / 2.2) - HDL
-     *
-     * Где:
-     * Общий холестерин  - общий уровень холестерина в крови (ммоль/л)
-     * Триглицериды      - уровень триглицеридов (ммоль/л)
-     * HDL                - уровень холестерина ЛПВП (ммоль/л)
-     * LDL                - уровень холестерина ЛПНП (ммоль/л), рассчитанный
-     *
-     * Примечания:
-     * - Формула применима при концентрации триглицеридов < 4.5 ммоль/л (400 мг/дл)
-     * - Для более высоких значений триглицеридов расчет по Фридевальду может быть неточным.
-     */
+    public static FriedwaldResult calc(double totalChol, double triglycerides, double hdl) {
+        if (totalChol <= 0 || triglycerides <= 0 || hdl <= 0)
+            return new FriedwaldResult(-1, "Ошибка: значения должны быть положительными");
 
-    public static POAKResult calc(double kreatinin) {
-        if (kreatinin > 60) {
-            return new POAKResult("Некорректные входные данные");
-        }
-        double poak = kreatinin / 10;
-        int poakInt = (int) Math.round(poak);
-        String result = String.format("1 раз в %d месяца(ев)", poakInt);
-        return new POAKResult(result);
+        if (triglycerides >= 4.5)
+            return new FriedwaldResult(-1, "Ошибка: формула Фридвальда неприменима при ТГ ≥ 4.5 ммоль/л");
+
+        double ldl = totalChol - (triglycerides / 2.2) - hdl;
+
+        String interpretation;
+        if (ldl < 1.8)
+            interpretation = "Оптимальный уровень ЛПНП";
+        else if (ldl < 2.6)
+            interpretation = "Целевой уровень (умеренный риск)";
+        else if (ldl < 3.0)
+            interpretation = "Погранично высокий уровень";
+        else
+            interpretation = "Высокий уровень ЛПНП";
+
+        return new FriedwaldResult(ldl, interpretation);
     }
 }

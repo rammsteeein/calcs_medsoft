@@ -8,7 +8,7 @@ public class FLIModel {
     private final StringProperty bmi = new SimpleStringProperty("");
     private final StringProperty ggt = new SimpleStringProperty("");
     private final StringProperty waistCircumference = new SimpleStringProperty("");
-    private final StringProperty result = new SimpleStringProperty("");
+    private final StringProperty result = new SimpleStringProperty("Введите данные для расчёта");
 
     public FLIModel() {
     }
