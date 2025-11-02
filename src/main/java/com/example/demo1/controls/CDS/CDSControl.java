@@ -16,7 +16,6 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
     private ComboBox<String> cmbEyes;
     private ComboBox<String> cmbMucous;
     private ComboBox<String> cmbTears;
-    private Button btnCalc;
     private TextArea txtResult;
 
     public CDSControl(CDSModel model) {
@@ -26,42 +25,25 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
     }
 
     private void initialize() {
-        cmbAppearance = new ComboBox<>();
-        cmbAppearance.getItems().addAll(
+        cmbAppearance = createCombo("Внешний вид",
                 "Нормальный",
                 "Жажда, беспокойство, раздражительность",
-                "Вялость, сонливость"
-        );
-        cmbAppearance.setPromptText("Внешний вид");
+                "Вялость, сонливость");
 
-        cmbEyes = new ComboBox<>();
-        cmbEyes.getItems().addAll(
+        cmbEyes = createCombo("Глазные яблоки",
                 "Тургор нормальный",
                 "Слегка запавшие",
-                "Запавшие"
-        );
-        cmbEyes.setPromptText("Глазные яблоки");
+                "Запавшие");
 
-        cmbMucous = new ComboBox<>();
-        cmbMucous.getItems().addAll(
+        cmbMucous = createCombo("Слизистые оболочки",
                 "Влажные",
                 "Липкие, суховатые",
-                "Сухие"
-        );
-        cmbMucous.setPromptText("Слизистые оболочки");
+                "Сухие");
 
-        cmbTears = new ComboBox<>();
-        cmbTears.getItems().addAll(
+        cmbTears = createCombo("Слёзы",
                 "Слезоотделение в норме",
                 "Слезоотделение снижено",
-                "Слёзы отсутствуют"
-        );
-        cmbTears.setPromptText("Слёзы");
-
-        cmbAppearance.valueProperty().addListener((obs, oldVal, newVal) -> calculate());
-        cmbEyes.valueProperty().addListener((obs, oldVal, newVal) -> calculate());
-        cmbMucous.valueProperty().addListener((obs, oldVal, newVal) -> calculate());
-        cmbTears.valueProperty().addListener((obs, oldVal, newVal) -> calculate());
+                "Слёзы отсутствуют");
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -89,28 +71,43 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
         ));
     }
 
+    private ComboBox<String> createCombo(String prompt, String... items) {
+        ComboBox<String> cmb = new ComboBox<>();
+        cmb.getItems().addAll(items);
+        cmb.setPromptText(prompt);
+        cmb.setMaxWidth(Double.MAX_VALUE);
+        return cmb;
+    }
+
     private void bind() {
-        cmbAppearance.valueProperty().bindBidirectional(model.appearanceProperty());
-        cmbEyes.valueProperty().bindBidirectional(model.eyesProperty());
-        cmbMucous.valueProperty().bindBidirectional(model.mucousProperty());
-        cmbTears.valueProperty().bindBidirectional(model.tearsProperty());
+        bindCombo(cmbAppearance, model.appearanceProperty());
+        bindCombo(cmbEyes, model.eyesProperty());
+        bindCombo(cmbMucous, model.mucousProperty());
+        bindCombo(cmbTears, model.tearsProperty());
+
         txtResult.textProperty().bindBidirectional(model.resultProperty());
-        model.resultProperty().addListener((obs, oldVal, newVal) -> {
-            txtResult.setText(newVal != null ? newVal : "");
+        model.resultProperty().addListener((obs, o, n) -> txtResult.setText(n != null ? n : ""));
+    }
+
+    private void bindCombo(ComboBox<String> combo, javafx.beans.property.StringProperty prop) {
+        combo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            prop.set(newVal);
+            calculate();
+        });
+
+        prop.addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.equals(combo.getValue())) {
+                combo.setValue(newVal);
+            }
         });
     }
 
     private void unbind() {
-        cmbAppearance.valueProperty().unbindBidirectional(model.appearanceProperty());
-        cmbEyes.valueProperty().unbindBidirectional(model.eyesProperty());
-        cmbMucous.valueProperty().unbindBidirectional(model.mucousProperty());
-        cmbTears.valueProperty().unbindBidirectional(model.tearsProperty());
         txtResult.textProperty().unbindBidirectional(model.resultProperty());
     }
 
     private void calculate() {
         model.calc();
-
         double val = model.resultValueProperty().get();
         ResultStyler.applyStyleForValue(txtResult, val, 0.5, 4.5);
     }
@@ -130,4 +127,3 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
         return 430;
     }
 }
-

@@ -19,12 +19,8 @@ public class CockroftControl extends StackPane implements Closeable, CalculatorC
     private TextField nmrKreatinin;
     private TextField nmrAge;
     private TextField nmrWeight;
-    private Button btnCalc;
-    private TextArea txtResult;
     private ComboBox<Unit> cmbUnit;
-
-    private static final String GENDER_TEXT = "Пол:";
-    private static final String BUTTON_TEXT = "Рассчитать";
+    private TextArea txtResult;
 
     public CockroftControl(CockroftModel model) {
         this.model = model;
@@ -35,7 +31,7 @@ public class CockroftControl extends StackPane implements Closeable, CalculatorC
     private void initialize() {
         cmbGender = new ComboBox<>();
         cmbGender.getItems().addAll(Gender.values());
-        cmbGender.setPromptText(GENDER_TEXT);
+        cmbGender.setPromptText("Пол");
 
         nmrKreatinin = new TextField();
         nmrKreatinin.setPromptText("Креатинин");
@@ -50,12 +46,6 @@ public class CockroftControl extends StackPane implements Closeable, CalculatorC
         nmrWeight = new TextField();
         nmrWeight.setPromptText("Вес");
 
-        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        cmbUnit.valueProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        nmrKreatinin.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        nmrAge.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        nmrWeight.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
@@ -63,77 +53,42 @@ public class CockroftControl extends StackPane implements Closeable, CalculatorC
         getChildren().add(
                 new HBox(20,
                         new VBox(10,
-                                CalculatorHeader.createHeader("Клиренс креатинина по формуле Cockroft"),
+                                CalculatorHeader.createHeader("Клиренс креатинина (Cockcroft-Gault)"),
                                 cmbGender,
                                 new HBox(10, nmrKreatinin, cmbUnit),
                                 nmrAge, nmrWeight, txtResult
                         ),
                         CalculatorDescription.createDescription(
-                                "Формула Кокрофта-Голта позволяет оценить клиренс креатинина — показатель фильтрационной функции почек.\n" +
+                                "Формула Кокрофта-Голта используется для оценки клиренса креатинина — показателя фильтрационной функции почек.\n\n" +
                                         "CrCl = ((140 - возраст) * вес) * (0.85 если женщина) / (72 * Scr)"
                         )
                 )
         );
     }
 
-    private void tryAutoCalc() {
-        if (model == null) {
-            return;
-        }
-        if (cmbGender.getValue() == null ||
-                cmbUnit.getValue() == null ||
-                nmrKreatinin.getText() == null || nmrKreatinin.getText().isEmpty() ||
-                nmrAge.getText() == null || nmrAge.getText().isEmpty() ||
-                nmrWeight.getText() == null || nmrWeight.getText().isEmpty()) {
-            txtResult.setText("Введите все поля для расчёта");
-            return;
-        }
-
-        try {
-            Double.parseDouble(nmrKreatinin.getText());
-            Double.parseDouble(nmrWeight.getText());
-            Integer.parseInt(nmrAge.getText());
-        } catch (NumberFormatException ex) {
-            txtResult.setText("Некорректный ввод чисел");
-            return;
-        }
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка: " + ex.getMessage());
-        }
-    }
-
     private void bind() {
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
         nmrKreatinin.textProperty().bindBidirectional(model.kreatininProperty());
         nmrAge.textProperty().bindBidirectional(model.ageProperty());
-        cmbUnit.valueProperty().bindBidirectional(model.creatininUnitProperty());
         nmrWeight.textProperty().bindBidirectional(model.weightProperty());
+        cmbUnit.valueProperty().bindBidirectional(model.creatininUnitProperty());
+        txtResult.textProperty().bind(model.resultStringProperty());
 
-        model.resultProperty().addListener((obs, oldVal, newVal) -> {
-            txtResult.setText(newVal != null ? newVal.toString() : "");
-        });
-    }
+        cmbGender.valueProperty().addListener((obs, o, n) -> model.calc());
+        cmbUnit.valueProperty().addListener((obs, o, n) -> model.calc());
 
-    private void unbind() {
-        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
-        nmrKreatinin.textProperty().unbindBidirectional(model.kreatininProperty());
-        nmrAge.textProperty().unbindBidirectional(model.ageProperty());
-        cmbUnit.valueProperty().unbindBidirectional(model.creatininUnitProperty());
-        nmrWeight.textProperty().unbindBidirectional(model.weightProperty());
-    }
-
-    private void calculateResult() {
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка ввода: " + ex.getMessage());
-        }
+        nmrKreatinin.textProperty().addListener((obs, o, n) -> model.calc());
+        nmrAge.textProperty().addListener((obs, o, n) -> model.calc());
+        nmrWeight.textProperty().addListener((obs, o, n) -> model.calc());
     }
 
     @Override
     public void close() {
-        unbind();
+        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
+        nmrKreatinin.textProperty().unbindBidirectional(model.kreatininProperty());
+        nmrAge.textProperty().unbindBidirectional(model.ageProperty());
+        nmrWeight.textProperty().unbindBidirectional(model.weightProperty());
+        cmbUnit.valueProperty().unbindBidirectional(model.creatininUnitProperty());
+        txtResult.textProperty().unbind();
     }
 }

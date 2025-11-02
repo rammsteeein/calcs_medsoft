@@ -5,23 +5,49 @@ import com.example.demo1.common.enums.Unit;
 import javafx.beans.property.*;
 
 public class CKDEPIModel {
+
     private final StringProperty kreatinin = new SimpleStringProperty();
     private final ObjectProperty<Unit> creatininUnit = new SimpleObjectProperty<>(Unit.MKMOL);
     private final ObjectProperty<Gender> gender = new SimpleObjectProperty<>();
     private final StringProperty age = new SimpleStringProperty();
-    private final StringProperty result = new SimpleStringProperty();
-
+    private final StringProperty result = new SimpleStringProperty("Введите все данные для расчёта");
 
     public void calc() {
         double scr = Double.parseDouble(kreatinin.get());
         int ageVal = Integer.parseInt(age.get());
+
         CKDEPIResult res = CKDEPICalculator.calc(
                 gender.get(),
                 scr,
                 creatininUnit.get(),
                 ageVal
         );
+
         result.set(res.getFormatted() + "\n" + res.getInterpretation());
+    }
+
+    public void tryCalcAuto() {
+        if (gender.get() == null ||
+                creatininUnit.get() == null ||
+                kreatinin.get() == null || kreatinin.get().isEmpty() ||
+                age.get() == null || age.get().isEmpty()) {
+            result.set("Введите все поля для расчёта");
+            return;
+        }
+
+        try {
+            Double.parseDouble(kreatinin.get());
+            Integer.parseInt(age.get());
+        } catch (NumberFormatException e) {
+            result.set("Некорректный ввод чисел");
+            return;
+        }
+
+        try {
+            calc();
+        } catch (Exception ex) {
+            result.set("Ошибка: " + ex.getMessage());
+        }
     }
 
     public StringProperty kreatininProperty() { return kreatinin; }

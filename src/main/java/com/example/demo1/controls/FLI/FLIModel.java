@@ -1,5 +1,7 @@
 package com.example.demo1.controls.FLI;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -10,28 +12,32 @@ public class FLIModel {
     private final StringProperty waistCircumference = new SimpleStringProperty("");
     private final StringProperty result = new SimpleStringProperty("Введите данные для расчёта");
 
-    public FLIModel() {
-    }
+    private final DoubleProperty resultValue = new SimpleDoubleProperty(Double.NaN);
 
     public StringProperty triglyceridesProperty() { return triglycerides; }
     public StringProperty bmiProperty() { return bmi; }
     public StringProperty ggtProperty() { return ggt; }
     public StringProperty waistCircumferenceProperty() { return waistCircumference; }
     public StringProperty resultProperty() { return result; }
-
-    public void setResult(String result) { this.result.set(result); }
+    public DoubleProperty resultValueProperty() { return resultValue; }
 
     public void calc() {
         try {
             double triglyceridesValue = Double.parseDouble(triglycerides.get());
             double bmiValue = Double.parseDouble(bmi.get());
             double ggtValue = Double.parseDouble(ggt.get());
-            double waistCircumferenceValue = Double.parseDouble(waistCircumference.get());
+            double waistValue = Double.parseDouble(waistCircumference.get());
 
-            FLIResult calcResult = FLICalculator.calc(triglyceridesValue, bmiValue, ggtValue, waistCircumferenceValue);
-            setResult(calcResult.getFormatted());
+            FLIResult fliResult = FLICalculator.calc(triglyceridesValue, bmiValue, ggtValue, waistValue);
+
+            resultValue.set(fliResult.getFli());
+            result.set(fliResult.getFormatted());
+        } catch (NumberFormatException e) {
+            resultValue.set(Double.NaN);
+            result.set("Ошибка: некорректный ввод чисел");
         } catch (Exception e) {
-            setResult("Ошибка: " + e.getMessage());
+            resultValue.set(Double.NaN);
+            result.set("Ошибка: " + e.getMessage());
         }
     }
 }

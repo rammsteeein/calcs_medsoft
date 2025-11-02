@@ -35,10 +35,6 @@ public class FriedwaldControl extends StackPane implements Closeable, Calculator
         nmrHDL = new TextField();
         nmrHDL.setPromptText("ХС ЛПВП (ммоль/л)");
 
-        nmrTotalChol.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        nmrTriglycerides.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        nmrHDL.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
@@ -48,47 +44,20 @@ public class FriedwaldControl extends StackPane implements Closeable, Calculator
                 nmrTotalChol, nmrTriglycerides, nmrHDL, txtResult
         );
 
-        getChildren().add(
-                new HBox(
-                        20,
-                        leftBox,
-                        CalculatorDescription.createDescription(
-                                "Назначение: Оценка концентрации липопротеинов низкой плотности (ЛПНП) в крови.\n\n" +
-                                        "Формула Фридвальда:\n" +
-                                        "ХС ЛПНП = Общий холестерин - (Триглицериды / 2.2) - ХС ЛПВП\n\n" +
-                                        "Примечания:\n" +
-                                        "- Формула справедлива при уровне триглицеридов < 4.5 ммоль/л.\n" +
-                                        "- Единицы измерения: ммоль/л.\n" +
-                                        "- Применяется в клинической практике для расчёта показателя \"плохого\" холестерина."
-                        )
+        HBox mainBox = new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "Назначение: Оценка концентрации липопротеинов низкой плотности (ЛПНП) в крови.\n\n" +
+                                "Формула Фридвальда:\n" +
+                                "ХС ЛПНП = Общий холестерин - (Триглицериды / 2.2) - ХС ЛПВП\n\n" +
+                                "Примечания:\n" +
+                                "- Формула справедлива при уровне триглицеридов < 4.5 ммоль/л.\n" +
+                                "- Единицы измерения: ммоль/л.\n" +
+                                "- Применяется в клинической практике для расчёта показателя \"плохого\" холестерина."
                 )
         );
-    }
 
-    private void tryAutoCalc() {
-        if (model == null) return;
-
-        if (nmrTotalChol.getText().isEmpty() ||
-                nmrTriglycerides.getText().isEmpty() ||
-                nmrHDL.getText().isEmpty()) {
-            txtResult.setText("Введите все поля для расчёта");
-            return;
-        }
-
-        try {
-            Double.parseDouble(nmrTotalChol.getText());
-            Double.parseDouble(nmrTriglycerides.getText());
-            Double.parseDouble(nmrHDL.getText());
-        } catch (NumberFormatException ex) {
-            txtResult.setText("Некорректный ввод чисел");
-            return;
-        }
-
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка: " + ex.getMessage());
-        }
+        getChildren().add(mainBox);
     }
 
     private void bind() {
@@ -96,7 +65,31 @@ public class FriedwaldControl extends StackPane implements Closeable, Calculator
         nmrTriglycerides.textProperty().bindBidirectional(model.triglyceridesProperty());
         nmrHDL.textProperty().bindBidirectional(model.hdlProperty());
 
+        nmrTotalChol.textProperty().addListener((obs, o, n) -> calculate());
+        nmrTriglycerides.textProperty().addListener((obs, o, n) -> calculate());
+        nmrHDL.textProperty().addListener((obs, o, n) -> calculate());
+
+
         model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+    }
+
+    private void calculate() {
+        if (nmrTotalChol.getText().isEmpty() || nmrTriglycerides.getText().isEmpty() || nmrHDL.getText().isEmpty()) {
+            model.setResult("Введите все поля для расчёта");
+            return;
+        }
+
+        try {
+            Double.parseDouble(nmrTotalChol.getText());
+            Double.parseDouble(nmrTriglycerides.getText());
+            Double.parseDouble(nmrHDL.getText());
+
+            model.calc();
+        } catch (NumberFormatException e) {
+            model.setResult("Некорректный ввод чисел");
+        } catch (Exception e) {
+            model.setResult("Ошибка: " + e.getMessage());
+        }
     }
 
     private void unbind() {

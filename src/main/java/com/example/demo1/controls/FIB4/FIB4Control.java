@@ -3,11 +3,11 @@ package com.example.demo1.controls.FIB4;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import com.example.demo1.common.services.ResultStyler;
 
 import java.io.Closeable;
 
@@ -24,22 +24,10 @@ public class FIB4Control extends StackPane implements Closeable, CalculatorContr
     }
 
     private void initialize() {
-        txtAge = new TextField();
-        txtAge.setPromptText("Возраст (лет)");
-
-        txtAst = new TextField();
-        txtAst.setPromptText("АСТ (Ед/л)");
-
-        txtAlt = new TextField();
-        txtAlt.setPromptText("АЛТ (Ед/л)");
-
-        txtPlatelets = new TextField();
-        txtPlatelets.setPromptText("Тромбоциты (10^9/л)");
-
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        txtAst.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        txtAlt.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
-        txtPlatelets.textProperty().addListener((obs, oldVal, newVal) -> tryAutoCalc());
+        txtAge = new TextField(); txtAge.setPromptText("Возраст (лет)");
+        txtAst = new TextField(); txtAst.setPromptText("АСТ (Ед/л)");
+        txtAlt = new TextField(); txtAlt.setPromptText("АЛТ (Ед/л)");
+        txtPlatelets = new TextField(); txtPlatelets.setPromptText("Тромбоциты (10^9/л)");
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -66,40 +54,21 @@ public class FIB4Control extends StackPane implements Closeable, CalculatorContr
         ));
     }
 
-    private void tryAutoCalc() {
-        if (model == null) {
-            return;
-        }
-        if (txtAge.getText().isEmpty() ||
-                txtAlt.getText().isEmpty() ||
-                txtAst.getText().isEmpty() ||
-                txtPlatelets.getText().isEmpty()) {
-            txtResult.setText("Введите все поля для расчёта");
-            return;
-        }
-
-        try {
-            Double.parseDouble(txtAlt.getText());
-            Integer.parseInt(txtAge.getText());
-            Double.parseDouble(txtPlatelets.getText());
-            Double.parseDouble(txtAst.getText());
-        } catch (NumberFormatException ex) {
-            txtResult.setText("Некорректный ввод чисел");
-            return;
-        }
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка: " + ex.getMessage());
-        }
-    }
-
     private void bind() {
         txtAge.textProperty().bindBidirectional(model.ageProperty());
         txtAst.textProperty().bindBidirectional(model.astProperty());
         txtAlt.textProperty().bindBidirectional(model.altProperty());
         txtPlatelets.textProperty().bindBidirectional(model.plateletsProperty());
-        txtResult.textProperty().bindBidirectional(model.resultProperty());
+
+        txtAge.textProperty().addListener((obs, o, n) -> model.calc());
+        txtAst.textProperty().addListener((obs, o, n) -> model.calc());
+        txtAlt.textProperty().addListener((obs, o, n) -> model.calc());
+        txtPlatelets.textProperty().addListener((obs, o, n) -> model.calc());
+
+        model.resultProperty().addListener((obs, o, n) -> txtResult.setText(n));
+        model.resultValueProperty().addListener((obs, o, n) ->
+                ResultStyler.applyStyleForValue(txtResult, n.doubleValue(), 1.45, 3.25)
+        );
     }
 
     private void unbind() {
@@ -107,14 +76,10 @@ public class FIB4Control extends StackPane implements Closeable, CalculatorContr
         txtAst.textProperty().unbindBidirectional(model.astProperty());
         txtAlt.textProperty().unbindBidirectional(model.altProperty());
         txtPlatelets.textProperty().unbindBidirectional(model.plateletsProperty());
-        txtResult.textProperty().unbindBidirectional(model.resultProperty());
-    }
-
-    private void calculate() {
-        model.calc();
-
-        double val = model.resultValueProperty().get(); 
-        ResultStyler.applyStyleForValue(txtResult, val, 1.45, 3.25);
+        model.resultProperty().removeListener((obs, o, n) -> txtResult.setText(n));
+        model.resultValueProperty().removeListener((obs, o, n) ->
+                ResultStyler.applyStyleForValue(txtResult, n.doubleValue(), 1.45, 3.25)
+        );
     }
 
     @Override
@@ -123,12 +88,8 @@ public class FIB4Control extends StackPane implements Closeable, CalculatorContr
     }
 
     @Override
-    public double getDefaultWidth() {
-        return 700;
-    }
+    public double getDefaultWidth() { return 700; }
 
     @Override
-    public double getDefaultHeight() {
-        return 430;
-    }
+    public double getDefaultHeight() { return 430; }
 }

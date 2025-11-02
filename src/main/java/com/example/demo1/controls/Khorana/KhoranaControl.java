@@ -3,18 +3,20 @@ package com.example.demo1.controls.Khorana;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class KhoranaControl extends StackPane implements AutoCloseable, CalculatorControl {
+import java.io.Closeable;
+
+public class KhoranaControl extends StackPane implements CalculatorControl, Closeable {
 
     private final KhoranaModel model;
 
     private ComboBox<String> cmbTumor;
     private CheckBox cbPlatelets, cbHemoglobin, cbLeukocytes, cbHighBMI;
-    private Button btnCalc;
     private TextArea txtResult;
 
     public KhoranaControl(KhoranaModel model) {
@@ -36,12 +38,6 @@ public class KhoranaControl extends StackPane implements AutoCloseable, Calculat
         cbLeukocytes = new CheckBox("Лейкоциты > 11 × 10⁹/л");
         cbHighBMI = new CheckBox("ИМТ ≥ 35 кг/м²");
 
-        cmbTumor.valueProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        cbPlatelets.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        cbHemoglobin.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        cbLeukocytes.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        cbHighBMI.selectedProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
@@ -51,55 +47,51 @@ public class KhoranaControl extends StackPane implements AutoCloseable, Calculat
                 cmbTumor, cbPlatelets, cbHemoglobin, cbLeukocytes, cbHighBMI, txtResult
         );
 
-        getChildren().add(new HBox(20,
+        HBox mainBox = new HBox(20,
                 leftBox,
                 CalculatorDescription.createDescription(
-                        "Шкала Хорана (Khorana) прогнозирует риск развития венозных тромбоэмболически осложнений (ВТЭО) у онкологических пациентов, которые начинают курс химиотерапии. Главная задача — определить пациентов с высоким риском и уделить им особое внимание.\n" +
-                                "\n" +
-                                "Шкала не применима к пациентам с опухолями головного мозга или миеломами."
+                        "Шкала Хорана (Khorana) прогнозирует риск развития венозных тромбоэмболических осложнений (ВТЭО) " +
+                                "у онкологических пациентов, начинающих курс химиотерапии."
                 )
-        ));
+        );
+
+        getChildren().add(mainBox);
     }
-
-    private void tryAutoCalc() {
-        if (model == null) return;
-
-        if (cmbTumor.getValue().isEmpty() ||
-                cbPlatelets.getText().isEmpty() ||
-                cbHemoglobin.getText().isEmpty() ||
-                cbLeukocytes.getText().isEmpty() ||
-                cbHighBMI.getText().isEmpty()) {
-            txtResult.setText("Введите все поля для расчёта");
-            return;
-        }
-
-        try {
-            Double.parseDouble(cmbTumor.getValue());
-            Double.parseDouble(cbPlatelets.getText());
-            Double.parseDouble(cbHemoglobin.getText());
-            Double.parseDouble(cbLeukocytes.getText());
-            Double.parseDouble(cbHighBMI.getText());
-        } catch (NumberFormatException ex) {
-            txtResult.setText("Некорректный ввод чисел");
-            return;
-        }
-
-        try {
-            model.calc();
-        } catch (Exception ex) {
-            txtResult.setText("Ошибка: " + ex.getMessage());
-        }
-    }
-
 
     private void bind() {
+        // Привязка полей к модели
         cmbTumor.valueProperty().bindBidirectional(model.tumorLocationProperty());
-        txtResult.textProperty().bindBidirectional(model.resultProperty());
+
+        cbPlatelets.selectedProperty().addListener((obs, oldV, newV) -> updateFactors());
+        cbHemoglobin.selectedProperty().addListener((obs, oldV, newV) -> updateFactors());
+        cbLeukocytes.selectedProperty().addListener((obs, oldV, newV) -> updateFactors());
+        cbHighBMI.selectedProperty().addListener((obs, oldV, newV) -> updateFactors());
+
+        model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+
+        cmbTumor.valueProperty().addListener((obs, oldV, newV) -> calculate());
+    }
+
+    private void updateFactors() {
+        model.getPatientFactors().clear();
+        if (cbPlatelets.isSelected()) model.getPatientFactors().add("Тромбоциты");
+        if (cbHemoglobin.isSelected()) model.getPatientFactors().add("Гемоглобин");
+        if (cbLeukocytes.isSelected()) model.getPatientFactors().add("Лейкоциты");
+        if (cbHighBMI.isSelected()) model.getPatientFactors().add("ИМТ");
+
+        calculate();
+    }
+
+    private void calculate() {
+        if (cmbTumor.getValue() == null || cmbTumor.getValue().isEmpty()) {
+            model.setResult("Введите локализацию опухоли");
+            return;
+        }
+        model.calc();
     }
 
     private void unbind() {
         cmbTumor.valueProperty().unbindBidirectional(model.tumorLocationProperty());
-        txtResult.textProperty().unbindBidirectional(model.resultProperty());
     }
 
     @Override

@@ -15,10 +15,7 @@ public class LDLControl extends StackPane implements Closeable, CalculatorContro
 
     private TextField nmrNonHDL;
     private TextField nmrTG;
-    private Button btnCalc;
     private TextArea txtResult;
-
-    private static final String BUTTON_TEXT = "Рассчитать";
 
     public LDLControl(LDLModel model) {
         this.model = model;
@@ -33,19 +30,16 @@ public class LDLControl extends StackPane implements Closeable, CalculatorContro
         nmrTG = new TextField();
         nmrTG.setPromptText("Триглицериды");
 
-        btnCalc = new Button(BUTTON_TEXT);
-        btnCalc.setOnAction(e -> calculateResult());
-
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("ХС-ЛНП на основании современной парадигмы метаболизма липидов"),
-                nmrNonHDL, nmrTG, btnCalc, txtResult
+                nmrNonHDL, nmrTG, txtResult
         );
 
-        getChildren().add(new HBox(20,
+        HBox mainBox = new HBox(20,
                 leftBox,
                 CalculatorDescription.createDescription(
                         "Формула Фридевальда рассчитывает уровень холестерина ЛПНП (LDL) как разницу " +
@@ -54,23 +48,43 @@ public class LDLControl extends StackPane implements Closeable, CalculatorContro
                                 "- Триглицериды < 4.5 ммоль/л\n" +
                                 "- При более высоких значениях результат может быть неточным"
                 )
-        ));
+        );
+
+        getChildren().add(mainBox);
     }
 
     private void bind() {
         nmrNonHDL.textProperty().bindBidirectional(model.nonHDLProperty());
         nmrTG.textProperty().bindBidirectional(model.tgProperty());
-        txtResult.textProperty().bindBidirectional(model.resultProperty());
+
+        // Автоподсчёт при изменении текста
+        nmrNonHDL.textProperty().addListener((obs, oldV, newV) -> calculate());
+        nmrTG.textProperty().addListener((obs, oldV, newV) -> calculate());
+
+        // Обновление TextArea при изменении результата
+        model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+    }
+
+    private void calculate() {
+        if (nmrNonHDL.getText().isEmpty() || nmrTG.getText().isEmpty()) {
+            model.setResult("Введите все поля для расчёта");
+            return;
+        }
+
+        try {
+            Double.parseDouble(nmrNonHDL.getText());
+            Double.parseDouble(nmrTG.getText());
+            model.calc();
+        } catch (NumberFormatException e) {
+            model.setResult("Некорректный ввод чисел");
+        } catch (Exception e) {
+            model.setResult("Ошибка: " + e.getMessage());
+        }
     }
 
     private void unbind() {
         nmrNonHDL.textProperty().unbindBidirectional(model.nonHDLProperty());
         nmrTG.textProperty().unbindBidirectional(model.tgProperty());
-        txtResult.textProperty().unbindBidirectional(model.resultProperty());
-    }
-
-    private void calculateResult() {
-        model.calc();
     }
 
     @Override

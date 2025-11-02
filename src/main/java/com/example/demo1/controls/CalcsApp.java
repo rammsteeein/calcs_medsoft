@@ -18,6 +18,8 @@ import com.example.demo1.controls.GRACE.GRACEControl;
 import com.example.demo1.controls.GRACE.GRACEModel;
 import com.example.demo1.controls.GuptaMICA.GuptaMICAControl;
 import com.example.demo1.controls.GuptaMICA.GuptaMICAModel;
+import com.example.demo1.controls.HASBLED.HASBLEDControl;
+import com.example.demo1.controls.HASBLED.HASBLEDModel;
 import com.example.demo1.controls.HSI.HSIControl;
 import com.example.demo1.controls.HSI.HSIModel;
 import com.example.demo1.controls.IDAChronicAnemia.IDAChronicAnemiaControl;
@@ -106,6 +108,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("DASI", () -> new DASIControl(new DASIModel()));
         calculatorMap.put("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний",
                 () -> new IDAChronicAnemiaControl(new IDAChronicAnemiaModel()));
+        calculatorMap.put("HAS-BLED", () -> new HASBLEDControl(new HASBLEDModel()));
 
         List<String> keys = new ArrayList<>(calculatorMap.keySet());
         Collections.sort(keys);
@@ -176,9 +179,9 @@ public class CalcsApp extends Application {
         }
 
         Scene scene = new Scene(control, width, height, javafx.scene.paint.Color.WHITE);
-        try {
-            scene.getStylesheets().add("com/example/demo1/styles/style.css");
-        } catch (Exception ignored) {}
+//        try {
+//            scene.getStylesheets().add("com/example/demo1/styles/style.css");
+//        } catch (Exception ignored) {}
 
         stage.setScene(scene);
         stage.setTitle(title);

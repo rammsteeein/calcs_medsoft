@@ -149,11 +149,11 @@ public class LarsenControl extends StackPane implements AutoCloseable, Calculato
 
     @Override
     public double getDefaultWidth() {
-        return 800;
+        return 700;
     }
 
     @Override
     public double getDefaultHeight() {
-        return 500;
+        return 400;
     }
 }

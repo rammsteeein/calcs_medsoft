@@ -4,6 +4,7 @@ import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -17,10 +18,7 @@ public class INBARControl extends StackPane implements Closeable, CalculatorCont
     private TextField nmrAge;
     private TextField nmrWeight;
     private ComboBox<Gender> cmbGender;
-    private Button btnCalc;
     private TextArea txtResult;
-
-    private static final String BUTTON_TEXT = "Рассчитать";
 
     public INBARControl(INBARModel model) {
         this.model = model;
@@ -39,10 +37,6 @@ public class INBARControl extends StackPane implements Closeable, CalculatorCont
         cmbGender.getItems().addAll(Gender.values());
         cmbGender.setValue(Gender.MALE);
 
-        nmrAge.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        nmrWeight.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        cmbGender.valueProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат расчёта");
@@ -52,7 +46,7 @@ public class INBARControl extends StackPane implements Closeable, CalculatorCont
                 nmrAge, nmrWeight, cmbGender, txtResult
         );
 
-        getChildren().add(new HBox(20,
+        HBox mainBox = new HBox(20,
                 leftBox,
                 CalculatorDescription.createDescription(
                         "Формула Inbar используется для оценки максимальной частоты сердечных сокращений (ЧССmax).\n\n" +
@@ -63,42 +57,39 @@ public class INBARControl extends StackPane implements Closeable, CalculatorCont
                                 "- Подбор тренировочных зон\n" +
                                 "- Оценка кардиореспираторной выносливости"
                 )
-        ));
-    }
+        );
 
-    private void tryAutoCalc() {
-        if (nmrAge.getText().isEmpty() || nmrWeight.getText().isEmpty() || cmbGender.getValue() == null) {
-            model.resultProperty().set("Введите все поля");
-            return;
-        }
-
-        try {
-            model.setAge(nmrAge.getText());
-            model.setWeight(nmrWeight.getText());
-            model.calc();
-        } catch (NumberFormatException e) {
-            model.resultProperty().set("Некорректный ввод чисел");
-        } catch (Exception e) {
-            model.resultProperty().set("Ошибка: " + e.getMessage());
-        }
+        getChildren().add(mainBox);
     }
 
     private void bind() {
         nmrAge.textProperty().bindBidirectional(model.ageProperty());
         nmrWeight.textProperty().bindBidirectional(model.weightProperty());
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
-        txtResult.textProperty().bindBidirectional(model.resultProperty());
+
+        nmrAge.textProperty().addListener((obs, o, n) -> calculate());
+        nmrWeight.textProperty().addListener((obs, o, n) -> calculate());
+        cmbGender.valueProperty().addListener((obs, o, n) -> calculate());
+
+        model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+    }
+
+    private void calculate() {
+        if (nmrAge.getText().isEmpty() || nmrWeight.getText().isEmpty() || cmbGender.getValue() == null) {
+            model.resultProperty().set("Введите все поля");
+            return;
+        }
+        try {
+            model.calc();
+        } catch (Exception e) {
+            model.resultProperty().set("Ошибка: " + e.getMessage());
+        }
     }
 
     private void unbind() {
         nmrAge.textProperty().unbindBidirectional(model.ageProperty());
         nmrWeight.textProperty().unbindBidirectional(model.weightProperty());
         cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
-        txtResult.textProperty().unbindBidirectional(model.resultProperty());
-    }
-
-    private void calculateResult() {
-        model.calc();
     }
 
     @Override

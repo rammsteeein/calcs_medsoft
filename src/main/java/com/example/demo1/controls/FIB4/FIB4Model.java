@@ -11,7 +11,6 @@ public class FIB4Model {
     private final StringProperty alt = new SimpleStringProperty();
     private final StringProperty platelets = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty();
-
     private final DoubleProperty resultValue = new SimpleDoubleProperty(Double.NaN);
 
     public StringProperty ageProperty() { return age; }
@@ -23,17 +22,24 @@ public class FIB4Model {
 
     public void calc() {
         try {
+            if (age.get() == null || ast.get() == null || alt.get() == null || platelets.get() == null ||
+                    age.get().isBlank() || ast.get().isBlank() || alt.get().isBlank() || platelets.get().isBlank()) {
+                result.set("");
+                resultValue.set(Double.NaN);
+                return;
+            }
+
             int ageValue = Integer.parseInt(age.get());
             double astValue = Double.parseDouble(ast.get());
             double altValue = Double.parseDouble(alt.get());
             double plateletsValue = Double.parseDouble(platelets.get());
 
             FIB4Result res = FIB4Calculator.calc(ageValue, astValue, altValue, plateletsValue);
-            resultValue.set(res.getValue());
             result.set(res.toString());
+            resultValue.set(res.getValue());
         } catch (Exception e) {
-            resultValue.set(Double.NaN);
             result.set("Ошибка: " + e.getMessage());
+            resultValue.set(Double.NaN);
         }
     }
 }

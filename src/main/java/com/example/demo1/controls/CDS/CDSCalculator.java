@@ -79,36 +79,36 @@ public class CDSCalculator {
 
     private static int mapAppearance(String value) {
         switch (value) {
-            case "Нормальный": return 1;
-            case "Жажда, беспокойство, раздражительность": return 2;
-            case "Вялость, сонливость": return 3;
+            case "Нормальный": return 0;
+            case "Жажда, беспокойство, раздражительность": return 1;
+            case "Вялость, сонливость": return 2;
             default: throw new IllegalArgumentException("Неизвестное значение: " + value);
         }
     }
 
     private static int mapEyes(String value) {
         switch (value) {
-            case "Тургор нормальный": return 1;
-            case "Слегка запавшие": return 2;
-            case "Запавшие": return 3;
+            case "Тургор нормальный": return 0;
+            case "Слегка запавшие": return 1;
+            case "Запавшие": return 2;
             default: throw new IllegalArgumentException("Неизвестное значение: " + value);
         }
     }
 
     private static int mapMucous(String value) {
         switch (value) {
-            case "Влажные": return 1;
-            case "Липкие, суховатые": return 2;
-            case "Сухие": return 3;
+            case "Влажные": return 0;
+            case "Липкие, суховатые": return 1;
+            case "Сухие": return 2;
             default: throw new IllegalArgumentException("Неизвестное значение: " + value);
         }
     }
 
     private static int mapTears(String value) {
         switch (value) {
-            case "Слезоотделение в норме": return 1;
-            case "Слезоотделение снижено": return 2;
-            case "Слёзы отсутствуют": return 3;
+            case "Слезоотделение в норме": return 0;
+            case "Слезоотделение снижено": return 1;
+            case "Слёзы отсутствуют": return 2;
             default: throw new IllegalArgumentException("Неизвестное значение: " + value);
         }
     }
