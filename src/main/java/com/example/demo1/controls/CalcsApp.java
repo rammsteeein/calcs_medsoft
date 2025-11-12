@@ -5,6 +5,8 @@ import com.example.demo1.controls.AKI.AKIControl;
 import com.example.demo1.controls.AKI.AKIModel;
 import com.example.demo1.controls.CDS.CDSControl;
 import com.example.demo1.controls.CDS.CDSModel;
+import com.example.demo1.controls.CHA2DS2VASc.CHA2DS2VAScControl;
+import com.example.demo1.controls.CHA2DS2VASc.CHA2DS2VAScModel;
 import com.example.demo1.controls.Cockroft.*;
 import com.example.demo1.controls.DASI.DASIControl;
 import com.example.demo1.controls.DASI.DASIModel;
@@ -109,6 +111,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("Дифференц. диагностика железодефиц. анемии и анемии хронических заболеваний",
                 () -> new IDAChronicAnemiaControl(new IDAChronicAnemiaModel()));
         calculatorMap.put("HAS-BLED", () -> new HASBLEDControl(new HASBLEDModel()));
+        calculatorMap.put("CHA2DS2VASc", () -> new CHA2DS2VAScControl(new CHA2DS2VAScModel()));
 
         List<String> keys = new ArrayList<>(calculatorMap.keySet());
         Collections.sort(keys);

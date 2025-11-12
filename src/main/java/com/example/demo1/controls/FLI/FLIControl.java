@@ -87,7 +87,7 @@ public class FLIControl extends StackPane implements Closeable, CalculatorContro
 
     @Override
     public double getDefaultHeight() {
-        return 350;
+        return 380;
     }
     @Override
     public double getDefaultWidth() {

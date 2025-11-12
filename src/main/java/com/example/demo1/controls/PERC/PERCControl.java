@@ -1,19 +1,17 @@
 package com.example.demo1.controls.PERC;
 
 import com.example.demo1.common.interfaces.CalculatorControl;
-import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
-import javafx.beans.value.ChangeListener;
+import com.example.demo1.common.services.CalculatorHeader;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class PERCControl extends BorderPane implements CalculatorControl {
+public class PERCControl extends StackPane implements CalculatorControl {
 
     private final PERCModel model;
 
-    private TextField txtAge, txtHeartRate, txtOxygen;
-    private CheckBox chkUnilateralLegEdema, chkHemoptysis,
-            chkRecentSurgeryOrTrauma, chkSurgeryWithin4Weeks, chkPrevPEorDVT, chkHormoneUse;
+    private TextField txtAge, txtHeartRate, txtSpO2;
+    private CheckBox chkLegEdema, chkHemoptysis, chkTrauma, chkPrevVte, chkHormones;
     private TextArea txtResult;
 
     public PERCControl(PERCModel model) {
@@ -23,73 +21,101 @@ public class PERCControl extends BorderPane implements CalculatorControl {
     }
 
     private void initialize() {
-        txtAge = new TextField(); txtAge.setPromptText("Возраст (годы)");
-        txtHeartRate = new TextField(); txtHeartRate.setPromptText("ЧСС (уд/мин)");
-        txtOxygen = new TextField(); txtOxygen.setPromptText("O₂ (%)");
+        txtAge = new TextField();
+        txtAge.setPromptText("Возраст (лет)");
 
-        chkUnilateralLegEdema = new CheckBox("Односторонний отек ног");
+        txtHeartRate = new TextField();
+        txtHeartRate.setPromptText("Пульс (уд/мин)");
+
+        txtSpO2 = new TextField();
+        txtSpO2.setPromptText("SpO₂ (%)");
+
+        chkLegEdema = new CheckBox("Односторонний отёк ноги");
         chkHemoptysis = new CheckBox("Кровохарканье");
-        chkRecentSurgeryOrTrauma = new CheckBox("Недавняя операция или травма");
-        chkSurgeryWithin4Weeks = new CheckBox("Операция/травма ≤4 недель");
-        chkPrevPEorDVT = new CheckBox("Предшествующая ТЭЛА или ТГВ");
-        chkHormoneUse = new CheckBox("Использование гормонов / ОК / заместительная терапия");
+        chkTrauma = new CheckBox("Недавняя травма или операция");
+        chkPrevVte = new CheckBox("Предшествующий ТГВ/ТЭЛА");
+        chkHormones = new CheckBox("Приём гормонов");
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
-        txtResult.setPrefHeight(100);
 
         VBox leftBox = new VBox(10,
-                CalculatorHeader.createHeader("PERC"),
-                txtAge, txtHeartRate, txtOxygen,
-                chkUnilateralLegEdema, chkHemoptysis,
-                chkRecentSurgeryOrTrauma, chkSurgeryWithin4Weeks,
-                chkPrevPEorDVT, chkHormoneUse, txtResult
-        );
-        leftBox.setPrefSize(400, 600);
-
-        Label lblDescription = CalculatorDescription.createDescription(
-                "Шкала PERC:\n\n" +
-                        "Используется для исключения риска ТЭЛА у пациентов с низкой вероятностью.\n" +
-                        "0 баллов — крайне низкий риск, дополнительные тесты не нужны.\n" +
-                        "≥1 балла — требуется дальнейшее обследование (D-димер, КТ-ангиография)."
+                CalculatorHeader.createHeader("Правило PERC"),
+                txtAge, txtHeartRate, txtSpO2,
+                chkLegEdema, chkHemoptysis, chkTrauma, chkPrevVte, chkHormones,
+                txtResult
         );
 
-        this.setLeft(leftBox);
-        this.setCenter(lblDescription);
-        this.setPrefSize(700, 600);
+        getChildren().add(new HBox(20,
+                leftBox,
+                CalculatorDescription.createDescription(
+                        "PERC (Pulmonary Embolism Rule-out Criteria)\n\n" +
+                                "Позволяет исключить вероятность ТЭЛА у пациентов с низким риском.\n" +
+                                "Если все критерии отрицательны — вероятность менее 2%."
+                )
+        ));
     }
 
     private void bind() {
-        ChangeListener<Object> listener = (obs, oldVal, newVal) -> model.calc();
-
-        chkUnilateralLegEdema.selectedProperty().bindBidirectional(model.unilateralLegEdemaProperty());
-        chkHemoptysis.selectedProperty().bindBidirectional(model.hemoptysisProperty());
-        chkRecentSurgeryOrTrauma.selectedProperty().bindBidirectional(model.recentSurgeryOrTraumaProperty());
-        chkSurgeryWithin4Weeks.selectedProperty().bindBidirectional(model.surgeryWithin4WeeksProperty());
-        chkPrevPEorDVT.selectedProperty().bindBidirectional(model.prevPEorDVTProperty());
-        chkHormoneUse.selectedProperty().bindBidirectional(model.hormoneUseProperty());
-
-        chkUnilateralLegEdema.selectedProperty().addListener(listener);
-        chkHemoptysis.selectedProperty().addListener(listener);
-        chkRecentSurgeryOrTrauma.selectedProperty().addListener(listener);
-        chkSurgeryWithin4Weeks.selectedProperty().addListener(listener);
-        chkPrevPEorDVT.selectedProperty().addListener(listener);
-        chkHormoneUse.selectedProperty().addListener(listener);
-
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.ageProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
+        txtAge.textProperty().addListener((obs, o, n) -> {
+            try {
+                model.setAge(Integer.parseInt(n));
+            } catch (Exception e) {
+                model.setAge(0);
+            }
             model.calc();
         });
-        txtHeartRate.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.heartRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
+
+        txtHeartRate.textProperty().addListener((obs, o, n) -> {
+            try {
+                model.setHeartRate(Integer.parseInt(n));
+            } catch (Exception e) {
+                model.setHeartRate(0);
+            }
             model.calc();
         });
-        txtOxygen.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.oxygenProperty().set(Double.parseDouble(newVal)); } catch (Exception ignored) {}
+
+        txtSpO2.textProperty().addListener((obs, o, n) -> {
+            try {
+                model.setSpo2(Integer.parseInt(n));
+            } catch (Exception e) {
+                model.setSpo2(0);
+            }
+            model.calc();
+        });
+
+        chkLegEdema.selectedProperty().addListener((obs, o, n) -> {
+            model.setUnilateralLegEdema(n);
+            model.calc();
+        });
+        chkHemoptysis.selectedProperty().addListener((obs, o, n) -> {
+            model.setHemoptysis(n);
+            model.calc();
+        });
+        chkTrauma.selectedProperty().addListener((obs, o, n) -> {
+            model.setRecentTraumaOrSurgery(n);
+            model.calc();
+        });
+        chkPrevVte.selectedProperty().addListener((obs, o, n) -> {
+            model.setPreviousVte(n);
+            model.calc();
+        });
+        chkHormones.selectedProperty().addListener((obs, o, n) -> {
+            model.setHormoneUse(n);
             model.calc();
         });
 
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 400;
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 520;
     }
 }

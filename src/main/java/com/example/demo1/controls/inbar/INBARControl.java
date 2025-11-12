@@ -75,12 +75,17 @@ public class INBARControl extends StackPane implements Closeable, CalculatorCont
     }
 
     private void calculate() {
-        if (nmrAge.getText().isEmpty() || nmrWeight.getText().isEmpty() || cmbGender.getValue() == null) {
-            model.resultProperty().set("Введите все поля");
-            return;
-        }
         try {
+            if (nmrAge == null || nmrWeight == null || cmbGender == null
+                    || nmrAge.getText() == null || nmrWeight.getText() == null
+                    || nmrAge.getText().isEmpty() || nmrWeight.getText().isEmpty()
+                    || cmbGender.getValue() == null) {
+                model.resultProperty().set("Введите все поля");
+                return;
+            }
             model.calc();
+        } catch (NumberFormatException e) {
+            model.resultProperty().set("Некорректный ввод чисел");
         } catch (Exception e) {
             model.resultProperty().set("Ошибка: " + e.getMessage());
         }
