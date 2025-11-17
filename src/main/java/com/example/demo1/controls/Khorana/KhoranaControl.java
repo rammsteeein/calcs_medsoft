@@ -3,15 +3,15 @@ package com.example.demo1.controls.Khorana;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import com.example.demo1.common.services.ResultStyler;
-import javafx.scene.control.*;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.io.Closeable;
-
-public class KhoranaControl extends StackPane implements CalculatorControl, Closeable {
+public class KhoranaControl extends StackPane implements CalculatorControl, AutoCloseable {
 
     private final KhoranaModel model;
 
@@ -19,10 +19,14 @@ public class KhoranaControl extends StackPane implements CalculatorControl, Clos
     private CheckBox cbPlatelets, cbHemoglobin, cbLeukocytes, cbHighBMI;
     private TextArea txtResult;
 
+    private final ChangeListener<String> tumorListener = (obs, oldV, newV) -> calculate();
+    private final ChangeListener<Boolean> factorListener = (obs, oldV, newV) -> updateFactors();
+
     public KhoranaControl(KhoranaModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -59,17 +63,24 @@ public class KhoranaControl extends StackPane implements CalculatorControl, Clos
     }
 
     private void bind() {
-        // Привязка полей к модели
         cmbTumor.valueProperty().bindBidirectional(model.tumorLocationProperty());
+        txtResult.textProperty().bind(model.resultProperty());
+    }
 
-        cbPlatelets.selectedProperty().addListener((obs, oldV, newV) -> updateFactors());
-        cbHemoglobin.selectedProperty().addListener((obs, oldV, newV) -> updateFactors());
-        cbLeukocytes.selectedProperty().addListener((obs, oldV, newV) -> updateFactors());
-        cbHighBMI.selectedProperty().addListener((obs, oldV, newV) -> updateFactors());
+    private void addListeners() {
+        cmbTumor.valueProperty().addListener(tumorListener);
+        cbPlatelets.selectedProperty().addListener(factorListener);
+        cbHemoglobin.selectedProperty().addListener(factorListener);
+        cbLeukocytes.selectedProperty().addListener(factorListener);
+        cbHighBMI.selectedProperty().addListener(factorListener);
+    }
 
-        model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
-
-        cmbTumor.valueProperty().addListener((obs, oldV, newV) -> calculate());
+    private void removeListeners() {
+        cmbTumor.valueProperty().removeListener(tumorListener);
+        cbPlatelets.selectedProperty().removeListener(factorListener);
+        cbHemoglobin.selectedProperty().removeListener(factorListener);
+        cbLeukocytes.selectedProperty().removeListener(factorListener);
+        cbHighBMI.selectedProperty().removeListener(factorListener);
     }
 
     private void updateFactors() {
@@ -96,6 +107,18 @@ public class KhoranaControl extends StackPane implements CalculatorControl, Clos
 
     @Override
     public void close() {
+        removeListeners();
         unbind();
+        txtResult.textProperty().unbind();
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 720;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 460;
     }
 }

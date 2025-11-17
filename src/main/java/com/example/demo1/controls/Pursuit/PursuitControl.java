@@ -5,12 +5,15 @@ import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class PursuitControl extends BorderPane implements CalculatorControl {
+import java.io.Closeable;
+
+public class PursuitControl extends BorderPane implements CalculatorControl, Closeable {
 
     private final PursuitModel model;
 
@@ -19,14 +22,22 @@ public class PursuitControl extends BorderPane implements CalculatorControl {
     private CheckBox chkAngina, chkHeartFailure;
     private TextArea txtResult;
 
+    private final ChangeListener<String> ageListener = (obs, oldVal, newVal) -> calculate();
+    private final ChangeListener<Gender> genderListener = (obs, oldVal, newVal) -> calculate();
+    private final ChangeListener<Boolean> anginaListener = (obs, oldVal, newVal) -> calculate();
+    private final ChangeListener<Boolean> heartFailureListener = (obs, oldVal, newVal) -> calculate();
+    private final ChangeListener<String> resultListener = (obs, oldVal, newVal) -> txtResult.setText(newVal);
+
     public PursuitControl(PursuitModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
-        txtAge = new TextField(); txtAge.setPromptText("Возраст");
+        txtAge = new TextField();
+        txtAge.setPromptText("Возраст");
 
         cmbGender = new ComboBox<>();
         cmbGender.getItems().addAll(Gender.values());
@@ -59,22 +70,34 @@ public class PursuitControl extends BorderPane implements CalculatorControl {
         this.setPrefSize(700, 600);
     }
 
-
     private void bind() {
-        // Двустороннее связывание с моделью
         txtAge.textProperty().bindBidirectional(model.ageProperty());
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
         chkAngina.selectedProperty().bindBidirectional(model.hasAnginaProperty());
         chkHeartFailure.selectedProperty().bindBidirectional(model.hasHeartFailureProperty());
+        model.resultProperty().addListener(resultListener);
+    }
 
-        // Слушатели для автоподсчёта
-        txtAge.textProperty().addListener((obs, o, n) -> calculate());
-        cmbGender.valueProperty().addListener((obs, o, n) -> calculate());
-        chkAngina.selectedProperty().addListener((obs, o, n) -> calculate());
-        chkHeartFailure.selectedProperty().addListener((obs, o, n) -> calculate());
+    private void unbind() {
+        txtAge.textProperty().unbindBidirectional(model.ageProperty());
+        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
+        chkAngina.selectedProperty().unbindBidirectional(model.hasAnginaProperty());
+        chkHeartFailure.selectedProperty().unbindBidirectional(model.hasHeartFailureProperty());
+        model.resultProperty().removeListener(resultListener);
+    }
 
-        // Обновление текстового поля результата при изменении модели
-        model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+    private void addListeners() {
+        txtAge.textProperty().addListener(ageListener);
+        cmbGender.valueProperty().addListener(genderListener);
+        chkAngina.selectedProperty().addListener(anginaListener);
+        chkHeartFailure.selectedProperty().addListener(heartFailureListener);
+    }
+
+    private void removeListeners() {
+        txtAge.textProperty().removeListener(ageListener);
+        cmbGender.valueProperty().removeListener(genderListener);
+        chkAngina.selectedProperty().removeListener(anginaListener);
+        chkHeartFailure.selectedProperty().removeListener(heartFailureListener);
     }
 
     private void calculate() {
@@ -84,10 +107,8 @@ public class PursuitControl extends BorderPane implements CalculatorControl {
                 ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
                 return;
             }
-
             model.calc();
             ResultStyler.applyStyleForValue(txtResult, model.resultValueProperty().get(), 12, 14);
-
         } catch (Exception e) {
             model.resultProperty().set("Ошибка: " + e.getMessage());
             ResultStyler.applyStyle(txtResult, ResultStyler.Zone.ERROR);
@@ -95,7 +116,18 @@ public class PursuitControl extends BorderPane implements CalculatorControl {
     }
 
     @Override
+    public void close() {
+        removeListeners();
+        unbind();
+    }
+
+    @Override
     public double getDefaultWidth() {
         return 700;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 600;
     }
 }

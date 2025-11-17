@@ -5,6 +5,7 @@ import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -15,19 +16,34 @@ import java.io.Closeable;
 
 public class CKDEPIControl extends StackPane implements Closeable, CalculatorControl {
 
-    private final CKDEPIModel model;
+    private CKDEPIModel model;
 
     private ComboBox<Gender> cmbGender;
-    private TextField nmrKreatinin;
-    private ComboBox<Unit> cmbCreatininUnit;
-    private TextField nmrAge;
+    private TextField txtCreatinine;
+    private ComboBox<Unit> cmbUnit;
+    private TextField txtAge;
     private TextArea txtResult;
+
+    private final ChangeListener<Gender> genderListener =
+            (o, ov, nv) -> { model.setGender(nv); model.tryCalcAuto(); };
+
+    private final ChangeListener<Unit> unitListener =
+            (o, ov, nv) -> { model.setCreatininUnit(nv); model.tryCalcAuto(); };
+
+    private final ChangeListener<String> creatinineListener =
+            (o, ov, nv) -> { model.setKreatinin(nv); model.tryCalcAuto(); };
+
+    private final ChangeListener<String> ageListener =
+            (o, ov, nv) -> { model.setAge(nv); model.tryCalcAuto(); };
+
+    private final ChangeListener<String> resultListener =
+            (o, ov, nv) -> txtResult.setText(nv);
 
     public CKDEPIControl(CKDEPIModel model) {
         this.model = model;
         initialize();
         bind();
-        setupAutoCalc();
+        addListeners();
     }
 
     private void initialize() {
@@ -35,19 +51,17 @@ public class CKDEPIControl extends StackPane implements Closeable, CalculatorCon
         cmbGender.getItems().addAll(Gender.values());
         cmbGender.setPromptText("Пол");
 
-        nmrKreatinin = new TextField();
-        nmrKreatinin.setPromptText("Креатинин");
+        txtCreatinine = new TextField();
+        txtCreatinine.setPromptText("Креатинин");
 
-        cmbCreatininUnit = new ComboBox<>(FXCollections.observableArrayList(Unit.forCkdEpi()));
-        cmbCreatininUnit.setValue(Unit.defaultForCkdEpi());
-        cmbCreatininUnit.setPromptText("Ед. измерения");
+        cmbUnit = new ComboBox<>(FXCollections.observableArrayList(Unit.forCkdEpi()));
+        cmbUnit.setValue(Unit.defaultForCkdEpi());
 
-        nmrAge = new TextField();
-        nmrAge.setPromptText("Возраст");
+        txtAge = new TextField();
+        txtAge.setPromptText("Возраст");
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
-        txtResult.setPromptText("Результат расчёта");
         txtResult.setPrefHeight(100);
 
         getChildren().add(
@@ -55,45 +69,52 @@ public class CKDEPIControl extends StackPane implements Closeable, CalculatorCon
                         new VBox(10,
                                 CalculatorHeader.createHeader("СКФ по формуле CKD-EPI (2021)"),
                                 cmbGender,
-                                nmrKreatinin,
-                                cmbCreatininUnit,
-                                nmrAge,
+                                txtCreatinine,
+                                cmbUnit,
+                                txtAge,
                                 txtResult
                         ),
                         CalculatorDescription.createDescription(
-                                "Формула CKD-EPI используется для оценки скорости клубочковой фильтрации (СКФ), " +
-                                        "что является важным показателем функции почек. Формула учитывает уровень " +
-                                        "креатинина в крови, возраст и пол пациента."
+                                "Формула CKD-EPI оценивает скорость клубочковой фильтрации " +
+                                        "по креатинину, возрасту и полу пациента."
                         )
                 )
         );
     }
 
     private void bind() {
-        cmbGender.valueProperty().bindBidirectional(model.genderProperty());
-        cmbCreatininUnit.valueProperty().bindBidirectional(model.creatininUnitProperty());
-        nmrKreatinin.textProperty().bindBidirectional(model.kreatininProperty());
-        nmrAge.textProperty().bindBidirectional(model.ageProperty());
-        txtResult.textProperty().bindBidirectional(model.resultProperty());
+        model.resultProperty().addListener(resultListener);
+        txtResult.setText(model.getResult());
+    }
+
+    private void addListeners() {
+        cmbGender.valueProperty().addListener(genderListener);
+        cmbUnit.valueProperty().addListener(unitListener);
+        txtCreatinine.textProperty().addListener(creatinineListener);
+        txtAge.textProperty().addListener(ageListener);
+    }
+
+    private void removeListeners() {
+        cmbGender.valueProperty().removeListener(genderListener);
+        cmbUnit.valueProperty().removeListener(unitListener);
+        txtCreatinine.textProperty().removeListener(creatinineListener);
+        txtAge.textProperty().removeListener(ageListener);
+        model.resultProperty().removeListener(resultListener);
     }
 
     private void unbind() {
-        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
-        cmbCreatininUnit.valueProperty().unbindBidirectional(model.creatininUnitProperty());
-        nmrKreatinin.textProperty().unbindBidirectional(model.kreatininProperty());
-        nmrAge.textProperty().unbindBidirectional(model.ageProperty());
-        txtResult.textProperty().unbindBidirectional(model.resultProperty());
-    }
-
-    private void setupAutoCalc() {
-        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> model.tryCalcAuto());
-        cmbCreatininUnit.valueProperty().addListener((obs, oldVal, newVal) -> model.tryCalcAuto());
-        nmrKreatinin.textProperty().addListener((obs, oldVal, newVal) -> model.tryCalcAuto());
-        nmrAge.textProperty().addListener((obs, oldVal, newVal) -> model.tryCalcAuto());
+        txtResult.textProperty().unbind();
     }
 
     @Override
     public void close() {
         unbind();
+        removeListeners();
     }
+
+    @Override
+    public double getDefaultWidth() { return 650; }
+
+    @Override
+    public double getDefaultHeight() { return 420; }
 }

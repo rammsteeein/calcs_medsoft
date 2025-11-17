@@ -8,20 +8,41 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
-public class rGENEVAControl extends StackPane implements CalculatorControl {
+import java.io.Closeable;
 
-    private final rGENEVAModel model;
+public class rGENEVAControl extends StackPane implements CalculatorControl, Closeable {
+
+    private rGENEVAModel model;
 
     private CheckBox chkPrevPEorDVT, chkSurgeryOrFracture, chkHemoptysis;
     private CheckBox chkActiveCancer, chkLegPain, chkPainAndSwelling;
     private TextField txtHeartRate, txtAge;
     private TextArea txtResult;
 
+    private final ChangeListener<Boolean> prevPEorDVTListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> surgeryOrFractureListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> hemoptysisListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> activeCancerListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> legPainListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> painAndSwellingListener = (obs, oldVal, newVal) -> model.calc();
+
+    private final ChangeListener<String> heartRateListener = (obs, oldVal, newVal) -> {
+        try { model.heartRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
+        model.calc();
+    };
+    private final ChangeListener<String> ageListener = (obs, oldVal, newVal) -> {
+        try { model.ageProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
+        model.calc();
+    };
+
     public rGENEVAControl(rGENEVAModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
+        model.calc();
     }
 
     private void initialize() {
@@ -63,7 +84,22 @@ public class rGENEVAControl extends StackPane implements CalculatorControl {
     }
 
     private void bind() {
-        ChangeListener<Object> listener = (obs, oldVal, newVal) -> model.calc();
+        // Конвертер: 0 -> пусто
+        StringConverter<Number> zeroToEmptyConverter = new StringConverter<>() {
+            @Override
+            public String toString(Number object) {
+                if (object == null || object.intValue() == 0) return "";
+                return object.toString();
+            }
+            @Override
+            public Number fromString(String string) {
+                try { return Integer.parseInt(string); }
+                catch (Exception e) { return 0; }
+            }
+        };
+
+        txtHeartRate.textProperty().bindBidirectional(model.heartRateProperty(), zeroToEmptyConverter);
+        txtAge.textProperty().bindBidirectional(model.ageProperty(), zeroToEmptyConverter);
 
         chkPrevPEorDVT.selectedProperty().bindBidirectional(model.prevPEorDVTProperty());
         chkSurgeryOrFracture.selectedProperty().bindBidirectional(model.surgeryOrFractureProperty());
@@ -72,33 +108,52 @@ public class rGENEVAControl extends StackPane implements CalculatorControl {
         chkLegPain.selectedProperty().bindBidirectional(model.legPainProperty());
         chkPainAndSwelling.selectedProperty().bindBidirectional(model.painAndSwellingProperty());
 
-        chkPrevPEorDVT.selectedProperty().addListener(listener);
-        chkSurgeryOrFracture.selectedProperty().addListener(listener);
-        chkHemoptysis.selectedProperty().addListener(listener);
-        chkActiveCancer.selectedProperty().addListener(listener);
-        chkLegPain.selectedProperty().addListener(listener);
-        chkPainAndSwelling.selectedProperty().addListener(listener);
-
-        txtHeartRate.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.heartRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.ageProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
         txtResult.textProperty().bind(model.resultProperty());
     }
 
-    @Override
-    public double getDefaultWidth() {
-        return 700;
+    private void unbind() {
+        chkPrevPEorDVT.selectedProperty().unbindBidirectional(model.prevPEorDVTProperty());
+        chkSurgeryOrFracture.selectedProperty().unbindBidirectional(model.surgeryOrFractureProperty());
+        chkHemoptysis.selectedProperty().unbindBidirectional(model.hemoptysisProperty());
+        chkActiveCancer.selectedProperty().unbindBidirectional(model.activeCancerProperty());
+        chkLegPain.selectedProperty().unbindBidirectional(model.legPainProperty());
+        chkPainAndSwelling.selectedProperty().unbindBidirectional(model.painAndSwellingProperty());
+        txtHeartRate.textProperty().unbindBidirectional(model.heartRateProperty());
+        txtAge.textProperty().unbindBidirectional(model.ageProperty());
+        txtResult.textProperty().unbind();
+    }
+
+    private void addListeners() {
+        chkPrevPEorDVT.selectedProperty().addListener(prevPEorDVTListener);
+        chkSurgeryOrFracture.selectedProperty().addListener(surgeryOrFractureListener);
+        chkHemoptysis.selectedProperty().addListener(hemoptysisListener);
+        chkActiveCancer.selectedProperty().addListener(activeCancerListener);
+        chkLegPain.selectedProperty().addListener(legPainListener);
+        chkPainAndSwelling.selectedProperty().addListener(painAndSwellingListener);
+        txtHeartRate.textProperty().addListener(heartRateListener);
+        txtAge.textProperty().addListener(ageListener);
+    }
+
+    private void removeListeners() {
+        chkPrevPEorDVT.selectedProperty().removeListener(prevPEorDVTListener);
+        chkSurgeryOrFracture.selectedProperty().removeListener(surgeryOrFractureListener);
+        chkHemoptysis.selectedProperty().removeListener(hemoptysisListener);
+        chkActiveCancer.selectedProperty().removeListener(activeCancerListener);
+        chkLegPain.selectedProperty().removeListener(legPainListener);
+        chkPainAndSwelling.selectedProperty().removeListener(painAndSwellingListener);
+        txtHeartRate.textProperty().removeListener(heartRateListener);
+        txtAge.textProperty().removeListener(ageListener);
     }
 
     @Override
-    public double getDefaultHeight() {
-        return 430;
+    public void close() {
+        removeListeners();
+        unbind();
     }
+
+    @Override
+    public double getDefaultWidth() { return 700; }
+
+    @Override
+    public double getDefaultHeight() { return 430; }
 }

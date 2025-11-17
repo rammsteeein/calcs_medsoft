@@ -4,6 +4,7 @@ import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -12,15 +13,25 @@ import javafx.scene.layout.VBox;
 import java.io.Closeable;
 
 public class FIB4Control extends StackPane implements Closeable, CalculatorControl {
-    private final FIB4Model model;
+
+    private FIB4Model model;
 
     private TextField txtAge, txtAst, txtAlt, txtPlatelets;
     private TextArea txtResult;
+
+    private final ChangeListener<String> ageListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<String> astListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<String> altListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<String> plateletsListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<String> resultListener = (obs, o, n) -> txtResult.setText(n);
+    private final ChangeListener<Number> resultValueListener = (obs, o, n) ->
+            ResultStyler.applyStyleForValue(txtResult, n.doubleValue(), 1.45, 3.25);
 
     public FIB4Control(FIB4Model model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -59,16 +70,24 @@ public class FIB4Control extends StackPane implements Closeable, CalculatorContr
         txtAst.textProperty().bindBidirectional(model.astProperty());
         txtAlt.textProperty().bindBidirectional(model.altProperty());
         txtPlatelets.textProperty().bindBidirectional(model.plateletsProperty());
+        model.resultProperty().addListener(resultListener);
+        model.resultValueProperty().addListener(resultValueListener);
+    }
 
-        txtAge.textProperty().addListener((obs, o, n) -> model.calc());
-        txtAst.textProperty().addListener((obs, o, n) -> model.calc());
-        txtAlt.textProperty().addListener((obs, o, n) -> model.calc());
-        txtPlatelets.textProperty().addListener((obs, o, n) -> model.calc());
+    private void addListeners() {
+        txtAge.textProperty().addListener(ageListener);
+        txtAst.textProperty().addListener(astListener);
+        txtAlt.textProperty().addListener(altListener);
+        txtPlatelets.textProperty().addListener(plateletsListener);
+    }
 
-        model.resultProperty().addListener((obs, o, n) -> txtResult.setText(n));
-        model.resultValueProperty().addListener((obs, o, n) ->
-                ResultStyler.applyStyleForValue(txtResult, n.doubleValue(), 1.45, 3.25)
-        );
+    private void removeListeners() {
+        txtAge.textProperty().removeListener(ageListener);
+        txtAst.textProperty().removeListener(astListener);
+        txtAlt.textProperty().removeListener(altListener);
+        txtPlatelets.textProperty().removeListener(plateletsListener);
+        model.resultProperty().removeListener(resultListener);
+        model.resultValueProperty().removeListener(resultValueListener);
     }
 
     private void unbind() {
@@ -76,14 +95,11 @@ public class FIB4Control extends StackPane implements Closeable, CalculatorContr
         txtAst.textProperty().unbindBidirectional(model.astProperty());
         txtAlt.textProperty().unbindBidirectional(model.altProperty());
         txtPlatelets.textProperty().unbindBidirectional(model.plateletsProperty());
-        model.resultProperty().removeListener((obs, o, n) -> txtResult.setText(n));
-        model.resultValueProperty().removeListener((obs, o, n) ->
-                ResultStyler.applyStyleForValue(txtResult, n.doubleValue(), 1.45, 3.25)
-        );
     }
 
     @Override
     public void close() {
+        removeListeners();
         unbind();
     }
 

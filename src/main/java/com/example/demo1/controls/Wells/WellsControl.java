@@ -10,7 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class WellsControl extends StackPane implements CalculatorControl {
+public class WellsControl extends StackPane implements CalculatorControl, AutoCloseable {
 
     private final WellsModel model;
 
@@ -18,10 +18,14 @@ public class WellsControl extends StackPane implements CalculatorControl {
     private CheckBox chkHemoptysis, chkActiveCancer, chkClinicalDVT, chkAlternativeLessLikely;
     private TextArea txtResult;
 
+    private ChangeListener<Boolean> checkListener;
+    private ChangeListener<Number> scoreListener;
+
     public WellsControl(WellsModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -63,7 +67,9 @@ public class WellsControl extends StackPane implements CalculatorControl {
     }
 
     private void bind() {
-        ChangeListener<Object> listener = (obs, oldVal, newVal) -> model.calc();
+        checkListener = (obs, oldVal, newVal) -> model.calc();
+        scoreListener = (obs, oldVal, newVal) ->
+                ResultStyler.applyStyleForValue(txtResult, newVal.doubleValue(), 1.5, 7);
 
         chkPrevPEorDVT.selectedProperty().bindBidirectional(model.prevPEorDVTProperty());
         chkTachycardia.selectedProperty().bindBidirectional(model.tachycardiaProperty());
@@ -73,18 +79,34 @@ public class WellsControl extends StackPane implements CalculatorControl {
         chkClinicalDVT.selectedProperty().bindBidirectional(model.clinicalDVTProperty());
         chkAlternativeLessLikely.selectedProperty().bindBidirectional(model.alternativeLessLikelyProperty());
 
-        chkPrevPEorDVT.selectedProperty().addListener(listener);
-        chkTachycardia.selectedProperty().addListener(listener);
-        chkSurgeryOrImmobilization.selectedProperty().addListener(listener);
-        chkHemoptysis.selectedProperty().addListener(listener);
-        chkActiveCancer.selectedProperty().addListener(listener);
-        chkClinicalDVT.selectedProperty().addListener(listener);
-        chkAlternativeLessLikely.selectedProperty().addListener(listener);
-
         txtResult.textProperty().bind(model.resultProperty());
-        model.scoreProperty().addListener((obs, oldVal, newVal) ->
-                ResultStyler.applyStyleForValue(txtResult, newVal.doubleValue(), 1.5, 7)
-        );
+        model.scoreProperty().addListener(scoreListener);
+    }
+
+    private void addListeners() {
+        chkPrevPEorDVT.selectedProperty().addListener(checkListener);
+        chkTachycardia.selectedProperty().addListener(checkListener);
+        chkSurgeryOrImmobilization.selectedProperty().addListener(checkListener);
+        chkHemoptysis.selectedProperty().addListener(checkListener);
+        chkActiveCancer.selectedProperty().addListener(checkListener);
+        chkClinicalDVT.selectedProperty().addListener(checkListener);
+        chkAlternativeLessLikely.selectedProperty().addListener(checkListener);
+    }
+
+    private void removeListeners() {
+        chkPrevPEorDVT.selectedProperty().removeListener(checkListener);
+        chkTachycardia.selectedProperty().removeListener(checkListener);
+        chkSurgeryOrImmobilization.selectedProperty().removeListener(checkListener);
+        chkHemoptysis.selectedProperty().removeListener(checkListener);
+        chkActiveCancer.selectedProperty().removeListener(checkListener);
+        chkClinicalDVT.selectedProperty().removeListener(checkListener);
+        chkAlternativeLessLikely.selectedProperty().removeListener(checkListener);
+        model.scoreProperty().removeListener(scoreListener);
+    }
+
+    @Override
+    public void close() {
+        removeListeners();
     }
 
     @Override

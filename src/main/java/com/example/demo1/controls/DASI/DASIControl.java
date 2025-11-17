@@ -3,14 +3,17 @@ package com.example.demo1.controls.DASI;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class DASIControl extends StackPane implements CalculatorControl {
+import java.io.Closeable;
 
-    private final DASIModel model;
+public class DASIControl extends StackPane implements CalculatorControl, Closeable {
+
+    private DASIModel model;
 
     private CheckBox chkSelfCare, chkWalkIndoors, chkWalk1to2Blocks, chkClimbStairsOrHill,
             chkRunShortDistance, chkLightHousework, chkModerateHousework, chkHeavyHousework,
@@ -18,10 +21,24 @@ public class DASIControl extends StackPane implements CalculatorControl {
 
     private TextArea txtResult;
 
+    private final ChangeListener<Boolean> chkSelfCareListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkWalkIndoorsListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkWalk1to2BlocksListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkClimbStairsOrHillListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkRunShortDistanceListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkLightHouseworkListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkModerateHouseworkListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkHeavyHouseworkListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkYardWorkListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkSexualActivityListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkModerateRecreationListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkStrenuousSportsListener = (obs, o, n) -> model.calc();
+
     public DASIControl(DASIModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -79,18 +96,56 @@ public class DASIControl extends StackPane implements CalculatorControl {
         model.resultProperty().addListener((obs, oldVal, newVal) -> {
             txtResult.setText(newVal != null ? newVal.toString() : "");
         });
+    }
 
-        chkSelfCare.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkWalkIndoors.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkWalk1to2Blocks.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkClimbStairsOrHill.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkRunShortDistance.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkLightHousework.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkModerateHousework.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkHeavyHousework.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkYardWork.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkSexualActivity.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkModerateRecreation.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkStrenuousSports.selectedProperty().addListener((obs, o, n) -> model.calc());
+    private void addListeners() {
+        chkSelfCare.selectedProperty().addListener(chkSelfCareListener);
+        chkWalkIndoors.selectedProperty().addListener(chkWalkIndoorsListener);
+        chkWalk1to2Blocks.selectedProperty().addListener(chkWalk1to2BlocksListener);
+        chkClimbStairsOrHill.selectedProperty().addListener(chkClimbStairsOrHillListener);
+        chkRunShortDistance.selectedProperty().addListener(chkRunShortDistanceListener);
+        chkLightHousework.selectedProperty().addListener(chkLightHouseworkListener);
+        chkModerateHousework.selectedProperty().addListener(chkModerateHouseworkListener);
+        chkHeavyHousework.selectedProperty().addListener(chkHeavyHouseworkListener);
+        chkYardWork.selectedProperty().addListener(chkYardWorkListener);
+        chkSexualActivity.selectedProperty().addListener(chkSexualActivityListener);
+        chkModerateRecreation.selectedProperty().addListener(chkModerateRecreationListener);
+        chkStrenuousSports.selectedProperty().addListener(chkStrenuousSportsListener);
+    }
+
+    private void removeListeners() {
+        chkSelfCare.selectedProperty().removeListener(chkSelfCareListener);
+        chkWalkIndoors.selectedProperty().removeListener(chkWalkIndoorsListener);
+        chkWalk1to2Blocks.selectedProperty().removeListener(chkWalk1to2BlocksListener);
+        chkClimbStairsOrHill.selectedProperty().removeListener(chkClimbStairsOrHillListener);
+        chkRunShortDistance.selectedProperty().removeListener(chkRunShortDistanceListener);
+        chkLightHousework.selectedProperty().removeListener(chkLightHouseworkListener);
+        chkModerateHousework.selectedProperty().removeListener(chkModerateHouseworkListener);
+        chkHeavyHousework.selectedProperty().removeListener(chkHeavyHouseworkListener);
+        chkYardWork.selectedProperty().removeListener(chkYardWorkListener);
+        chkSexualActivity.selectedProperty().removeListener(chkSexualActivityListener);
+        chkModerateRecreation.selectedProperty().removeListener(chkModerateRecreationListener);
+        chkStrenuousSports.selectedProperty().removeListener(chkStrenuousSportsListener);
+    }
+
+    private void unbind() {
+        chkSelfCare.selectedProperty().unbindBidirectional(model.selfCareProperty());
+        chkWalkIndoors.selectedProperty().unbindBidirectional(model.walkIndoorsProperty());
+        chkWalk1to2Blocks.selectedProperty().unbindBidirectional(model.walk1to2BlocksProperty());
+        chkClimbStairsOrHill.selectedProperty().unbindBidirectional(model.climbStairsOrHillProperty());
+        chkRunShortDistance.selectedProperty().unbindBidirectional(model.runShortDistanceProperty());
+        chkLightHousework.selectedProperty().unbindBidirectional(model.lightHouseworkProperty());
+        chkModerateHousework.selectedProperty().unbindBidirectional(model.moderateHouseworkProperty());
+        chkHeavyHousework.selectedProperty().unbindBidirectional(model.heavyHouseworkProperty());
+        chkYardWork.selectedProperty().unbindBidirectional(model.yardWorkProperty());
+        chkSexualActivity.selectedProperty().unbindBidirectional(model.sexualActivityProperty());
+        chkModerateRecreation.selectedProperty().unbindBidirectional(model.moderateRecreationProperty());
+        chkStrenuousSports.selectedProperty().unbindBidirectional(model.strenuousSportsProperty());
+    }
+
+    @Override
+    public void close() {
+        unbind();
+        removeListeners();
     }
 }

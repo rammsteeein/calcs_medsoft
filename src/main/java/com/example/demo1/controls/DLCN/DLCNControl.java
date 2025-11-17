@@ -15,9 +15,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class DLCNControl extends StackPane implements CalculatorControl {
+import java.io.Closeable;
 
-    private final DLCNModel model;
+public class DLCNControl extends StackPane implements CalculatorControl, Closeable {
+
+    private DLCNModel model;
 
     private CheckBox chkFamilyEarlyASCVDorHighLDL;
     private CheckBox chkFamilyTendonXanthomasOrChildHighLDL;
@@ -28,16 +30,24 @@ public class DLCNControl extends StackPane implements CalculatorControl {
 
     private ImageView gradientImage;
     private Rectangle marker;
-    private HBox ticksBox;
     private Label lblSliderValue;
 
     private final double SCALE_WIDTH = 300;
     private final double MAX_SCORE = 8.0;
 
+    private final ChangeListener<Boolean> chkFamilyEarlyListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkFamilyTendonListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkPersonalCHDListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkPersonalCerebroListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkTendonListener = (obs, o, n) -> model.calc();
+    private final ChangeListener<Boolean> chkCornealListener = (obs, o, n) -> model.calc();
+
     public DLCNControl(DLCNModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
+        updateMarker();
     }
 
     private void initialize() {
@@ -63,22 +73,23 @@ public class DLCNControl extends StackPane implements CalculatorControl {
         gradientPane.getChildren().addAll(gradientImage, marker);
         gradientPane.setPrefWidth(SCALE_WIDTH);
 
-        ticksBox = new HBox();
-        ticksBox.setPrefWidth(SCALE_WIDTH);
-        ticksBox.setAlignment(Pos.CENTER_LEFT);
-        ticksBox.setSpacing(0);
-
-        double[] tickPositions = {0.01, 3.0 / 8.0, 6.0 / 8.0, 1.0};
-        String[] tickLabels = {"0", "3", "6", "8+"};
+        Label lbl0 = new Label("0");
+        Label lbl3 = new Label("3");
+        Label lbl6 = new Label("6");
+        Label lbl8 = new Label("8+");
+        lbl0.setStyle("-fx-text-fill: black; -fx-font-size: 11;");
+        lbl3.setStyle("-fx-text-fill: black; -fx-font-size: 11;");
+        lbl6.setStyle("-fx-text-fill: black; -fx-font-size: 11;");
+        lbl8.setStyle("-fx-text-fill: black; -fx-font-size: 11;");
 
         Pane tickPane = new Pane();
         tickPane.setPrefWidth(SCALE_WIDTH);
-        for (int i = 0; i < tickLabels.length; i++) {
-            Label lbl = new Label(tickLabels[i]);
-            lbl.setStyle("-fx-text-fill: black; -fx-font-size: 11;");
-            lbl.setLayoutX(tickPositions[i] * (SCALE_WIDTH - 6) - 4); // центрируем по тексту
-            lbl.setLayoutY(0);
-            tickPane.getChildren().add(lbl);
+        double[] tickPositions = {0.01, 3.0 / 8.0, 6.0 / 8.0, 1.0};
+        Label[] labels = {lbl0, lbl3, lbl6, lbl8};
+        for (int i = 0; i < labels.length; i++) {
+            labels[i].setLayoutX(tickPositions[i] * (SCALE_WIDTH - 6) - 4);
+            labels[i].setLayoutY(0);
+            tickPane.getChildren().add(labels[i]);
         }
 
         lblSliderValue = new Label("Результат: FH маловероятна (0)");
@@ -111,8 +122,6 @@ public class DLCNControl extends StackPane implements CalculatorControl {
     }
 
     private void bind() {
-        ChangeListener<Object> recalcListener = (obs, oldVal, newVal) -> model.calc();
-
         chkFamilyEarlyASCVDorHighLDL.selectedProperty().bindBidirectional(model.familyEarlyASCVDorHighLDLProperty());
         chkFamilyTendonXanthomasOrChildHighLDL.selectedProperty().bindBidirectional(model.familyTendonXanthomasOrChildHighLDLProperty());
         chkPersonalEarlyCHD.selectedProperty().bindBidirectional(model.personalEarlyCHDProperty());
@@ -120,24 +129,41 @@ public class DLCNControl extends StackPane implements CalculatorControl {
         chkTendonXanthomas.selectedProperty().bindBidirectional(model.tendonXanthomasProperty());
         chkCornealArcusUnder45.selectedProperty().bindBidirectional(model.cornealArcusUnder45Property());
 
-        chkFamilyEarlyASCVDorHighLDL.selectedProperty().addListener(recalcListener);
-        chkFamilyTendonXanthomasOrChildHighLDL.selectedProperty().addListener(recalcListener);
-        chkPersonalEarlyCHD.selectedProperty().addListener(recalcListener);
-        chkPersonalEarlyCerebrovascularDisease.selectedProperty().addListener(recalcListener);
-        chkTendonXanthomas.selectedProperty().addListener(recalcListener);
-        chkCornealArcusUnder45.selectedProperty().addListener(recalcListener);
+        model.resultProperty().addListener((obs, o, n) -> updateMarker());
+        model.scoreProperty().addListener((obs, o, n) -> updateMarker());
+    }
 
-        model.resultProperty().addListener((obs, oldVal, newVal) -> updateMarker());
-        model.scoreProperty().addListener((obs, oldVal, newVal) -> updateMarker());
+    private void addListeners() {
+        chkFamilyEarlyASCVDorHighLDL.selectedProperty().addListener(chkFamilyEarlyListener);
+        chkFamilyTendonXanthomasOrChildHighLDL.selectedProperty().addListener(chkFamilyTendonListener);
+        chkPersonalEarlyCHD.selectedProperty().addListener(chkPersonalCHDListener);
+        chkPersonalEarlyCerebrovascularDisease.selectedProperty().addListener(chkPersonalCerebroListener);
+        chkTendonXanthomas.selectedProperty().addListener(chkTendonListener);
+        chkCornealArcusUnder45.selectedProperty().addListener(chkCornealListener);
+    }
 
-        updateMarker();
+    private void removeListeners() {
+        chkFamilyEarlyASCVDorHighLDL.selectedProperty().removeListener(chkFamilyEarlyListener);
+        chkFamilyTendonXanthomasOrChildHighLDL.selectedProperty().removeListener(chkFamilyTendonListener);
+        chkPersonalEarlyCHD.selectedProperty().removeListener(chkPersonalCHDListener);
+        chkPersonalEarlyCerebrovascularDisease.selectedProperty().removeListener(chkPersonalCerebroListener);
+        chkTendonXanthomas.selectedProperty().removeListener(chkTendonListener);
+        chkCornealArcusUnder45.selectedProperty().removeListener(chkCornealListener);
+    }
+
+    private void unbind() {
+        chkFamilyEarlyASCVDorHighLDL.selectedProperty().unbindBidirectional(model.familyEarlyASCVDorHighLDLProperty());
+        chkFamilyTendonXanthomasOrChildHighLDL.selectedProperty().unbindBidirectional(model.familyTendonXanthomasOrChildHighLDLProperty());
+        chkPersonalEarlyCHD.selectedProperty().unbindBidirectional(model.personalEarlyCHDProperty());
+        chkPersonalEarlyCerebrovascularDisease.selectedProperty().unbindBidirectional(model.personalEarlyCerebrovascularDiseaseProperty());
+        chkTendonXanthomas.selectedProperty().unbindBidirectional(model.tendonXanthomasProperty());
+        chkCornealArcusUnder45.selectedProperty().unbindBidirectional(model.cornealArcusUnder45Property());
     }
 
     private void updateMarker() {
         int score = model.getScore();
         double lineWidth = gradientImage.getFitWidth();
         double maxTravel = lineWidth - marker.getWidth();
-
         double fraction = Math.min(score / MAX_SCORE, 1.0);
         double targetX = fraction * maxTravel;
 
@@ -146,5 +172,11 @@ public class DLCNControl extends StackPane implements CalculatorControl {
         tt.play();
 
         lblSliderValue.setText(String.format("Результат: %s (баллы: %d)", model.getResult(), score));
+    }
+
+    @Override
+    public void close() {
+        unbind();
+        removeListeners();
     }
 }

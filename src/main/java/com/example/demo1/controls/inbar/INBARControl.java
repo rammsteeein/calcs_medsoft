@@ -4,15 +4,16 @@ import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import com.example.demo1.common.services.ResultStyler;
-import javafx.scene.control.*;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.io.Closeable;
+public class INBARControl extends StackPane implements CalculatorControl, AutoCloseable {
 
-public class INBARControl extends StackPane implements Closeable, CalculatorControl {
     private final INBARModel model;
 
     private TextField nmrAge;
@@ -20,10 +21,15 @@ public class INBARControl extends StackPane implements Closeable, CalculatorCont
     private ComboBox<Gender> cmbGender;
     private TextArea txtResult;
 
+    private final ChangeListener<String> ageListener = (obs, oldVal, newVal) -> calculate();
+    private final ChangeListener<String> weightListener = (obs, oldVal, newVal) -> calculate();
+    private final ChangeListener<Gender> genderListener = (obs, oldVal, newVal) -> calculate();
+
     public INBARControl(INBARModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -67,38 +73,61 @@ public class INBARControl extends StackPane implements Closeable, CalculatorCont
         nmrWeight.textProperty().bindBidirectional(model.weightProperty());
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
 
-        nmrAge.textProperty().addListener((obs, o, n) -> calculate());
-        nmrWeight.textProperty().addListener((obs, o, n) -> calculate());
-        cmbGender.valueProperty().addListener((obs, o, n) -> calculate());
+        txtResult.textProperty().bind(model.resultProperty());
+    }
 
-        model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+    private void addListeners() {
+        nmrAge.textProperty().addListener(ageListener);
+        nmrWeight.textProperty().addListener(weightListener);
+        cmbGender.valueProperty().addListener(genderListener);
+    }
+
+    private void removeListeners() {
+        nmrAge.textProperty().removeListener(ageListener);
+        nmrWeight.textProperty().removeListener(weightListener);
+        cmbGender.valueProperty().removeListener(genderListener);
     }
 
     private void calculate() {
-        try {
-            if (nmrAge == null || nmrWeight == null || cmbGender == null
-                    || nmrAge.getText() == null || nmrWeight.getText() == null
-                    || nmrAge.getText().isEmpty() || nmrWeight.getText().isEmpty()
-                    || cmbGender.getValue() == null) {
-                model.resultProperty().set("Введите все поля");
-                return;
-            }
-            model.calc();
-        } catch (NumberFormatException e) {
-            model.resultProperty().set("Некорректный ввод чисел");
-        } catch (Exception e) {
-            model.resultProperty().set("Ошибка: " + e.getMessage());
-        }
-    }
+        String ageText = nmrAge.getText();
+        String weightText = nmrWeight.getText();
+        Gender genderValue = cmbGender.getValue();
 
-    private void unbind() {
-        nmrAge.textProperty().unbindBidirectional(model.ageProperty());
-        nmrWeight.textProperty().unbindBidirectional(model.weightProperty());
-        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
+        if (ageText == null || ageText.isBlank() ||
+                weightText == null || weightText.isBlank() ||
+                genderValue == null) {
+            txtResult.setText("Введите все поля");
+            return;
+        }
+
+        try {
+            double ageValue = Double.parseDouble(ageText);
+            double weightValue = Double.parseDouble(weightText);
+            INBARResult result = INBARCalculator.calc(ageValue, weightValue, genderValue);
+            txtResult.setText(result.toString());
+        } catch (NumberFormatException e) {
+            txtResult.setText("Некорректный ввод чисел");
+        } catch (Exception e) {
+            txtResult.setText("Ошибка: " + e.getMessage());
+        }
     }
 
     @Override
     public void close() {
-        unbind();
+        removeListeners();
+        nmrAge.textProperty().unbindBidirectional(model.ageProperty());
+        nmrWeight.textProperty().unbindBidirectional(model.weightProperty());
+        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
+        txtResult.textProperty().unbind();
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 720;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 460;
     }
 }

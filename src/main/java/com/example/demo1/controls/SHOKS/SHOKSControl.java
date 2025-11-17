@@ -18,7 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class SHOKSControl extends StackPane implements CalculatorControl {
+public class SHOKSControl extends StackPane implements CalculatorControl, AutoCloseable {
 
     private final SHOKSModel model;
 
@@ -27,12 +27,13 @@ public class SHOKSControl extends StackPane implements CalculatorControl {
     private Rectangle marker;
     private HBox ticksBox;
 
-    private final double MAX_SCORE = 12.0;
+    private ChangeListener<Object> propertyListener;
 
     public SHOKSControl(SHOKSModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -59,8 +60,7 @@ public class SHOKSControl extends StackPane implements CalculatorControl {
             gradientImage.setImage(
                     new Image(getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm())
             );
-        } catch (Exception e) {
-        }
+        } catch (Exception ignored) {}
 
         marker = new Rectangle(4, 20);
         marker.setFill(Color.BLACK);
@@ -101,19 +101,34 @@ public class SHOKSControl extends StackPane implements CalculatorControl {
     }
 
     private void bind() {
-        ChangeListener<Object> listener = (obs, o, n) -> updateMarker();
+        propertyListener = (obs, o, n) -> updateMarker();
+    }
 
-        model.odyshkaProperty().addListener(listener);
-        model.vesProperty().addListener(listener);
-        model.pereboiProperty().addListener(listener);
-        model.polozhenieProperty().addListener(listener);
-        model.sheinyeVenyProperty().addListener(listener);
-        model.hripyProperty().addListener(listener);
-        model.galopProperty().addListener(listener);
-        model.pechenProperty().addListener(listener);
-        model.otekiProperty().addListener(listener);
-        model.SADProperty().addListener(listener);
+    private void addListeners() {
+        model.odyshkaProperty().addListener(propertyListener);
+        model.vesProperty().addListener(propertyListener);
+        model.pereboiProperty().addListener(propertyListener);
+        model.polozhenieProperty().addListener(propertyListener);
+        model.sheinyeVenyProperty().addListener(propertyListener);
+        model.hripyProperty().addListener(propertyListener);
+        model.galopProperty().addListener(propertyListener);
+        model.pechenProperty().addListener(propertyListener);
+        model.otekiProperty().addListener(propertyListener);
+        model.SADProperty().addListener(propertyListener);
         Platform.runLater(this::updateMarker);
+    }
+
+    private void removeListeners() {
+        model.odyshkaProperty().removeListener(propertyListener);
+        model.vesProperty().removeListener(propertyListener);
+        model.pereboiProperty().removeListener(propertyListener);
+        model.polozhenieProperty().removeListener(propertyListener);
+        model.sheinyeVenyProperty().removeListener(propertyListener);
+        model.hripyProperty().removeListener(propertyListener);
+        model.galopProperty().removeListener(propertyListener);
+        model.pechenProperty().removeListener(propertyListener);
+        model.otekiProperty().removeListener(propertyListener);
+        model.SADProperty().removeListener(propertyListener);
     }
 
     private void updateMarker() {
@@ -127,10 +142,9 @@ public class SHOKSControl extends StackPane implements CalculatorControl {
         else if (score <= 6) { classIndex = 2; fcText = "II"; }
         else if (score <= 9) { classIndex = 3; fcText = "III"; }
         else { classIndex = 4; fcText = "IV"; }
+
         Label targetLabel = (Label) ticksBox.getChildren().get(classIndex);
-
         double labelCenterX = targetLabel.getLayoutX() + targetLabel.getWidth() / 2;
-
         double targetX = labelCenterX - gradientImage.getFitWidth() / 2;
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), marker);
@@ -157,35 +171,27 @@ public class SHOKSControl extends StackPane implements CalculatorControl {
         return new HBox(10, lbl, combo);
     }
 
-    /**
-     * Возвращает текст подсказки для каждого критерия
-     */
     private String createTooltipText(String label) {
         switch (label.split(" ")[0]) {
-            case "Одышка":
-                return "0: нет\n1: при нагрузке\n2: в покое";
-            case "Изменение":
-                return "0: нет\n1: увеличился за последнюю неделю";
-            case "Перебои":
-                return "0: нет\n1: есть жалобы на перебои в работе сердца";
-            case "Положение":
-                return "0: горизонтально\n1: с приподнятым изголовьем\n2: просыпается от удушья\n3: вынужден сидеть";
-            case "Шейные":
-                return "0: нет\n1: набухание лежа\n2: набухание стоя";
-            case "Хрипы":
-                return "0: нет\n1: нижние отделы\n2: до лопаток\n3: над всей поверхностью легких";
-            case "Галоп":
-                return "0: нет\n1: есть (ритм галопа)";
-            case "Печень":
-                return "0: не увеличена\n1: увеличена до 5 см\n2: более 5 см";
-            case "Отеки":
-                return "0: нет\n1: пастозность\n2: отеки\n3: анасарка";
-            case "САД":
-                return "0: >120 мм рт. ст.\n1: 100–120 мм рт. ст.\n2: <100 мм рт. ст.";
-            default:
-                return "";
+            case "Одышка": return "0: нет\n1: при нагрузке\n2: в покое";
+            case "Изменение": return "0: нет\n1: увеличился за последнюю неделю";
+            case "Перебои": return "0: нет\n1: есть жалобы на перебои в работе сердца";
+            case "Положение": return "0: горизонтально\n1: с приподнятым изголовьем\n2: просыпается от удушья\n3: вынужден сидеть";
+            case "Шейные": return "0: нет\n1: набухание лежа\n2: набухание стоя";
+            case "Хрипы": return "0: нет\n1: нижние отделы\n2: до лопаток\n3: над всей поверхностью легких";
+            case "Галоп": return "0: нет\n1: есть (ритм галопа)";
+            case "Печень": return "0: не увеличена\n1: увеличена до 5 см\n2: более 5 см";
+            case "Отеки": return "0: нет\n1: пастозность\n2: отеки\n3: анасарка";
+            case "САД": return "0: >120 мм рт. ст.\n1: 100–120 мм рт. ст.\n2: <100 мм рт. ст.";
+            default: return "";
         }
     }
+
+    @Override
+    public void close() {
+        removeListeners();
+    }
+
     @Override
     public double getDefaultHeight() {
         return 480;

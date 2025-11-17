@@ -4,7 +4,9 @@ import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
-import javafx.scene.control.*;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -12,6 +14,7 @@ import javafx.scene.layout.VBox;
 import java.io.Closeable;
 
 public class FriedwaldControl extends StackPane implements Closeable, CalculatorControl {
+
     private final FriedwaldModel model;
 
     private TextField nmrTotalChol;
@@ -19,21 +22,22 @@ public class FriedwaldControl extends StackPane implements Closeable, Calculator
     private TextField nmrHDL;
     private TextArea txtResult;
 
+    private final ChangeListener<String> totalCholListener = (obs, o, n) -> calculate();
+    private final ChangeListener<String> trigListener = (obs, o, n) -> calculate();
+    private final ChangeListener<String> hdlListener = (obs, o, n) -> calculate();
+    private final ChangeListener<String> resultListener = (obs, o, n) -> txtResult.setText(n);
+
     public FriedwaldControl(FriedwaldModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
-        nmrTotalChol = new TextField();
-        nmrTotalChol.setPromptText("Общий холестерин (ммоль/л)");
-
-        nmrTriglycerides = new TextField();
-        nmrTriglycerides.setPromptText("Триглицериды (ммоль/л)");
-
-        nmrHDL = new TextField();
-        nmrHDL.setPromptText("ХС ЛПВП (ммоль/л)");
+        nmrTotalChol = new TextField(); nmrTotalChol.setPromptText("Общий холестерин (ммоль/л)");
+        nmrTriglycerides = new TextField(); nmrTriglycerides.setPromptText("Триглицериды (ммоль/л)");
+        nmrHDL = new TextField(); nmrHDL.setPromptText("ХС ЛПВП (ммоль/л)");
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -64,32 +68,20 @@ public class FriedwaldControl extends StackPane implements Closeable, Calculator
         nmrTotalChol.textProperty().bindBidirectional(model.totalCholProperty());
         nmrTriglycerides.textProperty().bindBidirectional(model.triglyceridesProperty());
         nmrHDL.textProperty().bindBidirectional(model.hdlProperty());
-
-        nmrTotalChol.textProperty().addListener((obs, o, n) -> calculate());
-        nmrTriglycerides.textProperty().addListener((obs, o, n) -> calculate());
-        nmrHDL.textProperty().addListener((obs, o, n) -> calculate());
-
-
-        model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+        model.resultProperty().addListener(resultListener);
     }
 
-    private void calculate() {
-        if (nmrTotalChol.getText().isEmpty() || nmrTriglycerides.getText().isEmpty() || nmrHDL.getText().isEmpty()) {
-            model.setResult("Введите все поля для расчёта");
-            return;
-        }
+    private void addListeners() {
+        nmrTotalChol.textProperty().addListener(totalCholListener);
+        nmrTriglycerides.textProperty().addListener(trigListener);
+        nmrHDL.textProperty().addListener(hdlListener);
+    }
 
-        try {
-            Double.parseDouble(nmrTotalChol.getText());
-            Double.parseDouble(nmrTriglycerides.getText());
-            Double.parseDouble(nmrHDL.getText());
-
-            model.calc();
-        } catch (NumberFormatException e) {
-            model.setResult("Некорректный ввод чисел");
-        } catch (Exception e) {
-            model.setResult("Ошибка: " + e.getMessage());
-        }
+    private void removeListeners() {
+        nmrTotalChol.textProperty().removeListener(totalCholListener);
+        nmrTriglycerides.textProperty().removeListener(trigListener);
+        nmrHDL.textProperty().removeListener(hdlListener);
+        model.resultProperty().removeListener(resultListener);
     }
 
     private void unbind() {
@@ -98,13 +90,32 @@ public class FriedwaldControl extends StackPane implements Closeable, Calculator
         nmrHDL.textProperty().unbindBidirectional(model.hdlProperty());
     }
 
+    private void calculate() {
+        if (nmrTotalChol.getText().isEmpty() || nmrTriglycerides.getText().isEmpty() || nmrHDL.getText().isEmpty()) {
+            model.setResult("Введите все поля для расчёта");
+            return;
+        }
+        try {
+            Double.parseDouble(nmrTotalChol.getText());
+            Double.parseDouble(nmrTriglycerides.getText());
+            Double.parseDouble(nmrHDL.getText());
+            model.calc();
+        } catch (NumberFormatException e) {
+            model.setResult("Некорректный ввод чисел");
+        } catch (Exception e) {
+            model.setResult("Ошибка: " + e.getMessage());
+        }
+    }
+
     @Override
     public void close() {
+        removeListeners();
         unbind();
     }
 
     @Override
-    public double getDefaultHeight() {
-        return 400;
-    }
+    public double getDefaultHeight() { return 400; }
+
+    @Override
+    public double getDefaultWidth() { return 500; }
 }

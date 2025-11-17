@@ -3,6 +3,7 @@ package com.example.demo1.controls.LDL;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -11,16 +12,20 @@ import javafx.scene.layout.VBox;
 import java.io.Closeable;
 
 public class LDLControl extends StackPane implements Closeable, CalculatorControl {
+
     private final LDLModel model;
 
     private TextField nmrNonHDL;
     private TextField nmrTG;
     private TextArea txtResult;
 
+    private final ChangeListener<String> inputListener = (obs, oldV, newV) -> calculate();
+
     public LDLControl(LDLModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -56,13 +61,17 @@ public class LDLControl extends StackPane implements Closeable, CalculatorContro
     private void bind() {
         nmrNonHDL.textProperty().bindBidirectional(model.nonHDLProperty());
         nmrTG.textProperty().bindBidirectional(model.tgProperty());
-
-        // Автоподсчёт при изменении текста
-        nmrNonHDL.textProperty().addListener((obs, oldV, newV) -> calculate());
-        nmrTG.textProperty().addListener((obs, oldV, newV) -> calculate());
-
-        // Обновление TextArea при изменении результата
         model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+    }
+
+    private void addListeners() {
+        nmrNonHDL.textProperty().addListener(inputListener);
+        nmrTG.textProperty().addListener(inputListener);
+    }
+
+    private void removeListeners() {
+        nmrNonHDL.textProperty().removeListener(inputListener);
+        nmrTG.textProperty().removeListener(inputListener);
     }
 
     private void calculate() {
@@ -89,6 +98,7 @@ public class LDLControl extends StackPane implements Closeable, CalculatorContro
 
     @Override
     public void close() {
+        removeListeners();
         unbind();
     }
 }

@@ -4,6 +4,7 @@ import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -13,6 +14,7 @@ import javafx.scene.layout.VBox;
 import java.io.Closeable;
 
 public class FLIControl extends StackPane implements Closeable, CalculatorControl {
+
     private final FLIModel model;
 
     private TextField nmrTriglycerides;
@@ -21,10 +23,17 @@ public class FLIControl extends StackPane implements Closeable, CalculatorContro
     private TextField nmrWaistCircumference;
     private TextArea txtResult;
 
+    private final ChangeListener<String> trigListener = (obs, o, n) -> calculate();
+    private final ChangeListener<String> bmiListener = (obs, o, n) -> calculate();
+    private final ChangeListener<String> ggtListener = (obs, o, n) -> calculate();
+    private final ChangeListener<String> waistListener = (obs, o, n) -> calculate();
+    private final ChangeListener<String> resultListener = (obs, o, n) -> txtResult.setText(n);
+
     public FLIControl(FLIModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -58,19 +67,22 @@ public class FLIControl extends StackPane implements Closeable, CalculatorContro
         nmrBMI.textProperty().bindBidirectional(model.bmiProperty());
         nmrGGT.textProperty().bindBidirectional(model.ggtProperty());
         nmrWaistCircumference.textProperty().bindBidirectional(model.waistCircumferenceProperty());
-
-        nmrTriglycerides.textProperty().addListener((obs, o, n) -> calculate());
-        nmrBMI.textProperty().addListener((obs, o, n) -> calculate());
-        nmrGGT.textProperty().addListener((obs, o, n) -> calculate());
-        nmrWaistCircumference.textProperty().addListener((obs, o, n) -> calculate());
-
-        model.resultProperty().addListener((obs, oldVal, newVal) -> txtResult.setText(newVal));
+        model.resultProperty().addListener(resultListener);
     }
 
-    private void calculate() {
-        model.calc();
-        double val = model.resultValueProperty().get();
-        ResultStyler.applyStyleForValue(txtResult, val, 30, 60);
+    private void addListeners() {
+        nmrTriglycerides.textProperty().addListener(trigListener);
+        nmrBMI.textProperty().addListener(bmiListener);
+        nmrGGT.textProperty().addListener(ggtListener);
+        nmrWaistCircumference.textProperty().addListener(waistListener);
+    }
+
+    private void removeListeners() {
+        nmrTriglycerides.textProperty().removeListener(trigListener);
+        nmrBMI.textProperty().removeListener(bmiListener);
+        nmrGGT.textProperty().removeListener(ggtListener);
+        nmrWaistCircumference.textProperty().removeListener(waistListener);
+        model.resultProperty().removeListener(resultListener);
     }
 
     private void unbind() {
@@ -80,17 +92,21 @@ public class FLIControl extends StackPane implements Closeable, CalculatorContro
         nmrWaistCircumference.textProperty().unbindBidirectional(model.waistCircumferenceProperty());
     }
 
+    private void calculate() {
+        model.calc();
+        double val = model.resultValueProperty().get();
+        ResultStyler.applyStyleForValue(txtResult, val, 30, 60);
+    }
+
     @Override
     public void close() {
+        removeListeners();
         unbind();
     }
 
     @Override
-    public double getDefaultHeight() {
-        return 380;
-    }
+    public double getDefaultHeight() { return 380; }
+
     @Override
-    public double getDefaultWidth() {
-        return 500;
-    }
+    public double getDefaultWidth() { return 500; }
 }

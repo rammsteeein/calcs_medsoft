@@ -3,12 +3,15 @@ package com.example.demo1.controls.Mehran2;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-public class Mehran2Control extends BorderPane implements CalculatorControl {
+import java.io.Closeable;
 
-    private final Mehran2Model model;
+public class Mehran2Control extends BorderPane implements CalculatorControl, Closeable {
+
+    private Mehran2Model model;
 
     private ComboBox<String> cmbOksType;
     private ComboBox<String> cmbDiabetesType;
@@ -19,10 +22,13 @@ public class Mehran2Control extends BorderPane implements CalculatorControl {
     private CheckBox chkBleeding;
     private TextArea txtResult;
 
+    private final ChangeListener<Object> listener = (obs, oldVal, newVal) -> model.calc();
+
     public Mehran2Control(Mehran2Model model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -36,14 +42,13 @@ public class Mehran2Control extends BorderPane implements CalculatorControl {
 
         chkLvefLow = new CheckBox("LVEF <40%");
         chkAnemia = new CheckBox("Анемия (Hb <11 г/дл)");
+        chkBleeding = new CheckBox("Кровотечение во время ЧКВ");
 
         txtAge = new TextField();
         txtAge.setPromptText("Возраст (лет)");
 
         txtContrastVolume = new TextField();
         txtContrastVolume.setPromptText("Объём контраста (мл)");
-
-        chkBleeding = new CheckBox("Кровотечение во время ЧКВ");
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
@@ -77,31 +82,47 @@ public class Mehran2Control extends BorderPane implements CalculatorControl {
 
     private void bind() {
         cmbOksType.valueProperty().bindBidirectional(model.oksTypeProperty());
-        cmbOksType.valueProperty().addListener((obs, o, n) -> model.calc());
-
         cmbDiabetesType.valueProperty().bindBidirectional(model.diabetesTypeProperty());
-        cmbDiabetesType.valueProperty().addListener((obs, o, n) -> model.calc());
-
         chkLvefLow.selectedProperty().bindBidirectional(model.lvefLowProperty());
-        chkLvefLow.selectedProperty().addListener((obs, o, n) -> model.calc());
-
         chkAnemia.selectedProperty().bindBidirectional(model.anemiaProperty());
-        chkAnemia.selectedProperty().addListener((obs, o, n) -> model.calc());
-
         chkBleeding.selectedProperty().bindBidirectional(model.bleedingProperty());
-        chkBleeding.selectedProperty().addListener((obs, o, n) -> model.calc());
-
-        txtAge.textProperty().addListener((obs, o, n) -> {
-            try { model.setAge(Integer.parseInt(n)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        txtContrastVolume.textProperty().addListener((obs, o, n) -> {
-            try { model.setContrastVolume(Integer.parseInt(n)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
         txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    private void addListeners() {
+        cmbOksType.valueProperty().addListener(listener);
+        cmbDiabetesType.valueProperty().addListener(listener);
+        chkLvefLow.selectedProperty().addListener(listener);
+        chkAnemia.selectedProperty().addListener(listener);
+        chkBleeding.selectedProperty().addListener(listener);
+
+        txtAge.textProperty().addListener((obs, oldV, newV) -> {
+            try { model.setAge(Integer.parseInt(newV)); } catch (Exception ignored) {}
+            model.calc();
+        });
+
+        txtContrastVolume.textProperty().addListener((obs, oldV, newV) -> {
+            try { model.setContrastVolume(Integer.parseInt(newV)); } catch (Exception ignored) {}
+            model.calc();
+        });
+    }
+
+    private void removeListeners() {
+        cmbOksType.valueProperty().removeListener(listener);
+        cmbDiabetesType.valueProperty().removeListener(listener);
+        chkLvefLow.selectedProperty().removeListener(listener);
+        chkAnemia.selectedProperty().removeListener(listener);
+        chkBleeding.selectedProperty().removeListener(listener);
+    }
+
+    @Override
+    public void close() {
+        removeListeners();
+        cmbOksType.valueProperty().unbindBidirectional(model.oksTypeProperty());
+        cmbDiabetesType.valueProperty().unbindBidirectional(model.diabetesTypeProperty());
+        chkLvefLow.selectedProperty().unbindBidirectional(model.lvefLowProperty());
+        chkAnemia.selectedProperty().unbindBidirectional(model.anemiaProperty());
+        chkBleeding.selectedProperty().unbindBidirectional(model.bleedingProperty());
     }
 
     @Override

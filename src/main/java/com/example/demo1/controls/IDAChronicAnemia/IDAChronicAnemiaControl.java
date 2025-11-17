@@ -3,14 +3,16 @@ package com.example.demo1.controls.IDAChronicAnemia;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
-import javafx.scene.control.*;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class IDAChronicAnemiaControl extends StackPane implements CalculatorControl {
+public class IDAChronicAnemiaControl extends StackPane implements CalculatorControl, AutoCloseable {
 
-    private final IDAChronicAnemiaModel model;
+    private IDAChronicAnemiaModel model;
 
     private TextField txtSerumIron;
     private TextField txtTIBC;
@@ -18,24 +20,33 @@ public class IDAChronicAnemiaControl extends StackPane implements CalculatorCont
     private TextField txtFerritin;
     private TextArea txtResult;
 
+    private final ChangeListener<String> serumIronListener = (obs, oldVal, newVal) -> updateDouble(model::setSerumIron, newVal);
+    private final ChangeListener<String> tibcListener = (obs, oldVal, newVal) -> updateDouble(model::setTIBC, newVal);
+    private final ChangeListener<String> transferrinListener = (obs, oldVal, newVal) -> updateDouble(model::setTransferrinSat, newVal);
+    private final ChangeListener<String> ferritinListener = (obs, oldVal, newVal) -> updateDouble(model::setFerritin, newVal);
+
     public IDAChronicAnemiaControl(IDAChronicAnemiaModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
-        txtSerumIron = new TextField(); txtSerumIron.setPromptText("Сывороточное железо (мкмоль/л)");
-        txtTIBC = new TextField(); txtTIBC.setPromptText("ОЖСС (мкмоль/л)");
-        txtTransferrinSat = new TextField(); txtTransferrinSat.setPromptText("НТЖ (%)");
-        txtFerritin = new TextField(); txtFerritin.setPromptText("Ферритин (нг/мл)");
-        txtResult = new TextArea(); txtResult.setEditable(false);
+        txtSerumIron = new TextField();
+        txtSerumIron.setPromptText("Сывороточное железо (мкмоль/л)");
 
-        txtSerumIron.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        txtTIBC.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        txtTransferrinSat.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
-        txtFerritin.textProperty().addListener((obs, oldV, newV) -> tryAutoCalc());
+        txtTIBC = new TextField();
+        txtTIBC.setPromptText("ОЖСС (мкмоль/л)");
 
+        txtTransferrinSat = new TextField();
+        txtTransferrinSat.setPromptText("НТЖ (%)");
+
+        txtFerritin = new TextField();
+        txtFerritin.setPromptText("Ферритин (нг/мл)");
+
+        txtResult = new TextArea();
+        txtResult.setEditable(false);
 
         getChildren().add(
                 new HBox(20,
@@ -57,44 +68,35 @@ public class IDAChronicAnemiaControl extends StackPane implements CalculatorCont
         );
     }
 
-    private void tryAutoCalc() {
-        if (txtSerumIron.getText().isEmpty() ||
-                txtTIBC.getText().isEmpty() ||
-                txtTransferrinSat.getText().isEmpty() ||
-                txtFerritin.getText().isEmpty()) {
-            model.resultProperty().set("Введите все поля");
-            return;
-        }
-
-        try {
-            model.setSerumIron(Double.parseDouble(txtSerumIron.getText()));
-            model.setTIBC(Double.parseDouble(txtTIBC.getText()));
-            model.setTransferrinSat(Double.parseDouble(txtTransferrinSat.getText()));
-            model.setFerritin(Double.parseDouble(txtFerritin.getText()));
-
-            model.calc();
-        } catch (NumberFormatException e) {
-            model.resultProperty().set("Некорректный ввод чисел");
-        } catch (Exception e) {
-            model.resultProperty().set("Ошибка: " + e.getMessage());
-        }
+    private void bind() {
+        txtResult.textProperty().bind(model.resultProperty());
     }
 
-    private void bind() {
-        txtSerumIron.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setSerumIron(Double.parseDouble(newVal)); } catch(Exception ignored){}
-        });
-        txtTIBC.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setTIBC(Double.parseDouble(newVal)); } catch(Exception ignored){}
-        });
-        txtTransferrinSat.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setTransferrinSat(Double.parseDouble(newVal)); } catch(Exception ignored){}
-        });
-        txtFerritin.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setFerritin(Double.parseDouble(newVal)); } catch(Exception ignored){}
-        });
+    private void addListeners() {
+        txtSerumIron.textProperty().addListener(serumIronListener);
+        txtTIBC.textProperty().addListener(tibcListener);
+        txtTransferrinSat.textProperty().addListener(transferrinListener);
+        txtFerritin.textProperty().addListener(ferritinListener);
+    }
 
-        txtResult.textProperty().bind(model.resultProperty());
+    private void removeListeners() {
+        txtSerumIron.textProperty().removeListener(serumIronListener);
+        txtTIBC.textProperty().removeListener(tibcListener);
+        txtTransferrinSat.textProperty().removeListener(transferrinListener);
+        txtFerritin.textProperty().removeListener(ferritinListener);
+    }
+
+    private void updateDouble(java.util.function.DoubleConsumer setter, String newVal) {
+        try {
+            setter.accept(Double.parseDouble(newVal));
+        } catch (Exception ignored) {}
+        model.calc();
+    }
+
+    @Override
+    public void close() {
+        removeListeners();
+        txtResult.textProperty().unbind();
     }
 
     @Override

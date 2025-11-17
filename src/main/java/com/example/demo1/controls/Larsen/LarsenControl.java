@@ -18,19 +18,21 @@ public class LarsenControl extends StackPane implements AutoCloseable, Calculato
 
     private ComboBox<String> cmbDrug;
     private CheckBox cbCardiomegalia, cbIBS, cbAG, cbSD, cbAnthraHistory, cbRadiation, cbAge, cbFemale;
-
     private Label lblResult;
-
     private ImageView gradientImage;
     private Rectangle marker;
     private HBox ticksBox;
 
     private final double MAX_SCORE = 10.0;
 
+    private final ChangeListener<String> drugListener = (obs, oldV, newV) -> calculateAndUpdate();
+    private final ChangeListener<Boolean> factorListener = (obs, oldV, newV) -> calculateAndUpdate();
+
     public LarsenControl(LarsenModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -54,18 +56,15 @@ public class LarsenControl extends StackPane implements AutoCloseable, Calculato
 
         lblResult = new Label("Риск: 0 (Отсутствие риска)");
 
-        gradientImage = new ImageView();
+        gradientImage = new ImageView(new Image(
+                getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm()
+        ));
         gradientImage.setFitWidth(300);
         gradientImage.setFitHeight(20);
-        gradientImage.setImage(
-                new Image(getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm())
-        );
 
-        marker = new Rectangle(4, 20);
-        marker.setFill(Color.BLACK);
+        marker = new Rectangle(4, 20, Color.BLACK);
 
-        StackPane gradientPane = new StackPane();
-        gradientPane.getChildren().addAll(gradientImage, marker);
+        StackPane gradientPane = new StackPane(gradientImage, marker);
 
         ticksBox = new HBox();
         String[] tickLabels = {"0", "2", "4", "6", "8", "10"};
@@ -99,21 +98,32 @@ public class LarsenControl extends StackPane implements AutoCloseable, Calculato
     }
 
     private void bind() {
-        ChangeListener<Object> listener = (obs, oldVal, newVal) -> calculateAndUpdate();
-
         cmbDrug.valueProperty().bindBidirectional(model.drugProperty());
-        cmbDrug.valueProperty().addListener(listener);
-
-        cbCardiomegalia.selectedProperty().addListener(listener);
-        cbIBS.selectedProperty().addListener(listener);
-        cbAG.selectedProperty().addListener(listener);
-        cbSD.selectedProperty().addListener(listener);
-        cbAnthraHistory.selectedProperty().addListener(listener);
-        cbRadiation.selectedProperty().addListener(listener);
-        cbAge.selectedProperty().addListener(listener);
-        cbFemale.selectedProperty().addListener(listener);
-
         calculateAndUpdate();
+    }
+
+    private void addListeners() {
+        cmbDrug.valueProperty().addListener(drugListener);
+        cbCardiomegalia.selectedProperty().addListener(factorListener);
+        cbIBS.selectedProperty().addListener(factorListener);
+        cbAG.selectedProperty().addListener(factorListener);
+        cbSD.selectedProperty().addListener(factorListener);
+        cbAnthraHistory.selectedProperty().addListener(factorListener);
+        cbRadiation.selectedProperty().addListener(factorListener);
+        cbAge.selectedProperty().addListener(factorListener);
+        cbFemale.selectedProperty().addListener(factorListener);
+    }
+
+    private void removeListeners() {
+        cmbDrug.valueProperty().removeListener(drugListener);
+        cbCardiomegalia.selectedProperty().removeListener(factorListener);
+        cbIBS.selectedProperty().removeListener(factorListener);
+        cbAG.selectedProperty().removeListener(factorListener);
+        cbSD.selectedProperty().removeListener(factorListener);
+        cbAnthraHistory.selectedProperty().removeListener(factorListener);
+        cbRadiation.selectedProperty().removeListener(factorListener);
+        cbAge.selectedProperty().removeListener(factorListener);
+        cbFemale.selectedProperty().removeListener(factorListener);
     }
 
     private void calculateAndUpdate() {
@@ -142,9 +152,14 @@ public class LarsenControl extends StackPane implements AutoCloseable, Calculato
         lblResult.setText("Риск: " + score + " (" + interpretation + ")");
     }
 
+    private void unbind() {
+        cmbDrug.valueProperty().unbindBidirectional(model.drugProperty());
+    }
+
     @Override
     public void close() {
-        cmbDrug.valueProperty().unbindBidirectional(model.drugProperty());
+        removeListeners();
+        unbind();
     }
 
     @Override

@@ -4,12 +4,13 @@ import com.example.demo1.common.enums.Gender;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.CalculatorDescription;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class MifflinStJeorControl extends BorderPane implements CalculatorControl {
+import java.io.Closeable;
+
+public class MifflinStJeorControl extends BorderPane implements CalculatorControl, Closeable {
 
     private final MifflinStJeorModel model;
 
@@ -23,6 +24,7 @@ public class MifflinStJeorControl extends BorderPane implements CalculatorContro
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -40,7 +42,7 @@ public class MifflinStJeorControl extends BorderPane implements CalculatorContro
                 CalculatorHeader.createHeader("Формула Миффлина-Сан Жеора"),
                 cmbGender, txtWeight, txtHeight, txtAge, txtResult
         );
-        leftBox.setAlignment(Pos.TOP_LEFT);
+        leftBox.setPrefWidth(250);
 
         Label lblDescription = CalculatorDescription.createDescription(
                 "Формула Миффлина-Сан Жеора используется для расчёта базального уровня метаболизма (BMR).\n\n" +
@@ -49,37 +51,44 @@ public class MifflinStJeorControl extends BorderPane implements CalculatorContro
         );
 
         VBox rightBox = new VBox(lblDescription);
-        rightBox.setAlignment(Pos.CENTER);
+        rightBox.setPrefWidth(400);
 
         this.setLeft(leftBox);
         this.setCenter(rightBox);
-        leftBox.setPrefWidth(250);
-
         this.setPrefSize(700, 600);
-
     }
 
     private void bind() {
         cmbGender.valueProperty().bindBidirectional(model.genderProperty());
-        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> model.calc());
-
-        txtWeight.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setWeight(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        txtHeight.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setHeight(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setAge(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
         txtResult.textProperty().bind(model.calculationProperty());
     }
 
-}
+    private void addListeners() {
+        cmbGender.valueProperty().addListener((obs, oldV, newV) -> model.calc());
 
+        txtWeight.textProperty().addListener((obs, oldV, newV) -> {
+            try { model.setWeight(Double.parseDouble(newV)); } catch (Exception ignored) {}
+            model.calc();
+        });
+
+        txtHeight.textProperty().addListener((obs, oldV, newV) -> {
+            try { model.setHeight(Double.parseDouble(newV)); } catch (Exception ignored) {}
+            model.calc();
+        });
+
+        txtAge.textProperty().addListener((obs, oldV, newV) -> {
+            try { model.setAge(Integer.parseInt(newV)); } catch (Exception ignored) {}
+            model.calc();
+        });
+    }
+
+    private void removeListeners() {
+        cmbGender.valueProperty().removeListener((obs, oldV, newV) -> model.calc());
+    }
+
+    @Override
+    public void close() {
+        removeListeners();
+        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
+    }
+}

@@ -7,11 +7,12 @@ import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.ResultStyler;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
-public class PESIControl extends StackPane implements CalculatorControl {
+import java.util.ArrayList;
+import java.util.List;
+
+public class PESIControl extends StackPane implements CalculatorControl, AutoCloseable {
 
     private final PESIModel model;
 
@@ -20,10 +21,12 @@ public class PESIControl extends StackPane implements CalculatorControl {
     private CheckBox chkCancer, chkCHF, chkChronicLung, chkAlteredMental;
     private TextArea txtResult;
 
+    private final List<ChangeListener<?>> listeners = new ArrayList<>();
+
     public PESIControl(PESIModel model) {
         this.model = model;
         initialize();
-        bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -76,8 +79,8 @@ public class PESIControl extends StackPane implements CalculatorControl {
         getChildren().add(container);
     }
 
-    private void bind() {
-        ChangeListener<Object> listener = (obs, oldVal, newVal) -> model.calc();
+    private void addListeners() {
+        ChangeListener<Object> genericListener = (obs, o, n) -> model.calc();
 
         choiceGender.valueProperty().bindBidirectional(model.genderProperty());
         chkCancer.selectedProperty().bindBidirectional(model.hasCancerProperty());
@@ -85,18 +88,30 @@ public class PESIControl extends StackPane implements CalculatorControl {
         chkChronicLung.selectedProperty().bindBidirectional(model.hasChronicLungDiseaseProperty());
         chkAlteredMental.selectedProperty().bindBidirectional(model.alteredMentalStatusProperty());
 
-        choiceGender.valueProperty().addListener(listener);
-        chkCancer.selectedProperty().addListener(listener);
-        chkCHF.selectedProperty().addListener(listener);
-        chkChronicLung.selectedProperty().addListener(listener);
-        chkAlteredMental.selectedProperty().addListener(listener);
+        choiceGender.valueProperty().addListener(genericListener); listeners.add(genericListener);
+        chkCancer.selectedProperty().addListener(genericListener); listeners.add(genericListener);
+        chkCHF.selectedProperty().addListener(genericListener); listeners.add(genericListener);
+        chkChronicLung.selectedProperty().addListener(genericListener); listeners.add(genericListener);
+        chkAlteredMental.selectedProperty().addListener(genericListener); listeners.add(genericListener);
 
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> { try { model.ageProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
-        txtHeartRate.textProperty().addListener((obs, oldVal, newVal) -> { try { model.heartRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
-        txtSystolicBP.textProperty().addListener((obs, oldVal, newVal) -> { try { model.systolicBPProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
-        txtRespiratoryRate.textProperty().addListener((obs, oldVal, newVal) -> { try { model.respiratoryRateProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {} model.calc(); });
-        txtTemperature.textProperty().addListener((obs, oldVal, newVal) -> { try { model.temperatureProperty().set(Double.parseDouble(newVal)); } catch (Exception ignored) {} model.calc(); });
-        txtOxygenSaturation.textProperty().addListener((obs, oldVal, newVal) -> { try { model.oxygenSaturationProperty().set(Double.parseDouble(newVal)); } catch (Exception ignored) {} model.calc(); });
+        ChangeListener<String> ageListener = (obs, o, n) -> { try { model.ageProperty().set(Integer.parseInt(n)); } catch (Exception ignored) {} model.calc(); };
+        txtAge.textProperty().addListener(ageListener); listeners.add(ageListener);
+
+        ChangeListener<String> hrListener = (obs, o, n) -> { try { model.heartRateProperty().set(Integer.parseInt(n)); } catch (Exception ignored) {} model.calc(); };
+        txtHeartRate.textProperty().addListener(hrListener); listeners.add(hrListener);
+
+        ChangeListener<String> sbpListener = (obs, o, n) -> { try { model.systolicBPProperty().set(Integer.parseInt(n)); } catch (Exception ignored) {} model.calc(); };
+        txtSystolicBP.textProperty().addListener(sbpListener); listeners.add(sbpListener);
+
+        ChangeListener<String> rrListener = (obs, o, n) -> { try { model.respiratoryRateProperty().set(Integer.parseInt(n)); } catch (Exception ignored) {} model.calc(); };
+        txtRespiratoryRate.textProperty().addListener(rrListener); listeners.add(rrListener);
+
+        ChangeListener<String> tempListener = (obs, o, n) -> { try { model.temperatureProperty().set(Double.parseDouble(n)); } catch (Exception ignored) {} model.calc(); };
+        txtTemperature.textProperty().addListener(tempListener); listeners.add(tempListener);
+
+        ChangeListener<String> spo2Listener = (obs, o, n) -> { try { model.oxygenSaturationProperty().set(Double.parseDouble(n)); } catch (Exception ignored) {} model.calc(); };
+        txtOxygenSaturation.textProperty().addListener(spo2Listener); listeners.add(spo2Listener);
+
         model.setOnResultStyled(res -> {
             if (res.getRiskClass().contains("Очень низкий") || res.getRiskClass().contains("Низкий")) {
                 ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
@@ -112,13 +127,31 @@ public class PESIControl extends StackPane implements CalculatorControl {
         txtResult.textProperty().bind(model.resultProperty());
     }
 
-    @Override
-    public double getDefaultWidth() {
-        return 800;
+    private void removeListeners() {
+        txtAge.textProperty().removeListener((ChangeListener<? super String>) listeners.get(0));
+        txtHeartRate.textProperty().removeListener((ChangeListener<? super String>) listeners.get(1));
+        txtSystolicBP.textProperty().removeListener((ChangeListener<? super String>) listeners.get(2));
+        txtRespiratoryRate.textProperty().removeListener((ChangeListener<? super String>) listeners.get(3));
+        txtTemperature.textProperty().removeListener((ChangeListener<? super String>) listeners.get(4));
+        txtOxygenSaturation.textProperty().removeListener((ChangeListener<? super String>) listeners.get(5));
+
+        choiceGender.valueProperty().removeListener((ChangeListener<? super Gender>) listeners.get(6));
+        chkCancer.selectedProperty().removeListener((ChangeListener<? super Boolean>) listeners.get(7));
+        chkCHF.selectedProperty().removeListener((ChangeListener<? super Boolean>) listeners.get(8));
+        chkChronicLung.selectedProperty().removeListener((ChangeListener<? super Boolean>) listeners.get(9));
+        chkAlteredMental.selectedProperty().removeListener((ChangeListener<? super Boolean>) listeners.get(10));
+
+        listeners.clear();
     }
 
     @Override
-    public double getDefaultHeight() {
-        return 500;
+    public void close() {
+        removeListeners();
     }
+
+    @Override
+    public double getDefaultWidth() { return 800; }
+
+    @Override
+    public double getDefaultHeight() { return 500; }
 }

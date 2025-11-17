@@ -5,24 +5,45 @@ import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class CHA2DS2VAScControl extends StackPane implements CalculatorControl {
+public class CHA2DS2VAScControl extends StackPane implements AutoCloseable, CalculatorControl {
 
-    private final CHA2DS2VAScModel model;
+    private CHA2DS2VAScModel model;
 
     private TextField txtAge;
     private ComboBox<Gender> cmbGender;
     private CheckBox chkCHF, chkHTN, chkDM, chkStroke, chkCV;
     private TextArea txtResult;
 
+    private final ChangeListener<String> ageListener = (o, ov, nv) -> {
+        try { model.setAge(Integer.parseInt(nv)); } catch (Exception ignored) { model.setAge(0); }
+        calculate();
+    };
+
+    private final ChangeListener<Gender> genderListener = (o, ov, nv) -> {
+        model.setGender(nv);
+        calculate();
+    };
+
+    private final ChangeListener<Boolean> chfListener    = (o, ov, nv) -> calculate();
+    private final ChangeListener<Boolean> htnListener    = (o, ov, nv) -> calculate();
+    private final ChangeListener<Boolean> dmListener     = (o, ov, nv) -> calculate();
+    private final ChangeListener<Boolean> strokeListener = (o, ov, nv) -> calculate();
+    private final ChangeListener<Boolean> cvListener     = (o, ov, nv) -> calculate();
+
+    private final ChangeListener<String> resultListener  = (o, ov, nv) ->
+            ResultStyler.applyStyleForValue(txtResult, model.resultValueProperty().get(), 1, 1.5);
+
     public CHA2DS2VAScControl(CHA2DS2VAScModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -41,11 +62,10 @@ public class CHA2DS2VAScControl extends StackPane implements CalculatorControl {
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
-        txtResult.setPromptText("Результат");
 
-        VBox leftBox = new VBox(10,
+        VBox left = new VBox(10,
                 CalculatorHeader.createHeader("Шкала CHA₂DS₂-VASc"),
-                new VBox(new Label("Возраст (лет)"), txtAge),
+                new VBox(new Label("Возраст"), txtAge),
                 new VBox(new Label("Пол"), cmbGender),
                 chkCHF,
                 chkHTN,
@@ -56,55 +76,67 @@ public class CHA2DS2VAScControl extends StackPane implements CalculatorControl {
         );
 
         getChildren().add(new HBox(20,
-                leftBox,
+                left,
                 CalculatorDescription.createDescription(
-                        "CHA₂DS₂-VASc — шкала для оценки риска инсульта у пациентов с фибрилляцией предсердий.\n\n" +
-                                "Баллы начисляются за:\n" +
-                                "- Застойную сердечную недостаточность\n" +
-                                "- Артериальную гипертензию\n" +
-                                "- Возраст ≥65 или ≥75 лет\n" +
-                                "- Сахарный диабет\n" +
-                                "- Инсульт/ТИА\n" +
-                                "- Сосудистые заболевания\n" +
-                                "- Женский пол\n\n" +
+                        "Шкала CHA₂DS₂-VASc для оценки риска инсульта у пациентов с ФП.\n" +
                                 "Чем выше сумма, тем выше риск тромбоэмболических осложнений."
                 )
         ));
     }
 
     private void bind() {
+        model.resultProperty().addListener(resultListener);
+        txtResult.textProperty().bind(model.resultProperty());
+    }
+
+    private void addListeners() {
+        txtAge.textProperty().addListener(ageListener);
+        cmbGender.valueProperty().addListener(genderListener);
+
+        chkCHF.selectedProperty().addListener(chfListener);
+        chkHTN.selectedProperty().addListener(htnListener);
+        chkDM.selectedProperty().addListener(dmListener);
+        chkStroke.selectedProperty().addListener(strokeListener);
+        chkCV.selectedProperty().addListener(cvListener);
+
         model.congestiveHeartFailureProperty().bind(chkCHF.selectedProperty());
         model.hypertensionProperty().bind(chkHTN.selectedProperty());
         model.diabetesProperty().bind(chkDM.selectedProperty());
         model.strokeProperty().bind(chkStroke.selectedProperty());
         model.cardiovascularProperty().bind(chkCV.selectedProperty());
-
-        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> {
-            model.setGender(newVal);
-            calculate();
-        });
-
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try {
-                model.setAge(Integer.parseInt(newVal));
-            } catch (Exception ignored) {
-                model.setAge(0);
-            }
-            calculate();
-        });
-
-        chkCHF.selectedProperty().addListener((obs, oldVal, newVal) -> calculate());
-        chkHTN.selectedProperty().addListener((obs, oldVal, newVal) -> calculate());
-        chkDM.selectedProperty().addListener((obs, oldVal, newVal) -> calculate());
-        chkStroke.selectedProperty().addListener((obs, oldVal, newVal) -> calculate());
-        chkCV.selectedProperty().addListener((obs, oldVal, newVal) -> calculate());
-
-        txtResult.textProperty().bind(model.resultProperty());
     }
+
+    private void removeListeners() {
+        txtAge.textProperty().removeListener(ageListener);
+        cmbGender.valueProperty().removeListener(genderListener);
+
+        chkCHF.selectedProperty().removeListener(chfListener);
+        chkHTN.selectedProperty().removeListener(htnListener);
+        chkDM.selectedProperty().removeListener(dmListener);
+        chkStroke.selectedProperty().removeListener(strokeListener);
+        chkCV.selectedProperty().removeListener(cvListener);
+
+        model.resultProperty().removeListener(resultListener);
+    }
+
+    private void unbind() {
+        txtResult.textProperty().unbind();
+        model.congestiveHeartFailureProperty().unbind();
+        model.hypertensionProperty().unbind();
+        model.diabetesProperty().unbind();
+        model.strokeProperty().unbind();
+        model.cardiovascularProperty().unbind();
+    }
+
     private void calculate() {
         model.calc();
-        double val = model.resultValueProperty().get();
-        ResultStyler.applyStyleForValue(txtResult, val, 1, 1.5);
+        ResultStyler.applyStyleForValue(txtResult, model.resultValueProperty().get(), 1, 1.5);
+    }
+
+    @Override
+    public void close() {
+        unbind();
+        removeListeners();
     }
 
     @Override

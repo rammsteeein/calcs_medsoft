@@ -4,13 +4,13 @@ import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 public class CDSControl extends StackPane implements AutoCloseable, CalculatorControl {
-    private final CDSModel model;
+
+    private CDSModel model;
 
     private ComboBox<String> cmbAppearance;
     private ComboBox<String> cmbEyes;
@@ -18,10 +18,17 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
     private ComboBox<String> cmbTears;
     private TextArea txtResult;
 
+    private final ChangeListener<String> appearanceListener = (o, ov, nv) -> { model.appearanceProperty().set(nv); calculate(); };
+    private final ChangeListener<String> eyesListener       = (o, ov, nv) -> { model.eyesProperty().set(nv);       calculate(); };
+    private final ChangeListener<String> mucousListener     = (o, ov, nv) -> { model.mucousProperty().set(nv);     calculate(); };
+    private final ChangeListener<String> tearsListener      = (o, ov, nv) -> { model.tearsProperty().set(nv);      calculate(); };
+    private final ChangeListener<String> resultListener     = (o, ov, nv) -> ResultStyler.applyStyleForValue(txtResult, model.resultValueProperty().get(), 0.5, 4.5);
+
     public CDSControl(CDSModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -47,26 +54,19 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
-        txtResult.setPromptText("Результат");
 
-        VBox leftBox = new VBox(10,
+        VBox left = new VBox(10,
                 CalculatorHeader.createHeader("Шкала CDS (оценка дегидратации)"),
                 cmbAppearance, cmbEyes, cmbMucous, cmbTears, txtResult
         );
 
-        this.getChildren().add(new HBox(20,
-                leftBox,
+        getChildren().add(new HBox(20,
+                left,
                 CalculatorDescription.createDescription(
                         "Шкала Clinical Dehydration Scale (CDS) используется для оценки степени обезвоживания.\n\n" +
-                                "Параметры:\n" +
-                                "1. Внешний вид (норма, раздражительность, вялость)\n" +
-                                "2. Глазные яблоки (норма, слегка запавшие, запавшие)\n" +
-                                "3. Слизистые оболочки (влажные, липкие, сухие)\n" +
-                                "4. Слезы (норма, снижены, отсутствуют)\n\n" +
-                                "Интерпретация:\n" +
-                                "- 0 баллов — дегидратация отсутствует\n" +
-                                "- 1–4 балла — лёгкая дегидратация\n" +
-                                "- 5–8 баллов — средняя или тяжёлая дегидратация"
+                                "0 — нет дегидратации\n" +
+                                "1–4 — лёгкая\n" +
+                                "5–8 — средняя/тяжёлая"
                 )
         ));
     }
@@ -80,26 +80,28 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
     }
 
     private void bind() {
-        bindCombo(cmbAppearance, model.appearanceProperty());
-        bindCombo(cmbEyes, model.eyesProperty());
-        bindCombo(cmbMucous, model.mucousProperty());
-        bindCombo(cmbTears, model.tearsProperty());
-
         txtResult.textProperty().bindBidirectional(model.resultProperty());
-        model.resultProperty().addListener((obs, o, n) -> txtResult.setText(n != null ? n : ""));
+        model.resultProperty().addListener(resultListener);
     }
 
-    private void bindCombo(ComboBox<String> combo, javafx.beans.property.StringProperty prop) {
-        combo.valueProperty().addListener((obs, oldVal, newVal) -> {
-            prop.set(newVal);
-            calculate();
-        });
+    private void addListeners() {
+        cmbAppearance.valueProperty().addListener(appearanceListener);
+        cmbEyes.valueProperty().addListener(eyesListener);
+        cmbMucous.valueProperty().addListener(mucousListener);
+        cmbTears.valueProperty().addListener(tearsListener);
 
-        prop.addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && !newVal.equals(combo.getValue())) {
-                combo.setValue(newVal);
-            }
-        });
+        model.appearanceProperty().addListener((o, ov, nv) -> cmbAppearance.setValue(nv));
+        model.eyesProperty().addListener((o, ov, nv) -> cmbEyes.setValue(nv));
+        model.mucousProperty().addListener((o, ov, nv) -> cmbMucous.setValue(nv));
+        model.tearsProperty().addListener((o, ov, nv) -> cmbTears.setValue(nv));
+    }
+
+    private void removeListeners() {
+        cmbAppearance.valueProperty().removeListener(appearanceListener);
+        cmbEyes.valueProperty().removeListener(eyesListener);
+        cmbMucous.valueProperty().removeListener(mucousListener);
+        cmbTears.valueProperty().removeListener(tearsListener);
+        model.resultProperty().removeListener(resultListener);
     }
 
     private void unbind() {
@@ -108,13 +110,13 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
 
     private void calculate() {
         model.calc();
-        double val = model.resultValueProperty().get();
-        ResultStyler.applyStyleForValue(txtResult, val, 0.5, 4.5);
+        ResultStyler.applyStyleForValue(txtResult, model.resultValueProperty().get(), 0.5, 4.5);
     }
 
     @Override
     public void close() {
         unbind();
+        removeListeners();
     }
 
     @Override

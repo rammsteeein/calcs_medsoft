@@ -14,7 +14,7 @@ import java.io.Closeable;
 
 public class POAKControl extends StackPane implements Closeable, CalculatorControl {
 
-    private final POAKModel model;
+    private POAKModel model;
     private ComboBox<String> cmbDrug;
     private TextField txtClearance;
     private TextField txtAge;
@@ -23,10 +23,18 @@ public class POAKControl extends StackPane implements Closeable, CalculatorContr
     private CheckBox chkBleedingRisk;
     private TextArea txtResult;
 
+    private final ChangeListener<String> autoCalcListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<String> drugChangeListener = (obs, oldVal, newVal) -> {
+        updateVisibleFields(newVal);
+        model.calc();
+    };
+    private final ChangeListener<Boolean> bleedingRiskListener = (obs, oldVal, newVal) -> model.calc();
+
     public POAKControl(POAKModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -80,16 +88,6 @@ public class POAKControl extends StackPane implements Closeable, CalculatorContr
                                 " в зависимости от клиренса креатинина, возраста и других факторов."
                 )
         ));
-
-        cmbDrug.valueProperty().addListener((obs, oldVal, newVal) -> updateVisibleFields(newVal));
-
-        ChangeListener<String> autoCalcListener = (obs, oldVal, newVal) -> model.calc();
-        cmbDrug.valueProperty().addListener((obs, oldVal, newVal) -> model.calc());
-        txtClearance.textProperty().addListener(autoCalcListener);
-        txtAge.textProperty().addListener(autoCalcListener);
-        txtWeight.textProperty().addListener(autoCalcListener);
-        txtCreatinine.textProperty().addListener(autoCalcListener);
-        chkBleedingRisk.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
     }
 
     private void bind() {
@@ -112,6 +110,24 @@ public class POAKControl extends StackPane implements Closeable, CalculatorContr
         txtResult.textProperty().unbindBidirectional(model.resultProperty());
     }
 
+    private void addListeners() {
+        cmbDrug.valueProperty().addListener(drugChangeListener);
+        txtClearance.textProperty().addListener(autoCalcListener);
+        txtAge.textProperty().addListener(autoCalcListener);
+        txtWeight.textProperty().addListener(autoCalcListener);
+        txtCreatinine.textProperty().addListener(autoCalcListener);
+        chkBleedingRisk.selectedProperty().addListener(bleedingRiskListener);
+    }
+
+    private void removeListeners() {
+        cmbDrug.valueProperty().removeListener(drugChangeListener);
+        txtClearance.textProperty().removeListener(autoCalcListener);
+        txtAge.textProperty().removeListener(autoCalcListener);
+        txtWeight.textProperty().removeListener(autoCalcListener);
+        txtCreatinine.textProperty().removeListener(autoCalcListener);
+        chkBleedingRisk.selectedProperty().removeListener(bleedingRiskListener);
+    }
+
     private void updateVisibleFields(String drug) {
         boolean isDabigatran = "Дабигатран".equalsIgnoreCase(drug);
         boolean isApixaban = "Апиксабан".equalsIgnoreCase(drug);
@@ -124,8 +140,10 @@ public class POAKControl extends StackPane implements Closeable, CalculatorContr
 
     @Override
     public void close() {
+        removeListeners();
         unbind();
     }
+
     @Override
     public double getDefaultWidth() {
         return 500;

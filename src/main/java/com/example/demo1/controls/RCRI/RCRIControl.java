@@ -3,13 +3,16 @@ package com.example.demo1.controls.RCRI;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class RCRIControl extends BorderPane implements CalculatorControl {
+import java.io.Closeable;
 
-    private final RCRIModel model;
+public class RCRIControl extends BorderPane implements CalculatorControl, Closeable {
+
+    private RCRIModel model;
 
     private CheckBox chkHighRiskSurgery;
     private CheckBox chkIschemicHeartDisease;
@@ -19,10 +22,19 @@ public class RCRIControl extends BorderPane implements CalculatorControl {
     private CheckBox chkHighCreatinine;
     private TextArea txtResult;
 
+    private final ChangeListener<Boolean> highRiskSurgeryListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> ischemicHeartDiseaseListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> heartFailureListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> cerebrovascularDiseaseListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> insulinTreatmentListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> highCreatinineListener = (obs, oldVal, newVal) -> model.calc();
+
     public RCRIControl(RCRIModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
+        model.calc();
     }
 
     private void initialize() {
@@ -71,15 +83,50 @@ public class RCRIControl extends BorderPane implements CalculatorControl {
         chkCerebrovascularDisease.selectedProperty().bindBidirectional(model.cerebrovascularDiseaseProperty());
         chkInsulinTreatment.selectedProperty().bindBidirectional(model.insulinTreatmentProperty());
         chkHighCreatinine.selectedProperty().bindBidirectional(model.highCreatinineProperty());
-
-        chkHighRiskSurgery.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkIschemicHeartDisease.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkHeartFailure.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkCerebrovascularDisease.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkInsulinTreatment.selectedProperty().addListener((obs, o, n) -> model.calc());
-        chkHighCreatinine.selectedProperty().addListener((obs, o, n) -> model.calc());
-
         txtResult.textProperty().bind(model.resultProperty());
-        model.calc();
+    }
+
+    private void unbind() {
+        chkHighRiskSurgery.selectedProperty().unbindBidirectional(model.highRiskSurgeryProperty());
+        chkIschemicHeartDisease.selectedProperty().unbindBidirectional(model.ischemicHeartDiseaseProperty());
+        chkHeartFailure.selectedProperty().unbindBidirectional(model.heartFailureProperty());
+        chkCerebrovascularDisease.selectedProperty().unbindBidirectional(model.cerebrovascularDiseaseProperty());
+        chkInsulinTreatment.selectedProperty().unbindBidirectional(model.insulinTreatmentProperty());
+        chkHighCreatinine.selectedProperty().unbindBidirectional(model.highCreatinineProperty());
+        txtResult.textProperty().unbind();
+    }
+
+    private void addListeners() {
+        chkHighRiskSurgery.selectedProperty().addListener(highRiskSurgeryListener);
+        chkIschemicHeartDisease.selectedProperty().addListener(ischemicHeartDiseaseListener);
+        chkHeartFailure.selectedProperty().addListener(heartFailureListener);
+        chkCerebrovascularDisease.selectedProperty().addListener(cerebrovascularDiseaseListener);
+        chkInsulinTreatment.selectedProperty().addListener(insulinTreatmentListener);
+        chkHighCreatinine.selectedProperty().addListener(highCreatinineListener);
+    }
+
+    private void removeListeners() {
+        chkHighRiskSurgery.selectedProperty().removeListener(highRiskSurgeryListener);
+        chkIschemicHeartDisease.selectedProperty().removeListener(ischemicHeartDiseaseListener);
+        chkHeartFailure.selectedProperty().removeListener(heartFailureListener);
+        chkCerebrovascularDisease.selectedProperty().removeListener(cerebrovascularDiseaseListener);
+        chkInsulinTreatment.selectedProperty().removeListener(insulinTreatmentListener);
+        chkHighCreatinine.selectedProperty().removeListener(highCreatinineListener);
+    }
+
+    @Override
+    public void close() {
+        removeListeners();
+        unbind();
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 620;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 400;
     }
 }

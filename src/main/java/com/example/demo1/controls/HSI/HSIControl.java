@@ -5,14 +5,15 @@ import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
 import com.example.demo1.common.services.ResultStyler;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class HSIControl extends StackPane implements CalculatorControl {
+public class HSIControl extends StackPane implements CalculatorControl, AutoCloseable {
 
-    private final HSIModel model;
+    private HSIModel model;
 
     private TextField txtALT;
     private TextField txtAST;
@@ -21,10 +22,17 @@ public class HSIControl extends StackPane implements CalculatorControl {
     private CheckBox chkDiabetes;
     private TextArea txtResult;
 
+    private final ChangeListener<String> altListener = (obs, oldVal, newVal) -> updateDouble(model::setAlt, newVal);
+    private final ChangeListener<String> astListener = (obs, oldVal, newVal) -> updateDouble(model::setAst, newVal);
+    private final ChangeListener<String> bmiListener = (obs, oldVal, newVal) -> updateDouble(model::setBmi, newVal);
+    private final ChangeListener<Gender> genderListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Boolean> diabetesListener = (obs, oldVal, newVal) -> model.calc();
+
     public HSIControl(HSIModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -47,7 +55,7 @@ public class HSIControl extends StackPane implements CalculatorControl {
         txtResult = new TextArea();
         txtResult.setEditable(false);
         txtResult.setPromptText("Результат");
-        model.setResultControl(txtResult); // передаем поле в модель для подсветки
+        model.setResultControl(txtResult);
 
         VBox leftBox = new VBox(10,
                 CalculatorHeader.createHeader("Индекс стеатоза печени (HSI)"),
@@ -77,27 +85,49 @@ public class HSIControl extends StackPane implements CalculatorControl {
     }
 
     private void bind() {
-        txtALT.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setAlt(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        txtAST.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setAst(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        txtBMI.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.setBmi(Double.parseDouble(newVal)); } catch (Exception ignored) {}
-            model.calc();
-        });
-
-        cmbGender.valueProperty().bindBidirectional(model.genderProperty());
-        cmbGender.valueProperty().addListener((obs, oldVal, newVal) -> model.calc());
-
-        chkDiabetes.selectedProperty().bindBidirectional(model.hasDiabetesProperty());
-        chkDiabetes.selectedProperty().addListener((obs, oldVal, newVal) -> model.calc());
-
         txtResult.textProperty().bind(model.resultProperty());
+
+        txtALT.textProperty().addListener(altListener);
+        txtAST.textProperty().addListener(astListener);
+        txtBMI.textProperty().addListener(bmiListener);
+        cmbGender.valueProperty().bindBidirectional(model.genderProperty());
+        cmbGender.valueProperty().addListener(genderListener);
+        chkDiabetes.selectedProperty().bindBidirectional(model.hasDiabetesProperty());
+        chkDiabetes.selectedProperty().addListener(diabetesListener);
+    }
+
+    private void addListeners() {
+        // все подписки уже добавлены в bind()
+    }
+
+    private void removeListeners() {
+        txtALT.textProperty().removeListener(altListener);
+        txtAST.textProperty().removeListener(astListener);
+        txtBMI.textProperty().removeListener(bmiListener);
+        cmbGender.valueProperty().removeListener(genderListener);
+        chkDiabetes.selectedProperty().removeListener(diabetesListener);
+    }
+
+    private void updateDouble(java.util.function.DoubleConsumer setter, String newVal) {
+        try {
+            setter.accept(Double.parseDouble(newVal));
+        } catch (Exception ignored) {}
+        model.calc();
+    }
+
+    @Override
+    public void close() {
+        removeListeners();
+        txtResult.textProperty().unbind();
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 720;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 460;
     }
 }

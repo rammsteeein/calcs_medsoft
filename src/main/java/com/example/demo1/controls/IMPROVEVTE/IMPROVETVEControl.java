@@ -16,9 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class IMPROVETVEControl extends StackPane implements CalculatorControl {
+public class IMPROVETVEControl extends StackPane implements CalculatorControl, AutoCloseable {
 
-    private final IMPROVETVEModel model;
+    private IMPROVETVEModel model;
 
     private CheckBox chkPriorVTE, chkKnownThrombophilia, chkLowerLimbParalysis;
     private CheckBox chkActiveCancer, chkImmobilization7Days, chkICUstay;
@@ -29,12 +29,24 @@ public class IMPROVETVEControl extends StackPane implements CalculatorControl {
     private Rectangle marker;
 
     private final double SCALE_WIDTH = 300;
-    private final double MAX_SCORE = 10.0; // 5–10 баллов
+    private final double MAX_SCORE = 10.0;
+
+    private final ChangeListener<Boolean> recalcListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<String> ageListener = (obs, oldVal, newVal) -> {
+        try {
+            model.ageProperty().set(Integer.parseInt(newVal));
+        } catch (NumberFormatException e) {
+            model.ageProperty().set(0);
+        }
+        model.calc();
+        updateMarker();
+    };
 
     public IMPROVETVEControl(IMPROVETVEModel model) {
         this.model = model;
         initialize();
         bind();
+        addListeners();
     }
 
     private void initialize() {
@@ -49,14 +61,12 @@ public class IMPROVETVEControl extends StackPane implements CalculatorControl {
 
         lblSliderValue = new Label("Риск: 0%");
 
-        // Градиент
         gradientImage = new ImageView(new Image(
                 getClass().getResource("/com/example/demo1/img/smooth-rgb-gradients.png").toExternalForm()
         ));
         gradientImage.setFitWidth(SCALE_WIDTH);
         gradientImage.setFitHeight(20);
 
-        // Маркер
         marker = new Rectangle(6, 22, Color.BLACK);
         marker.setArcWidth(3);
         marker.setArcHeight(3);
@@ -66,12 +76,10 @@ public class IMPROVETVEControl extends StackPane implements CalculatorControl {
         gradientPane.getChildren().addAll(gradientImage, marker);
         gradientPane.setPrefWidth(SCALE_WIDTH);
 
-        double[] tickValues = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        String[] tickLabels = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
-
+        double[] tickValues = {0,1,2,3,4,5,6,7,8,9,10};
+        String[] tickLabels = {"0","1","2","3","4","5","6","7","8","9","10"};
         Pane tickPane = new Pane();
         tickPane.setPrefWidth(SCALE_WIDTH);
-
         for (int i = 0; i < tickValues.length; i++) {
             double normalized = tickValues[i] / MAX_SCORE;
             double x = normalized * (SCALE_WIDTH - marker.getWidth());
@@ -104,31 +112,37 @@ public class IMPROVETVEControl extends StackPane implements CalculatorControl {
     }
 
     private void bind() {
-        ChangeListener<Object> recalcListener = (obs, oldVal, newVal) -> model.calc();
-
         chkPriorVTE.selectedProperty().bindBidirectional(model.priorVTEProperty());
         chkKnownThrombophilia.selectedProperty().bindBidirectional(model.knownThrombophiliaProperty());
         chkLowerLimbParalysis.selectedProperty().bindBidirectional(model.lowerLimbParalysisProperty());
         chkActiveCancer.selectedProperty().bindBidirectional(model.activeCancerProperty());
         chkImmobilization7Days.selectedProperty().bindBidirectional(model.immobilization7DaysProperty());
         chkICUstay.selectedProperty().bindBidirectional(model.ICUstayProperty());
+        txtAge.textProperty().addListener(ageListener);
 
+        model.resultProperty().addListener((obs, oldVal, newVal) -> updateMarker());
+        model.scoreProperty().addListener((obs, oldVal, newVal) -> updateMarker());
+
+        updateMarker();
+    }
+
+    private void addListeners() {
         chkPriorVTE.selectedProperty().addListener(recalcListener);
         chkKnownThrombophilia.selectedProperty().addListener(recalcListener);
         chkLowerLimbParalysis.selectedProperty().addListener(recalcListener);
         chkActiveCancer.selectedProperty().addListener(recalcListener);
         chkImmobilization7Days.selectedProperty().addListener(recalcListener);
         chkICUstay.selectedProperty().addListener(recalcListener);
+    }
 
-        model.resultProperty().addListener((obs, oldVal, newVal) -> updateMarker());
-        model.scoreProperty().addListener((obs, oldVal, newVal) -> updateMarker());
-
-        txtAge.textProperty().addListener((obs, oldVal, newVal) -> {
-            try { model.ageProperty().set(Integer.parseInt(newVal)); } catch (Exception ignored) {}
-            updateMarker();
-        });
-
-        updateMarker();
+    private void removeListeners() {
+        chkPriorVTE.selectedProperty().removeListener(recalcListener);
+        chkKnownThrombophilia.selectedProperty().removeListener(recalcListener);
+        chkLowerLimbParalysis.selectedProperty().removeListener(recalcListener);
+        chkActiveCancer.selectedProperty().removeListener(recalcListener);
+        chkImmobilization7Days.selectedProperty().removeListener(recalcListener);
+        chkICUstay.selectedProperty().removeListener(recalcListener);
+        txtAge.textProperty().removeListener(ageListener);
     }
 
     private void updateMarker() {
@@ -142,5 +156,20 @@ public class IMPROVETVEControl extends StackPane implements CalculatorControl {
         tt.play();
 
         lblSliderValue.setText(String.format("Риск: %s (баллы: %d)", model.getResult(), score));
+    }
+
+    @Override
+    public void close() {
+        removeListeners();
+    }
+
+    @Override
+    public double getDefaultWidth() {
+        return 720;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 460;
     }
 }

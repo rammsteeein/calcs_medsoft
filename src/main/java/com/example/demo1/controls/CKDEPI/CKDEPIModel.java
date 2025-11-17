@@ -12,6 +12,7 @@ public class CKDEPIModel {
     private final StringProperty age = new SimpleStringProperty();
     private final StringProperty result = new SimpleStringProperty("Введите все данные для расчёта");
 
+    // ===== Расчёты =====
     public void calc() {
         double scr = Double.parseDouble(kreatinin.get());
         int ageVal = Integer.parseInt(age.get());
@@ -50,9 +51,30 @@ public class CKDEPIModel {
         }
     }
 
-    public StringProperty kreatininProperty() { return kreatinin; }
-    public ObjectProperty<Unit> creatininUnitProperty() { return creatininUnit; }
+    // ===== Геттеры и сеттеры =====
+
+    // Gender
+    public Gender getGender() { return gender.get(); }
+    public void setGender(Gender value) { gender.set(value); }
     public ObjectProperty<Gender> genderProperty() { return gender; }
+
+    // Creatinin Unit
+    public Unit getCreatininUnit() { return creatininUnit.get(); }
+    public void setCreatininUnit(Unit value) { creatininUnit.set(value); }
+    public ObjectProperty<Unit> creatininUnitProperty() { return creatininUnit; }
+
+    // Kreatinin
+    public String getKreatinin() { return kreatinin.get(); }
+    public void setKreatinin(String value) { kreatinin.set(value); }
+    public StringProperty kreatininProperty() { return kreatinin; }
+
+    // Age
+    public String getAge() { return age.get(); }
+    public void setAge(String value) { age.set(value); }
     public StringProperty ageProperty() { return age; }
+
+    // Result
+    public String getResult() { return result.get(); }
+    public void setResult(String value) { result.set(value); }
     public StringProperty resultProperty() { return result; }
 }
