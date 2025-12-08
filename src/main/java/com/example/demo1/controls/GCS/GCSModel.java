@@ -16,26 +16,22 @@ public class GCSModel {
     private final StringProperty result = new SimpleStringProperty("Выберите значения");
     private final IntegerProperty resultValue = new SimpleIntegerProperty(0);
 
-    // соответствие текст → балл
     private final Map<String, Integer> eyesMap = new HashMap<>();
     private final Map<String, Integer> verbalMap = new HashMap<>();
     private final Map<String, Integer> motorMap = new HashMap<>();
 
     public GCSModel() {
-        // глаза
         eyesMap.put("4 — спонтанно", 4);
         eyesMap.put("3 — на голос", 3);
         eyesMap.put("2 — на болевой стимул", 2);
         eyesMap.put("1 — нет", 1);
 
-        // речь
         verbalMap.put("5 — ориентирован, отвечает адекватно", 5);
         verbalMap.put("4 — спутанная речь", 4);
         verbalMap.put("3 — отдельные слова", 3);
         verbalMap.put("2 — звуки (мычание, стоны)", 2);
         verbalMap.put("1 — нет", 1);
 
-        // движения
         motorMap.put("6 — выполняет команды", 6);
         motorMap.put("5 — локализует болевой стимул", 5);
         motorMap.put("4 — отдёргивает конечность", 4);
