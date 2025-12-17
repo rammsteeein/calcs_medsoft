@@ -32,6 +32,10 @@ import com.example.demo1.controls.IDAChronicAnemia.IDAChronicAnemiaControl;
 import com.example.demo1.controls.IDAChronicAnemia.IDAChronicAnemiaModel;
 import com.example.demo1.controls.IMPROVEVTE.IMPROVETVEControl;
 import com.example.demo1.controls.IMPROVEVTE.IMPROVETVEModel;
+import com.example.demo1.controls.Karnovsky.KarnovskyControl;
+import com.example.demo1.controls.Karnovsky.KarnovskyModel;
+import com.example.demo1.controls.ECOG.ECOGControl;
+import com.example.demo1.controls.ECOG.ECOGModel;
 import com.example.demo1.controls.Khorana.KhoranaControl;
 import com.example.demo1.controls.Khorana.KhoranaModel;
 import com.example.demo1.controls.Larsen.LarsenControl;
@@ -52,6 +56,8 @@ import com.example.demo1.controls.Pursuit.*;
 import com.example.demo1.controls.FLI.*;
 import com.example.demo1.controls.POAK_doze.*;
 import com.example.demo1.controls.CKDEPI.*;
+import com.example.demo1.controls.Cognitive.CognitiveControl;
+import com.example.demo1.controls.Cognitive.CognitiveModel;
 import com.example.demo1.controls.LDL.*;
 import com.example.demo1.controls.RCRI.RCRIControl;
 import com.example.demo1.controls.RCRI.RCRIModel;
@@ -93,6 +99,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(new INBARModel()));
         calculatorMap.put("FIB-4", () -> new FIB4Control(new FIB4Model()));
         calculatorMap.put("CDS", () -> new CDSControl(new CDSModel()));
+        calculatorMap.put("MMSE", () -> new CognitiveControl(new CognitiveModel()));
         calculatorMap.put("Larsen CM, 2017", () -> new LarsenControl(new LarsenModel()));
         calculatorMap.put("Шкала Хорана", () -> new KhoranaControl(new KhoranaModel()));
         calculatorMap.put("Шкала Friedwald", () -> new FriedwaldControl(new FriedwaldModel()));
@@ -121,6 +128,8 @@ public class CalcsApp extends Application {
         calculatorMap.put("NIHSS", () -> new NIHSSControl(new NIHSSModel()));
         calculatorMap.put("Шкала Каприни", () -> new CapriniControl(new CapriniModel()));
         calculatorMap.put("Шкала Глазго", () -> new GCSControl(new GCSModel()));
+        calculatorMap.put("Индекс Карновского", () -> new KarnovskyControl(new KarnovskyModel()));
+        calculatorMap.put("ECOG", () -> new ECOGControl(new ECOGModel()));
         List<String> keys = new ArrayList<>(calculatorMap.keySet());
         Collections.sort(keys);
 
