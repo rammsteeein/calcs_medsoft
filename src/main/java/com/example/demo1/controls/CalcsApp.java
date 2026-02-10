@@ -58,7 +58,6 @@ import com.example.demo1.controls.POAK_doze.*;
 import com.example.demo1.controls.CKDEPI.*;
 import com.example.demo1.controls.Cognitive.CognitiveControl;
 import com.example.demo1.controls.Cognitive.CognitiveModel;
-import com.example.demo1.controls.LDL.*;
 import com.example.demo1.controls.RCRI.RCRIControl;
 import com.example.demo1.controls.RCRI.RCRIModel;
 import com.example.demo1.controls.REACH.REACHControl;
@@ -95,7 +94,6 @@ public class CalcsApp extends Application {
         calculatorMap.put("Cockroft", () -> new CockroftControl(new CockroftModel()));
         calculatorMap.put("CKD-EPI", () -> new CKDEPIControl(new CKDEPIModel()));
         calculatorMap.put("Доза ПОАК", () -> new POAKControl(new POAKModel()));
-        calculatorMap.put("ХС-ЛНП", () -> new LDLControl(new LDLModel()));
         calculatorMap.put("Макс ЧСС по inbar", () -> new INBARControl(new INBARModel()));
         calculatorMap.put("FIB-4", () -> new FIB4Control(new FIB4Model()));
         calculatorMap.put("CDS", () -> new CDSControl(new CDSModel()));

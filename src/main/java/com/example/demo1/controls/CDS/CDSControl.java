@@ -110,7 +110,7 @@ public class CDSControl extends StackPane implements AutoCloseable, CalculatorCo
 
     private void calculate() {
         model.calc();
-        ResultStyler.applyStyleForValue(txtResult, model.resultValueProperty().get(), 0.5, 4.5);
+        ResultStyler.applyStyleForValue(txtResult, model.resultValueProperty().get(), 1, 5);
     }
 
     @Override
