@@ -52,6 +52,8 @@ import com.example.demo1.controls.PERC.PERCControl;
 import com.example.demo1.controls.PERC.PERCModel;
 import com.example.demo1.controls.PESI.PESIControl;
 import com.example.demo1.controls.PESI.PESIModel;
+import com.example.demo1.controls.Pokrovsky.PokrovskyControl;
+import com.example.demo1.controls.Pokrovsky.PokrovskyModel;
 import com.example.demo1.controls.Pursuit.*;
 import com.example.demo1.controls.FLI.*;
 import com.example.demo1.controls.POAK_doze.*;
@@ -128,6 +130,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("Шкала Глазго", () -> new GCSControl(new GCSModel()));
         calculatorMap.put("Индекс Карновского", () -> new KarnovskyControl(new KarnovskyModel()));
         calculatorMap.put("ECOG", () -> new ECOGControl(new ECOGModel()));
+        calculatorMap.put("Оценка тяжести дегидратации по В.И. Покровскому", () -> new PokrovskyControl(new PokrovskyModel()));
         List<String> keys = new ArrayList<>(calculatorMap.keySet());
         Collections.sort(keys);
 
