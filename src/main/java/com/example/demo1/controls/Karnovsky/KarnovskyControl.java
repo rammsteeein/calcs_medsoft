@@ -138,13 +138,12 @@ public class KarnovskyControl extends StackPane implements AutoCloseable, Calcul
             return;
         }
 
-        // Reversed logic: high scores (70-100) = green (good), low scores (<40) = red (bad)
         if (score >= 70) {
-            ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW); // Green for good scores
+            ResultStyler.applyStyle(txtResult, ResultStyler.Zone.LOW);
         } else if (score < 40) {
-            ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH); // Red for bad scores
+            ResultStyler.applyStyle(txtResult, ResultStyler.Zone.HIGH);
         } else {
-            ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY); // Yellow for medium scores
+            ResultStyler.applyStyle(txtResult, ResultStyler.Zone.GRAY);
         }
     }
 

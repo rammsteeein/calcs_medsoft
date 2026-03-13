@@ -14,6 +14,8 @@ import com.example.demo1.controls.DASI.DASIControl;
 import com.example.demo1.controls.DASI.DASIModel;
 import com.example.demo1.controls.DLCN.DLCNControl;
 import com.example.demo1.controls.DLCN.DLCNModel;
+import com.example.demo1.controls.EHRA.EHRAControl;
+import com.example.demo1.controls.EHRA.EHRAModel;
 import com.example.demo1.controls.FIB4.FIB4Control;
 import com.example.demo1.controls.FIB4.FIB4Model;
 import com.example.demo1.controls.Friedwald.FriedwaldControl;
@@ -28,6 +30,8 @@ import com.example.demo1.controls.HASBLED.HASBLEDControl;
 import com.example.demo1.controls.HASBLED.HASBLEDModel;
 import com.example.demo1.controls.HSI.HSIControl;
 import com.example.demo1.controls.HSI.HSIModel;
+import com.example.demo1.controls.HoehnYahr.HoehnYahrControl;
+import com.example.demo1.controls.HoehnYahr.HoehnYahrModel;
 import com.example.demo1.controls.IDAChronicAnemia.IDAChronicAnemiaControl;
 import com.example.demo1.controls.IDAChronicAnemia.IDAChronicAnemiaModel;
 import com.example.demo1.controls.IMPROVEVTE.IMPROVETVEControl;
@@ -130,6 +134,8 @@ public class CalcsApp extends Application {
         calculatorMap.put("Шкала Глазго", () -> new GCSControl(new GCSModel()));
         calculatorMap.put("Индекс Карновского", () -> new KarnovskyControl(new KarnovskyModel()));
         calculatorMap.put("ECOG", () -> new ECOGControl(new ECOGModel()));
+        calculatorMap.put("EHRA", () -> new EHRAControl(new EHRAModel()));
+        calculatorMap.put("Шкала Хен-Яра", () -> new HoehnYahrControl(new HoehnYahrModel()));
         calculatorMap.put("Оценка тяжести дегидратации по В.И. Покровскому", () -> new PokrovskyControl(new PokrovskyModel()));
         List<String> keys = new ArrayList<>(calculatorMap.keySet());
         Collections.sort(keys);
@@ -200,9 +206,7 @@ public class CalcsApp extends Application {
         }
 
         Scene scene = new Scene(control, width, height, javafx.scene.paint.Color.WHITE);
-//        try {
-//            scene.getStylesheets().add("com/example/demo1/styles/style.css");
-//        } catch (Exception ignored) {}
+
 
         stage.setScene(scene);
         stage.setTitle(title);
