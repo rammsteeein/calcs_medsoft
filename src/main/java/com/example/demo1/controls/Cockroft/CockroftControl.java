@@ -5,15 +5,15 @@ import com.example.demo1.common.enums.Unit;
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
 import com.example.demo1.common.services.CalculatorHeader;
+import com.example.demo1.common.services.ResultStyler;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.io.Closeable;
 
 public class CockroftControl extends StackPane implements Closeable, CalculatorControl {
+
     private CockroftModel model;
 
     private ComboBox<Gender> cmbGender;
@@ -23,11 +23,8 @@ public class CockroftControl extends StackPane implements Closeable, CalculatorC
     private ComboBox<Unit> cmbUnit;
     private TextArea txtResult;
 
-    private final ChangeListener<Gender> cmbGenderListener = (obs, oldVal, newVal) -> model.calc();
-    private final ChangeListener<Unit> cmbUnitListener = (obs, oldVal, newVal) -> model.calc();
-    private final ChangeListener<String> kreatininListener = (obs, oldVal, newVal) -> model.calc();
-    private final ChangeListener<String> ageListener = (obs, oldVal, newVal) -> model.calc();
-    private final ChangeListener<String> weightListener = (obs, oldVal, newVal) -> model.calc();
+    private final ChangeListener<Number> resultListener =
+            (o, ov, nv) -> applyStyle();
 
     public CockroftControl(CockroftModel model) {
         this.model = model;
@@ -56,22 +53,42 @@ public class CockroftControl extends StackPane implements Closeable, CalculatorC
 
         txtResult = new TextArea();
         txtResult.setEditable(false);
-        txtResult.setPromptText("Результат расчёта");
 
-        getChildren().add(
-                new HBox(20,
-                        new VBox(10,
-                                CalculatorHeader.createHeader("Клиренс креатинина (Cockcroft-Gault)"),
-                                cmbGender,
-                                new HBox(10, nmrKreatinin, cmbUnit),
-                                nmrAge, nmrWeight, txtResult
-                        ),
-                        CalculatorDescription.createDescription(
-                                "Формула Кокрофта-Голта используется для оценки клиренса креатинина — показателя фильтрационной функции почек.\n\n" +
-                                        "CrCl = ((140 - возраст) * вес) * (0.85 если женщина) / (72 * Scr)"
-                        )
-                )
+        VBox left = new VBox(10,
+                CalculatorHeader.createHeader("Клиренс креатинина (Cockcroft-Gault)"),
+                cmbGender,
+                new HBox(10, nmrKreatinin, cmbUnit),
+                nmrAge,
+                nmrWeight,
+                txtResult
         );
+
+        getChildren().add(new HBox(20,
+                left,
+                CalculatorDescription.createDescription(
+                        "Формула Cockcroft–Gault используется для оценки клиренса креатинина (CrCl) — показателя фильтрационной функции почек.\n\n" +
+
+                                "Формула:\n" +
+                                "CrCl = ((140 − возраст) × масса тела × K) / (72 × Scr)\n" +
+                                "где:\n" +
+                                "• Scr — креатинин сыворотки (мг/дл)\n" +
+                                "• K = 1.0 для мужчин и 0.85 для женщин\n\n" +
+
+                                "Интерпретация (приближённо соответствует стадиям ХБП):\n" +
+                                "• ≥ 90 мл/мин — нормальная функция (С1)\n" +
+                                "• 60–89 мл/мин — незначительное снижение (С2)\n" +
+                                "• 45–59 мл/мин — умеренное снижение (С3a)\n" +
+                                "• 30–44 мл/мин — выраженное снижение (С3b)\n" +
+                                "• 15–29 мл/мин — тяжёлое снижение (С4)\n" +
+                                "• < 15 мл/мин — терминальная стадия (С5)\n\n" +
+
+                                "Особенности:\n" +
+                                "• Используется у взрослых пациентов\n" +
+                                "• Учитывает массу тела (в отличие от CKD-EPI)\n" +
+                                "• Может переоценивать функцию почек при ожирении или отёках\n" +
+                                "• Менее точна при нестабильном уровне креатинина\n\n"
+                )
+        ));
     }
 
     private void bind() {
@@ -84,27 +101,36 @@ public class CockroftControl extends StackPane implements Closeable, CalculatorC
     }
 
     private void addListeners() {
-        cmbGender.valueProperty().addListener(cmbGenderListener);
-        cmbUnit.valueProperty().addListener(cmbUnitListener);
-        nmrKreatinin.textProperty().addListener(kreatininListener);
-        nmrAge.textProperty().addListener(ageListener);
-        nmrWeight.textProperty().addListener(weightListener);
+        cmbGender.valueProperty().addListener((o, ov, nv) -> calculate());
+        cmbUnit.valueProperty().addListener((o, ov, nv) -> calculate());
+        nmrKreatinin.textProperty().addListener((o, ov, nv) -> calculate());
+        nmrAge.textProperty().addListener((o, ov, nv) -> calculate());
+        nmrWeight.textProperty().addListener((o, ov, nv) -> calculate());
+
+        model.resultValueProperty().addListener(resultListener);
+    }
+
+    private void calculate() {
+        model.calc();
+    }
+
+    private void applyStyle() {
+        double value = model.resultValueProperty().get();
+        if (Double.isNaN(value)) return;
+
+        ResultStyler.applyStyleForValueReversed(
+                txtResult,
+                value,
+                30,
+                90
+        );
     }
 
     private void removeListeners() {
-        cmbGender.valueProperty().removeListener(cmbGenderListener);
-        cmbUnit.valueProperty().removeListener(cmbUnitListener);
-        nmrKreatinin.textProperty().removeListener(kreatininListener);
-        nmrAge.textProperty().removeListener(ageListener);
-        nmrWeight.textProperty().removeListener(weightListener);
+        model.resultValueProperty().removeListener(resultListener);
     }
 
     private void unbind() {
-        cmbGender.valueProperty().unbindBidirectional(model.genderProperty());
-        nmrKreatinin.textProperty().unbindBidirectional(model.kreatininProperty());
-        nmrAge.textProperty().unbindBidirectional(model.ageProperty());
-        nmrWeight.textProperty().unbindBidirectional(model.weightProperty());
-        cmbUnit.valueProperty().unbindBidirectional(model.creatininUnitProperty());
         txtResult.textProperty().unbind();
     }
 
@@ -112,5 +138,14 @@ public class CockroftControl extends StackPane implements Closeable, CalculatorC
     public void close() {
         unbind();
         removeListeners();
+    }
+    @Override
+    public double getDefaultWidth() {
+        return 800;
+    }
+
+    @Override
+    public double getDefaultHeight() {
+        return 540;
     }
 }

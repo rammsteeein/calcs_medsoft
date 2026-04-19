@@ -5,12 +5,12 @@ import com.example.demo1.common.enums.Unit;
 public class CockroftResult {
     private final double clearance;
     private final Unit unit;
-    private final String calculation;
+    private final String interpretation;
 
-    public CockroftResult(double clearance, Unit unit, String calculation) {
+    public CockroftResult(double clearance, Unit unit, String interpretation) {
         this.clearance = clearance;
         this.unit = unit;
-        this.calculation = calculation;
+        this.interpretation = interpretation;
     }
 
     public double getClearance() {
@@ -21,12 +21,15 @@ public class CockroftResult {
         return unit;
     }
 
-    public String getCalculation() {
-        return calculation;
+    public String getInterpretation() {
+        return interpretation;
     }
 
     @Override
     public String toString() {
-        return calculation;
+        return String.format(
+                "Клиренс креатинина: %.2f мл/мин\nИнтерпретация: %s",
+                clearance, interpretation
+        );
     }
 }

@@ -10,16 +10,20 @@ public class CockroftModel {
     private final ObjectProperty<Unit> creatininUnit = new SimpleObjectProperty<>(Unit.MKMOL);
     private final StringProperty age = new SimpleStringProperty();
     private final StringProperty weight = new SimpleStringProperty();
-    private final ObjectProperty<CockroftResult> result = new SimpleObjectProperty<>(new CockroftResult(Double.NaN, null, ""));
+
+    private final ObjectProperty<CockroftResult> result = new SimpleObjectProperty<>();
     private final StringProperty resultString = new SimpleStringProperty();
+    private final DoubleProperty resultValue = new SimpleDoubleProperty();
 
     public ObjectProperty<Gender> genderProperty() { return gender; }
     public StringProperty kreatininProperty() { return kreatinin; }
     public ObjectProperty<Unit> creatininUnitProperty() { return creatininUnit; }
     public StringProperty ageProperty() { return age; }
     public StringProperty weightProperty() { return weight; }
+
     public ObjectProperty<CockroftResult> resultProperty() { return result; }
     public StringProperty resultStringProperty() { return resultString; }
+    public DoubleProperty resultValueProperty() { return resultValue; }
 
     public void calc() {
         try {
@@ -47,11 +51,13 @@ public class CockroftModel {
                 kreatininValue /= 88.4;
             }
 
-            double calcValue = CockroftCalculator.calc(genderValue, kreatininValue, weightValue, ageValue);
+            CockroftResult res = CockroftCalculator.calcWithInterpretation(
+                    genderValue, kreatininValue, weightValue, ageValue
+            );
 
-            String resultText = String.format("Клиренс креатинина: %.2f мл/мин", calcValue);
-            result.set(new CockroftResult(calcValue, Unit.MGDL, resultText));
-            resultString.set(resultText);
+            result.set(res);
+            resultString.set(res.toString());
+            resultValue.set(res.getClearance());
 
         } catch (Exception e) {
             resultString.set("Ошибка: " + e.getMessage());

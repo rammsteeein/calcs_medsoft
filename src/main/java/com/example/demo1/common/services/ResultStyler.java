@@ -34,6 +34,22 @@ public final class ResultStyler {
         if (value > highThreshold) return Zone.HIGH;
         return Zone.GRAY;
     }
+    public static Zone zoneFromValueReversed(double value, double lowThreshold, double highThreshold) {
+        if (Double.isNaN(value)) return Zone.ERROR;
+
+        if (value > highThreshold) return Zone.LOW;
+        if (value < lowThreshold) return Zone.HIGH;
+        return Zone.GRAY;
+    }
+
+    public static void applyStyleForValueReversed(
+            TextInputControl control,
+            double value,
+            double lowThreshold,
+            double highThreshold
+    ) {
+        applyStyle(control, zoneFromValueReversed(value, lowThreshold, highThreshold));
+    }
 
     public static void applyStyleForValue(TextInputControl control, double value, double lowThreshold, double highThreshold) {
         applyStyle(control, zoneFromValue(value, lowThreshold, highThreshold));

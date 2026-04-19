@@ -119,7 +119,7 @@ public class GCSControl extends StackPane implements CalculatorControl {
     private void bind() {
         model.resultProperty().addListener((obs, oldVal, newVal) -> {
             txtResult.setText(newVal);
-            ResultStyler.applyStyleForValue(txtResult, model.resultValueProperty().get(), 8, 12);
+            ResultStyler.applyStyleForValueReversed(txtResult, model.resultValueProperty().get(), 8, 12);
         });
     }
 
