@@ -250,6 +250,6 @@ public class UCTControl extends StackPane
 
     @Override
     public double getDefaultHeight() {
-        return 400;
+        return 450;
     }
 }

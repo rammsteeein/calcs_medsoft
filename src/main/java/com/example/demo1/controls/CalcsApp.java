@@ -76,6 +76,8 @@ import com.example.demo1.controls.SAMSCI.SAMSCIControl;
 import com.example.demo1.controls.SAMSCI.SAMSCIModel;
 import com.example.demo1.controls.SCORE2OP.Score2OPControl;
 import com.example.demo1.controls.SHOKS.*;
+import com.example.demo1.controls.UAS7.UAS7Control;
+import com.example.demo1.controls.UAS7.UAS7Model;
 import com.example.demo1.controls.UCT.UCTControl;
 import com.example.demo1.controls.UCT.UCTModel;
 import com.example.demo1.controls.Wells.WellsControl;
@@ -85,6 +87,7 @@ import com.example.demo1.controls.rGENEVA.rGENEVAControl;
 import com.example.demo1.controls.rGENEVA.rGENEVAModel;
 import com.example.demo1.controls.SCORE2OP.Score2OPModel;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -144,6 +147,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("ECOG", () -> new ECOGControl(new ECOGModel()));
         calculatorMap.put("EHRA", () -> new EHRAControl(new EHRAModel()));
         calculatorMap.put("UCT", () -> new UCTControl(new UCTModel()));
+        calculatorMap.put("UAS7", () -> new UAS7Control(new UAS7Model()));
         calculatorMap.put("SCORE2-OP", () -> new Score2OPControl(new Score2OPModel()));
         calculatorMap.put("Опросник для оценки вероятности ХОБЛ", () -> new COPDControl(new COPDModel()));
         calculatorMap.put("Шкала Хен-Яра", () -> new HoehnYahrControl(new HoehnYahrModel()));
@@ -159,27 +163,43 @@ public class CalcsApp extends Application {
         comboBox.setPromptText("Выбрать калькулятор ССЗ");
 
         comboBox.getEditor().textProperty().addListener((obs, oldVal, newVal) -> {
+
             if (newVal == null || newVal.isBlank()) {
                 comboBox.setItems(items);
                 comboBox.hide();
-            } else {
-                String filter = newVal.toLowerCase();
-                List<String> filtered = new ArrayList<>();
-                for (String key : keys) {
-                    if (key.toLowerCase().contains(filter)) {
-                        filtered.add(key);
-                    }
+
+                comboBox.getSelectionModel().clearSelection();
+                return;
+            }
+
+            String filter = newVal.toLowerCase();
+
+            List<String> filtered = new ArrayList<>();
+
+            for (String key : keys) {
+                if (key.toLowerCase().contains(filter)) {
+                    filtered.add(key);
                 }
-                comboBox.setItems(FXCollections.observableArrayList(filtered));
+            }
+
+            comboBox.setItems(FXCollections.observableArrayList(filtered));
+
+            if (!comboBox.isShowing()) {
                 comboBox.show();
             }
         });
 
         comboBox.setOnAction(e -> {
             String selected = comboBox.getSelectionModel().getSelectedItem();
+
             if (selected != null) {
+
                 comboBox.getEditor().setText(selected);
+
+                comboBox.getEditor().positionCaret(selected.length());
+
                 comboBox.setItems(items);
+
                 comboBox.hide();
             }
         });
