@@ -50,6 +50,8 @@ import com.example.demo1.controls.Mehran2.Mehran2Control;
 import com.example.demo1.controls.Mehran2.Mehran2Model;
 import com.example.demo1.controls.MifflinStJeor.MifflinStJeorControl;
 import com.example.demo1.controls.MifflinStJeor.MifflinStJeorModel;
+import com.example.demo1.controls.MoCA.MoCAControl;
+import com.example.demo1.controls.MoCA.MoCAModel;
 import com.example.demo1.controls.NIHSS.NIHSSControl;
 import com.example.demo1.controls.NIHSS.NIHSSModel;
 import com.example.demo1.controls.NoSAS.NoSASControl;
@@ -142,6 +144,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("SCORE2-OP", () -> new Score2OPControl(new Score2OPModel()));
         calculatorMap.put("Опросник для оценки вероятности ХОБЛ", () -> new COPDControl(new COPDModel()));
         calculatorMap.put("Шкала Хен-Яра", () -> new HoehnYahrControl(new HoehnYahrModel()));
+        calculatorMap.put("Монреальская шкала оценки когнитивных функций", () -> new MoCAControl(new MoCAModel()));
         calculatorMap.put("Оценка тяжести дегидратации по В.И. Покровскому", () -> new PokrovskyControl(new PokrovskyModel()));
         List<String> keys = new ArrayList<>(calculatorMap.keySet());
         Collections.sort(keys);
