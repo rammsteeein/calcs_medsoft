@@ -76,6 +76,8 @@ import com.example.demo1.controls.SAMSCI.SAMSCIControl;
 import com.example.demo1.controls.SAMSCI.SAMSCIModel;
 import com.example.demo1.controls.SCORE2OP.Score2OPControl;
 import com.example.demo1.controls.SHOKS.*;
+import com.example.demo1.controls.UCT.UCTControl;
+import com.example.demo1.controls.UCT.UCTModel;
 import com.example.demo1.controls.Wells.WellsControl;
 import com.example.demo1.controls.Wells.WellsModel;
 import com.example.demo1.controls.inbar.*;
@@ -141,6 +143,7 @@ public class CalcsApp extends Application {
         calculatorMap.put("Индекс Карновского", () -> new KarnovskyControl(new KarnovskyModel()));
         calculatorMap.put("ECOG", () -> new ECOGControl(new ECOGModel()));
         calculatorMap.put("EHRA", () -> new EHRAControl(new EHRAModel()));
+        calculatorMap.put("UCT", () -> new UCTControl(new UCTModel()));
         calculatorMap.put("SCORE2-OP", () -> new Score2OPControl(new Score2OPModel()));
         calculatorMap.put("Опросник для оценки вероятности ХОБЛ", () -> new COPDControl(new COPDModel()));
         calculatorMap.put("Шкала Хен-Яра", () -> new HoehnYahrControl(new HoehnYahrModel()));

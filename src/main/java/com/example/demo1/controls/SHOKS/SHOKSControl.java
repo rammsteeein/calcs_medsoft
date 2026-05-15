@@ -38,17 +38,105 @@ public class SHOKSControl extends StackPane implements CalculatorControl, AutoCl
 
     private void initialize() {
         VBox leftBox = new VBox(10,
-                CalculatorHeader.createHeader("SHOKS"),
-                createLabeledCombo("Одышка (0–2)", 2, model.odyshkaProperty()),
-                createLabeledCombo("Изменение веса (0–1)", 1, model.vesProperty()),
-                createLabeledCombo("Перебои (0–1)", 1, model.pereboiProperty()),
-                createLabeledCombo("Положение (0–3)", 3, model.polozhenieProperty()),
-                createLabeledCombo("Шейные вены (0–2)", 2, model.sheinyeVenyProperty()),
-                createLabeledCombo("Хрипы (0–3)", 3, model.hripyProperty()),
-                createLabeledCombo("Галоп (0–1)", 1, model.galopProperty()),
-                createLabeledCombo("Печень (0–2)", 2, model.pechenProperty()),
-                createLabeledCombo("Отеки (0–3)", 3, model.otekiProperty()),
-                createLabeledCombo("САД (0–2)", 2, model.SADProperty())
+                createLabeledCombo(
+                        "Одышка",
+                        new String[]{
+                                "Нет",
+                                "При нагрузке (+1)",
+                                "В покое (+2)"
+                        },
+                        model.odyshkaProperty()
+                ),
+
+                createLabeledCombo(
+                        "Изменение веса",
+                        new String[]{
+                                "Нет",
+                                "Увеличился (+1)"
+                        },
+                        model.vesProperty()
+                ),
+
+                createLabeledCombo(
+                        "Перебои",
+                        new String[]{
+                                "Нет",
+                                "Есть (+1)"
+                        },
+                        model.pereboiProperty()
+                ),
+
+                createLabeledCombo(
+                        "Положение в постели",
+                        new String[]{
+                                "Горизонтально",
+                                "С приподнятым головным концом (+1)",
+                                "Просыпается от удушья (+2)",
+                                "Сидя (+3)"
+                        },
+                        model.polozhenieProperty()
+                ),
+
+                createLabeledCombo(
+                        "Шейные вены",
+                        new String[]{
+                                "Нет",
+                                "Лежа (+1)",
+                                "Стоя (+2)"
+                        },
+                        model.sheinyeVenyProperty()
+                ),
+
+                createLabeledCombo(
+                        "Хрипы",
+                        new String[]{
+                                "Нет",
+                                "Нижние отделы (+1)",
+                                "До лопаток (+2)",
+                                "Над всей поверхностью (+3)"
+                        },
+                        model.hripyProperty()
+                ),
+
+                createLabeledCombo(
+                        "Ритм галопа",
+                        new String[]{
+                                "Нет",
+                                "Есть (+1)"
+                        },
+                        model.galopProperty()
+                ),
+
+                createLabeledCombo(
+                        "Печень",
+                        new String[]{
+                                "Не увеличена",
+                                "До 5 см (+1)",
+                                "Более 5 см (+2)"
+                        },
+                        model.pechenProperty()
+                ),
+
+                createLabeledCombo(
+                        "Отеки",
+                        new String[]{
+                                "Нет",
+                                "Пастозность (+1)",
+                                "Отеки (+2)",
+                                "Анасарка (+3)"
+                        },
+                        model.otekiProperty()
+                ),
+
+                createLabeledCombo(
+                        "САД",
+                        new String[]{
+                                ">120 мм рт. ст.",
+                                "100–120 мм рт. ст. (+1)",
+                                "<100 мм рт. ст. (+2)"
+                        },
+                        model.SADProperty()
+                )
         );
 
         lblSliderValue = new Label("ФК: —");
@@ -154,19 +242,26 @@ public class SHOKSControl extends StackPane implements CalculatorControl, AutoCl
         lblSliderValue.setText(String.format("ФК: %s (%d баллов)", fcText, score));
     }
 
-    private HBox createLabeledCombo(String label, int maxValue, javafx.beans.property.IntegerProperty property) {
+    private HBox createLabeledCombo(String label, String[] options, javafx.beans.property.IntegerProperty property) {
         Label lbl = new Label(label);
-        ComboBox<Integer> combo = new ComboBox<>();
-        for (int i = 0; i <= maxValue; i++) combo.getItems().add(i);
 
-        combo.valueProperty().bindBidirectional(property.asObject());
-        if (property.get() == 0) combo.setValue(0);
+        ComboBox<String> combo = new ComboBox<>();
+        combo.getItems().addAll(options);
 
-        combo.setPrefWidth(80);
+        combo.setValue(options[property.get()]);
 
-        Tooltip tooltip = new Tooltip(createTooltipText(label));
-        tooltip.setShowDelay(Duration.millis(200));
-        combo.setTooltip(tooltip);
+        combo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            property.set(combo.getSelectionModel().getSelectedIndex());
+        });
+
+        property.addListener((obs, oldVal, newVal) -> {
+            int index = newVal.intValue();
+            if (index >= 0 && index < options.length) {
+                combo.setValue(options[index]);
+            }
+        });
+
+        combo.setPrefWidth(220);
 
         return new HBox(10, lbl, combo);
     }
@@ -193,7 +288,12 @@ public class SHOKSControl extends StackPane implements CalculatorControl, AutoCl
     }
 
     @Override
+    public double getDefaultWidth() {
+        return 650;
+    }
+
+    @Override
     public double getDefaultHeight() {
-        return 480;
+        return 450;
     }
 }
