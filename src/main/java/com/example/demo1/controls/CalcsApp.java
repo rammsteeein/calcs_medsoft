@@ -9,6 +9,10 @@ import com.example.demo1.controls.CHA2DS2VASc.CHA2DS2VAScControl;
 import com.example.demo1.controls.CHA2DS2VASc.CHA2DS2VAScModel;
 import com.example.demo1.controls.COPD.COPDControl;
 import com.example.demo1.controls.COPD.COPDModel;
+import com.example.demo1.controls.CEAP.CEAPControl;
+import com.example.demo1.controls.CEAP.CEAPModel;
+import com.example.demo1.controls.WIFI.WIFIControl;
+import com.example.demo1.controls.WIFI.WIFIModel;
 import com.example.demo1.controls.Caprini.CapriniControl;
 import com.example.demo1.controls.Caprini.CapriniModel;
 import com.example.demo1.controls.Cockroft.*;
@@ -87,7 +91,6 @@ import com.example.demo1.controls.rGENEVA.rGENEVAControl;
 import com.example.demo1.controls.rGENEVA.rGENEVAModel;
 import com.example.demo1.controls.SCORE2OP.Score2OPModel;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -153,6 +156,8 @@ public class CalcsApp extends Application {
         calculatorMap.put("Шкала Хен-Яра", () -> new HoehnYahrControl(new HoehnYahrModel()));
         calculatorMap.put("Монреальская шкала оценки когнитивных функций", () -> new MoCAControl(new MoCAModel()));
         calculatorMap.put("Оценка тяжести дегидратации по В.И. Покровскому", () -> new PokrovskyControl(new PokrovskyModel()));
+        calculatorMap.put("CEAP", () -> new CEAPControl(new CEAPModel()));
+        calculatorMap.put("Классификация WIfI", () -> new WIFIControl(new WIFIModel()));
         List<String> keys = new ArrayList<>(calculatorMap.keySet());
         Collections.sort(keys);
 
