@@ -1,4 +1,4 @@
-package com.example.demo1.controls.SCORE2OP;
+package com.example.demo1.controls.SCORE2;
 
 import com.example.demo1.common.interfaces.CalculatorControl;
 import com.example.demo1.common.services.CalculatorDescription;
@@ -10,9 +10,9 @@ import javafx.scene.layout.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Score2OPControl extends StackPane implements AutoCloseable, CalculatorControl {
+public class Score2Control extends StackPane implements AutoCloseable, CalculatorControl {
 
-    private Score2OPModel model;
+    private Score2Model model;
 
     private ToggleGroup genderGroup;
     private RadioButton rbMale;
@@ -30,7 +30,7 @@ public class Score2OPControl extends StackPane implements AutoCloseable, Calcula
     private final Map<String, Integer> sysAdMap = new HashMap<>();
     private final Map<String, Integer> cholesterolMap = new HashMap<>();
 
-    public Score2OPControl(Score2OPModel model) {
+    public Score2Control(Score2Model model) {
         this.model = model;
         initialize();
         bind();
@@ -56,19 +56,20 @@ public class Score2OPControl extends StackPane implements AutoCloseable, Calcula
         cmbSmoking.getItems().addAll("Нет", "Да");
         cmbSmoking.setPromptText("Курение");
 
-        sysAdMap.put("100–119", 100);
-        sysAdMap.put("120–139", 120);
-        sysAdMap.put("140–159", 140);
-        sysAdMap.put("160–179", 160);
+        sysAdMap.put("до 130", 120);
+        sysAdMap.put("130–149", 140);
+        sysAdMap.put("150–169", 160);
+        sysAdMap.put("170 и выше", 180);
 
         cmbSysAd = new ComboBox<>();
         cmbSysAd.getItems().addAll(sysAdMap.keySet());
         cmbSysAd.setPromptText("Систолическое АД");
 
-        cholesterolMap.put("3.0–3.9", 3);
         cholesterolMap.put("4.0–4.9", 4);
         cholesterolMap.put("5.0–5.9", 5);
         cholesterolMap.put("6.0–6.9", 6);
+        cholesterolMap.put("7.0–7.9", 7);
+        cholesterolMap.put("8.0 и выше", 8);
 
         cmbCholesterol = new ComboBox<>();
         cmbCholesterol.getItems().addAll(cholesterolMap.keySet());
@@ -78,7 +79,7 @@ public class Score2OPControl extends StackPane implements AutoCloseable, Calcula
         txtResult.setEditable(false);
 
         VBox left = new VBox(10,
-                CalculatorHeader.createHeader("SCORE2-OP"),
+                CalculatorHeader.createHeader("SCORE2"),
                 txtAge,
                 genderBox,
                 cmbSmoking,
@@ -90,20 +91,21 @@ public class Score2OPControl extends StackPane implements AutoCloseable, Calcula
         getChildren().add(new HBox(20,
                 left,
                 CalculatorDescription.createDescription(
-                        "SCORE2-OP — это шкала оценки 10-летнего риска развития фатальных и нефатальных" +
-                                " сердечно-сосудистых событий у людей старше 70 лет, разработанная Европейским обществом" +
-                                " кардиологов (ESC).\n\n" +
+                        "SCORE2 — это шкала оценки 10-летнего риска развития фатальных и нефатальных" +
+                                " сердечно-сосудистых событий у людей в возрасте от 40 до 69 лет, разработанная" +
+                                " Европейским обществом кардиологов (ESC).\n\n" +
                                 "Модель используется для прогнозирования вероятности таких событий, как инфаркт миокарда" +
                                 " и инсульт, с учётом ключевых факторов риска.\n\n" +
                                 "В расчёте учитываются следующие параметры:\n" +
-                                "- Возраст (старшие возрастные группы имеют существенно более высокий базовый риск)\n" +
+                                "- Возраст (40–44, 45–54, 55–59, 60–64, 65 и старше)\n" +
                                 "- Пол (мужчины и женщины имеют разные базовые кривые риска)\n" +
                                 "- Курение (наличие активного курения значительно повышает риск)\n" +
                                 "- Систолическое артериальное давление (уровень нагрузки на сосудистую систему)\n" +
                                 "- Общий уровень холестерина (маркер атерогенного риска)\n\n" +
                                 "Результат интерпретируется как процент вероятности развития сердечно-сосудистого" +
                                 " события в течение ближайших 10 лет и дополнительно классифицируется по категориям" +
-                                " риска: низкий, умеренный, высокий и очень высокий."
+                                " риска: низкий, умеренный, высокий и очень высокий.\n\n" +
+                                "Для пациентов старше 70 лет используется отдельная шкала SCORE2-OP."
                 )
         ));
     }

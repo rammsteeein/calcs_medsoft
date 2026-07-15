@@ -1,10 +1,11 @@
-package com.example.demo1.controls.SCORE2OP;
+package com.example.demo1.controls.SCORE2;
 
 import javafx.beans.property.*;
 
-public class Score2OPModel {
+public class Score2Model {
 
-    private static final int MIN_AGE = 70;
+    private static final int MIN_AGE = 40;
+    private static final int MAX_AGE = 69;
 
     private final BooleanProperty absolute = new SimpleBooleanProperty(true);
     private final IntegerProperty age = new SimpleIntegerProperty();
@@ -29,7 +30,13 @@ public class Score2OPModel {
 
         if (age.get() < MIN_AGE) {
             resultValue.set(0);
-            result.set("Возраст некорректный. Шкала SCORE2-OP применяется с " + MIN_AGE + " лет.");
+            result.set("Возраст некорректный. Шкала SCORE2 применяется с " + MIN_AGE + " лет.");
+            return;
+        }
+
+        if (age.get() > MAX_AGE) {
+            resultValue.set(0);
+            result.set("Возраст некорректный. Шкала SCORE2 применяется до " + MAX_AGE + " лет.");
             return;
         }
 
@@ -42,7 +49,7 @@ public class Score2OPModel {
             return;
         }
 
-        Score2OPResult res = Score2OPCalculator.calc(
+        Score2Result res = Score2Calculator.calc(
                 absolute.get(),
                 age.get(),
                 gender.get(),
