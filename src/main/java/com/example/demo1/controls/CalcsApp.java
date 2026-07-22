@@ -11,8 +11,14 @@ import com.example.demo1.controls.COPD.COPDControl;
 import com.example.demo1.controls.COPD.COPDModel;
 import com.example.demo1.controls.CEAP.CEAPControl;
 import com.example.demo1.controls.CEAP.CEAPModel;
+import com.example.demo1.controls.Fagerstrom.FagerstromControl;
+import com.example.demo1.controls.Fagerstrom.FagerstromModel;
 import com.example.demo1.controls.GorelkinPinhasov_age.GorelkinPinhasovControl;
 import com.example.demo1.controls.GorelkinPinhasov_age.GorelkinPinhasovModel;
+import com.example.demo1.controls.Morisky.MoriskyControl;
+import com.example.demo1.controls.Morisky.MoriskyModel;
+import com.example.demo1.controls.Naranjo.NaranjoControl;
+import com.example.demo1.controls.Naranjo.NaranjoModel;
 import com.example.demo1.controls.SCORE2.Score2Control;
 import com.example.demo1.controls.SCORE2.Score2Model;
 import com.example.demo1.controls.WIFI.WIFIControl;
@@ -164,6 +170,9 @@ public class CalcsApp extends Application {
         calculatorMap.put("CEAP", () -> new CEAPControl(new CEAPModel()));
         calculatorMap.put("Расчет биологического возраста", () -> new GorelkinPinhasovControl(new GorelkinPinhasovModel()));
         calculatorMap.put("Классификация WIfI", () -> new WIFIControl(new WIFIModel()));
+        calculatorMap.put("Шкала Мориски", () -> new MoriskyControl(new MoriskyModel()));
+        calculatorMap.put("Тест Фагерстрема", () -> new FagerstromControl(new FagerstromModel()));
+        calculatorMap.put("Шкала Наранжо", () -> new NaranjoControl(new NaranjoModel()));
         List<String> keys = new ArrayList<>(calculatorMap.keySet());
         Collections.sort(keys);
 
